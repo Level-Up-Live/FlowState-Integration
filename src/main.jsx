@@ -365,7 +365,6 @@ const spokenPrompts = [
 ];
 
 const targetDistanceOptions = [3, 5, 7, 10, 15, 20, 25, 30, 35, 40, 45, 50];
-
 const laneCompetitors = [
   { lane: 3, name: "Alex Carter", status: "Ready", score: 487, accuracy: 95 },
   { lane: 4, name: "Jordan Lee", status: "Ready", score: 468, accuracy: 91 },
@@ -481,6 +480,7 @@ function App() {
   const [axisLightingScene, setAxisLightingScene] = useState("Training Bright");
   const [axisLaneTimer, setAxisLaneTimer] = useState("07:00");
   const [axisAlert, setAxisAlert] = useState("Clear");
+  const [laneLanguage, setLaneLanguage] = useState("English");
   const [toast, setToast] = useState(null);
 
   const activeCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? customers[0];
@@ -629,6 +629,10 @@ function App() {
       setAxisAlert(updates.alert);
     }
 
+    if (updates.language) {
+      setLaneLanguage(updates.language);
+    }
+
     notify(`SmartRange AXIS command sent: ${command}.`);
   }
 
@@ -666,7 +670,7 @@ function App() {
               axisProgramMode={axisProgramMode}
               axisLightingScene={axisLightingScene}
               axisLaneTimer={axisLaneTimer}
-              axisAlert={axisAlert}
+              laneLanguage={laneLanguage}
               onAxisCommand={runAxisCommand}
               onChooseDrill={() => setScreen("drills")}
               onFriendPlay={() => setScreen("friends")}
@@ -694,6 +698,8 @@ function App() {
           {screen === "friends" && (
             <FriendPlay
               selectedLane={selectedLane}
+              lanes={lanes}
+              customers={customers}
               selectedCompetitorLanes={selectedCompetitorLanes}
               onToggleLane={toggleCompetitorLane}
               rankedCompetitors={rankedCompetitors}
@@ -958,7 +964,7 @@ function LaneTakeover({
   axisProgramMode,
   axisLightingScene,
   axisLaneTimer,
-  axisAlert,
+  laneLanguage,
   onAxisCommand,
   onChooseDrill,
   onFriendPlay
@@ -1005,7 +1011,7 @@ function LaneTakeover({
           axisProgramMode={axisProgramMode}
           axisLightingScene={axisLightingScene}
           axisLaneTimer={axisLaneTimer}
-          axisAlert={axisAlert}
+          laneLanguage={laneLanguage}
           onAxisCommand={onAxisCommand}
         />
 
@@ -1027,18 +1033,18 @@ function AxisCommandConsole({
   axisProgramMode,
   axisLightingScene,
   axisLaneTimer,
-  axisAlert,
+  laneLanguage,
   onAxisCommand
 }) {
   const nextLightingScene = axisLightingScene === "Training Bright" ? "Low Light" : "Training Bright";
-  const nextAlert = axisAlert === "Clear" ? "Visual Alert" : "Clear";
+  const nextLanguage = laneLanguage === "English" ? "Spanish" : "English";
 
   return (
     <div className="axis-console">
       <div className="axis-readouts">
         <AxisReadout icon={Target} label="Retriever" value={`${axisDistance} yd / ${axisTargetState}`} />
         <AxisReadout icon={Timer} label="Program" value={`${drill.name} • ${axisProgramMode}`} />
-        <AxisReadout icon={Gauge} label="Lane Timer" value={`${axisLaneTimer} • ${axisAlert}`} />
+        <AxisReadout icon={Gauge} label="Lane Timer" value={`${axisLaneTimer} • ${laneLanguage === "English" ? "EN" : "ES"}`} />
         <AxisReadout icon={ShieldCheck} label="Lighting" value={axisLightingScene} />
       </div>
 
@@ -1086,9 +1092,9 @@ function AxisCommandConsole({
           <Zap size={17} />
           Light
         </button>
-        <button type="button" onClick={() => onAxisCommand(`${nextAlert.toLowerCase()} state`, { alert: nextAlert })}>
-          <ShieldCheck size={17} />
-          Alert
+        <button type="button" onClick={() => onAxisCommand(`set lane screen language to ${nextLanguage}`, { language: nextLanguage })}>
+          <MonitorPlay size={17} />
+          Language
         </button>
       </div>
     </div>
@@ -1335,7 +1341,7 @@ function BluetoothModal({ connectedDevice, onConnect, onClose }) {
   );
 }
 
-function FriendPlay({ selectedLane, selectedCompetitorLanes, onToggleLane, rankedCompetitors, onStart }) {
+function FriendPlay({ selectedLane, lanes, customers, selectedCompetitorLanes, onToggleLane, rankedCompetitors, onStart }) {
   return (
     <section className="friend-layout fade-in">
       <div className="panel">
@@ -1345,6 +1351,12 @@ function FriendPlay({ selectedLane, selectedCompetitorLanes, onToggleLane, ranke
             <h2>Select nearby lanes to compete</h2>
           </div>
         </div>
+        <LaneManagementBoard
+          lanes={lanes}
+          customers={customers}
+          selectedLane={selectedLane}
+          selectedCompetitorLanes={selectedCompetitorLanes}
+        />
         <div className="lane-select-list">
           {laneCompetitors.map((competitor) => {
             const isSelected = selectedCompetitorLanes.includes(competitor.lane);
@@ -1381,6 +1393,30 @@ function FriendPlay({ selectedLane, selectedCompetitorLanes, onToggleLane, ranke
         <Scoreboard rows={rankedCompetitors} selectedLane={selectedLane} />
       </div>
     </section>
+  );
+}
+
+function LaneManagementBoard({ lanes, customers, selectedLane, selectedCompetitorLanes }) {
+  return (
+    <div className="lane-management-board" aria-label="Lane management status">
+      {lanes.map((lane) => {
+        const customer = lane.customerId ? customers.find((item) => item.id === lane.customerId) : null;
+        const isCurrent = lane.lane === selectedLane;
+        const isLinked = selectedCompetitorLanes.includes(lane.lane);
+        const displayStatus = isCurrent ? "LUL Live" : lane.status === "Available" ? "Idle" : lane.status;
+
+        return (
+          <div
+            key={lane.lane}
+            className={`management-lane status-${lane.status.toLowerCase().replaceAll(" ", "-")} ${isCurrent ? "is-current" : ""}`}
+          >
+            <strong>Lane {lane.lane}</strong>
+            <span>{displayStatus}</span>
+            <small>{customer ? customer.name : isLinked ? "Linked" : "Open"}</small>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

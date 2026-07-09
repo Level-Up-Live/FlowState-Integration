@@ -559,6 +559,10 @@ button {
   gap: 12px;
 }
 
+.lane-action-row {
+  grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+}
+
 .metric-card,
 .program-card,
 .info-box {
@@ -881,6 +885,71 @@ button {
 
 .friend-layout {
   grid-template-columns: minmax(340px, 0.82fr) minmax(0, 1.18fr);
+}
+
+.lane-management-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 8px;
+  border: 1px solid rgba(50, 167, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(50, 167, 255, 0.06);
+}
+
+.management-lane {
+  min-height: 58px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 8px;
+  border: 1px solid rgba(196, 229, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.management-lane strong,
+.management-lane span,
+.management-lane small {
+  display: block;
+  line-height: 1.1;
+}
+
+.management-lane strong {
+  font-size: 0.82rem;
+}
+
+.management-lane span {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.management-lane small {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.management-lane.status-in-game,
+.management-lane.is-current {
+  border-color: rgba(37, 244, 109, 0.42);
+  background: rgba(37, 244, 109, 0.13);
+}
+
+.management-lane.status-occupied {
+  border-color: rgba(50, 167, 255, 0.32);
+  background: rgba(50, 167, 255, 0.1);
+}
+
+.management-lane.status-waiting {
+  border-color: rgba(251, 243, 93, 0.28);
+  background: rgba(251, 243, 93, 0.08);
 }
 
 .competitor-row {
@@ -1907,12 +1976,43 @@ body {
   margin-top: 14px;
 }
 
+.axis-program-card {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.axis-program-card .secondary-action {
+  grid-column: 1 / -1;
+  min-height: 58px;
+  white-space: normal;
+}
+
 .prompt-line {
   min-height: 48px;
 }
 
 .friend-layout {
   grid-template-columns: 320px minmax(0, 1fr);
+}
+
+.lane-management-board {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  margin-bottom: 10px;
+  padding: 7px;
+}
+
+.management-lane {
+  min-height: 50px;
+  padding: 6px;
+}
+
+.management-lane strong {
+  font-size: 0.72rem;
+}
+
+.management-lane span,
+.management-lane small {
+  font-size: 0.6rem;
 }
 
 .competitor-row {
@@ -2121,7 +2221,7 @@ body {
 
 .axis-program-card {
   display: grid;
-  grid-template-columns: minmax(140px, 0.55fr) minmax(220px, 1fr) auto;
+  grid-template-columns: minmax(140px, 0.55fr) minmax(0, 1fr) minmax(200px, auto);
   align-items: center;
   gap: 10px;
   margin-top: 12px;
@@ -2133,6 +2233,7 @@ body {
 
 .axis-program-card .secondary-action {
   min-height: 62px;
+  width: 100%;
   white-space: nowrap;
 }
 

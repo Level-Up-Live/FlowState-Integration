@@ -99,7 +99,7 @@ const initialLanes = [
   { lane: 8, status: "Available", customerId: null }
 ];
 
-const programCategories = ["Drills", "Skills", "Games", "Leagues", "Custom"];
+const programCategories = ["Drills", "Skills", "Games", "Leagues", "Training", "Custom"];
 
 const drills = [
   {
@@ -234,6 +234,84 @@ const drills = [
     description: "Classic slow, timed, and rapid ring-scoring format.",
     behavior: "Target presents slow-fire, timed-fire, and rapid-fire windows.",
     scoring: "Thirty shots are scored up to 300 points."
+  },
+  {
+    id: "train-with-matt",
+    name: "Train with Matt",
+    category: "Training",
+    difficulty: "Coach",
+    time: "45 min",
+    rounds: 50,
+    description: "Fundamentals session for steady grip, repeatable sight picture, and clean strings.",
+    regimens: ["5-yard baseline", "Slow-fire groups", "Weekly prep"],
+    instructions: "Matt's training plan starts with a 5-yard baseline, then builds into slow-fire groups and a final scored string.",
+    behavior: "Target starts at 5 yards, holds for coached strings, then moves to 7 yards for the final review.",
+    scoring: "Scores track group size, ring value, and improvement from the opening baseline."
+  },
+  {
+    id: "train-with-clem",
+    name: "Train with Clem",
+    category: "Training",
+    difficulty: "Coach",
+    time: "40 min",
+    rounds: 45,
+    description: "Data-focused accuracy work using dot grids, lane scoring, and replay review.",
+    regimens: ["Dot-grid accuracy", "Score review", "League tune-up"],
+    instructions: "Clem's plan runs dot-grid accuracy, reviews camera scoring after each block, and ends with a league-style tune-up.",
+    behavior: "Target alternates between 3, 5, and 10 yards with scoring pauses after each block.",
+    scoring: "Scores combine ring value, dot hits, group size, and consistency across distances."
+  },
+  {
+    id: "train-with-hillary",
+    name: "Train with Hillary",
+    category: "Training",
+    difficulty: "Coach",
+    time: "35 min",
+    rounds: 40,
+    description: "Confidence-building session with guided cadence and visible progress targets.",
+    regimens: ["Cadence ladder", "Sight reset", "Confidence builder"],
+    instructions: "Hillary's plan uses guided cadence, short sight-reset strings, and a final progress check.",
+    behavior: "Target holds at 5 yards for warmup, then moves to 7 and 10 yards as the cadence changes.",
+    scoring: "Scores reward hit quality, steady pace, and fewer outliers each round."
+  },
+  {
+    id: "train-with-tom",
+    name: "Train with Tom",
+    category: "Training",
+    difficulty: "Coach",
+    time: "45 min",
+    rounds: 60,
+    description: "Timed target-control session for plate rhythm, transitions, and repeatable pacing.",
+    regimens: ["Plate rhythm", "Timed strings", "Transition tracking"],
+    instructions: "Tom's plan uses timed strings and neutral plate zones to build rhythm and controlled transitions.",
+    behavior: "Target faces for short timed windows, edges between strings, and changes distance after each block.",
+    scoring: "Scores combine confirmed hits, timing consistency, and recovery between target zones."
+  },
+  {
+    id: "train-with-jian",
+    name: "Train with Jian",
+    category: "Training",
+    difficulty: "Coach",
+    time: "50 min",
+    rounds: 55,
+    description: "Analytics-heavy coaching with distance ladders and camera-assisted grouping review.",
+    regimens: ["Grouping analysis", "Distance ladder", "Camera review"],
+    instructions: "Jian's plan builds from a close baseline into a distance ladder, then uses camera scoring to review grouping trends.",
+    behavior: "Target steps from 3 to 25 yards with scoring freezes between each distance.",
+    scoring: "Scores track group size, inferred pass-throughs, distance reached, and point totals."
+  },
+  {
+    id: "train-with-jim",
+    name: "Train with Jim",
+    category: "Training",
+    difficulty: "Coach",
+    time: "40 min",
+    rounds: 45,
+    description: "Classic precision session for breathing cadence, bullseye basics, and clean follow-through.",
+    regimens: ["Bullseye basics", "Breathing cadence", "Precision ladder"],
+    instructions: "Jim's plan focuses on breathing cadence, bullseye fundamentals, and a final precision ladder.",
+    behavior: "Target holds at 10 yards for precision blocks, then advances and returns for comparison groups.",
+    scoring: "Scores emphasize ring value, group size, and consistency between the first and final blocks."
   },
   {
     id: "build-your-own",
@@ -1087,6 +1165,13 @@ function ProgramSelection({ programs, activeProgramId, onSelectProgram }) {
               <Target size={24} />
             </div>
             <p>{program.description}</p>
+            {program.regimens && (
+              <div className="regimen-list" aria-label={`${program.name} regimens`}>
+                {program.regimens.map((regimen) => (
+                  <span key={regimen}>{regimen}</span>
+                ))}
+              </div>
+            )}
             <div className="program-meta">
               <span>
                 <Timer size={15} />
@@ -1098,7 +1183,7 @@ function ProgramSelection({ programs, activeProgramId, onSelectProgram }) {
               </span>
             </div>
             <button className="card-action" type="button" onClick={() => onSelectProgram(program.id)}>
-              Start
+              {program.category === "Training" ? "Start Training" : "Start"}
               <ChevronRight size={18} />
             </button>
           </article>
@@ -1126,7 +1211,7 @@ function InstructionScreen({
       <div className="panel instruction-card">
         <div className="panel-heading">
           <div>
-            <div className="eyebrow">Pre-Drill Briefing</div>
+            <div className="eyebrow">Pre-Program Briefing</div>
             <h2>{drill.name}</h2>
           </div>
           <span className="difficulty">{drill.difficulty}</span>
@@ -1177,7 +1262,7 @@ function InstructionScreen({
           </button>
           <button className="primary-action" type="button" onClick={onStart}>
             <Play size={21} />
-            Start Drill
+            {drill.category === "Training" ? "Start Training" : "Start Program"}
           </button>
         </div>
       </div>

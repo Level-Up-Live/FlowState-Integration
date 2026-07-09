@@ -995,15 +995,6 @@ function LaneTakeover({
           <Metric label="Audio" value={connectedDevice ? "Enabled" : "Not Connected"} icon={Headphones} />
         </div>
 
-        <div className="badge-row">
-          {player.badges.map((badge) => (
-            <span key={badge} className="achievement-badge">
-              <Sparkles size={15} />
-              {badge}
-            </span>
-          ))}
-        </div>
-
         <AxisCommandConsole
           drill={drill}
           axisDistance={axisDistance}

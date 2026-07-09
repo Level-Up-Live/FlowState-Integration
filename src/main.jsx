@@ -11,6 +11,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   CircleDot,
+  Crown,
   Crosshair,
   Download,
   Gauge,
@@ -29,6 +30,7 @@ import {
   Trophy,
   UserRound,
   UsersRound,
+  X,
   Zap
 } from "lucide-react";
 import "./styles.css";
@@ -746,6 +748,8 @@ function App() {
             <LaneTakeover
               player={activeCustomer}
               selectedLane={selectedLane}
+              lanes={lanes}
+              customers={customers}
               drill={activeDrill}
               connectedDevice={connectedDevice}
               axisDistance={axisDistance}
@@ -754,7 +758,6 @@ function App() {
               onAxisCommand={runAxisCommand}
               onOpenAudio={() => setAudioModalOpen(true)}
               onChooseDrill={() => setScreen("drills")}
-              onFriendPlay={() => setScreen("friends")}
             />
           )}
 
@@ -965,10 +968,15 @@ function TimeoutScreen({ selectedLane, onAddTime }) {
   );
 }
 
-function Avatar({ player, size = "large" }) {
+function Avatar({ player, size = "large", leader = false }) {
   return (
-    <div className={`avatar avatar-${size}`} style={{ "--avatar-accent": player.accent }}>
+    <div className={`avatar avatar-${size} ${leader ? "is-leader" : ""}`} style={{ "--avatar-accent": player.accent }}>
       {player.avatarImage ? <img src={player.avatarImage} alt={`${player.name} profile`} /> : player.avatar}
+      {leader && (
+        <span className="leader-crown" aria-label="Party leader">
+          <Crown size={size === "small" ? 16 : 24} />
+        </span>
+      )}
     </div>
   );
 }
@@ -1097,6 +1105,8 @@ function PosAssignment({
 function LaneTakeover({
   player,
   selectedLane,
+  lanes,
+  customers,
   drill,
   connectedDevice,
   axisDistance,
@@ -1104,10 +1114,30 @@ function LaneTakeover({
   axisLightingScene,
   onAxisCommand,
   onOpenAudio,
-  onChooseDrill,
-  onFriendPlay
+  onChooseDrill
 }) {
   const [cameraPanelOpen, setCameraPanelOpen] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [laneInviteResponses, setLaneInviteResponses] = useState({});
+
+  const partyMembers = useMemo(() => {
+    const acceptedMembers = lanes
+      .filter((lane) => lane.lane !== selectedLane && laneInviteResponses[lane.lane] === "accepted")
+      .map((lane) => {
+        const customer = lane.customerId ? customers.find((item) => item.id === lane.customerId) : null;
+        return customer ? { lane: lane.lane, player: customer, leader: false } : null;
+      })
+      .filter(Boolean);
+
+    return [{ lane: selectedLane, player, leader: true }, ...acceptedMembers];
+  }, [customers, laneInviteResponses, lanes, player, selectedLane]);
+
+  function handleLaneInviteResponse(laneNumber, response) {
+    setLaneInviteResponses((current) => ({
+      ...current,
+      [laneNumber]: response
+    }));
+  }
 
   return (
     <section className="fade-in lane-layout">
@@ -1115,7 +1145,7 @@ function LaneTakeover({
         <div className="scan-line" />
         <div className="lane-control-stack">
           <div className="lane-player">
-            <Avatar player={player} />
+            <Avatar player={player} leader />
             <div>
               <h2>{player.name}</h2>
               <p>XP {player.xp.toLocaleString()} • Score {player.recentScore}</p>
@@ -1166,10 +1196,14 @@ function LaneTakeover({
           />
 
           <div className="hero-actions">
-            <button className="secondary-action large" type="button" onClick={onFriendPlay}>
-              <UsersRound size={22} />
-              Invite Nearby Lanes
-            </button>
+            {partyMembers.length > 1 ? (
+              <PartyDock members={partyMembers} onInviteClick={() => setInviteModalOpen(true)} />
+            ) : (
+              <button className="secondary-action large" type="button" onClick={() => setInviteModalOpen(true)}>
+                <UsersRound size={22} />
+                Invite Nearby Lanes
+              </button>
+            )}
           </div>
         </div>
         {cameraPanelOpen && (
@@ -1180,8 +1214,114 @@ function LaneTakeover({
             axisTargetState={axisTargetState}
           />
         )}
+        {inviteModalOpen && (
+          <LaneInviteModal
+            lanes={lanes}
+            customers={customers}
+            selectedLane={selectedLane}
+            responses={laneInviteResponses}
+            onRespond={handleLaneInviteResponse}
+            onClose={() => setInviteModalOpen(false)}
+          />
+        )}
       </div>
     </section>
+  );
+}
+
+function PartyDock({ members, onInviteClick }) {
+  return (
+    <div className="party-dock" aria-label="Joined lanes">
+      <div className="party-dock-copy">
+        <span>Group</span>
+        <strong>{members.length} lanes joined</strong>
+      </div>
+      <div className="party-member-list">
+        {members.map((member) => (
+          <div key={member.lane} className={`party-member ${member.leader ? "is-leader" : ""}`}>
+            <Avatar player={member.player} size="small" leader={member.leader} />
+            <span>Lane {member.lane}</span>
+          </div>
+        ))}
+      </div>
+      <button className="party-manage-button" type="button" onClick={onInviteClick}>
+        <UsersRound size={20} />
+        Invite
+      </button>
+    </div>
+  );
+}
+
+function LaneInviteModal({ lanes, customers, selectedLane, responses, onRespond, onClose }) {
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <div className="modal-panel lane-invite-modal" role="dialog" aria-modal="true" aria-labelledby="lane-invite-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="panel-heading">
+          <div>
+            <div className="eyebrow">Invite Lanes</div>
+            <h2 id="lane-invite-title">Build your lane group</h2>
+          </div>
+          <button className="icon-button" type="button" onClick={onClose} aria-label="Close lane invite panel">
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="invite-lane-grid" aria-label="Lane invite responses">
+          {lanes.map((lane) => {
+            const customer = lane.customerId ? customers.find((item) => item.id === lane.customerId) : null;
+            const isLeader = lane.lane === selectedLane;
+            const response = isLeader ? "leader" : responses[lane.lane];
+            const canRespond = Boolean(customer) && !isLeader;
+
+            return (
+              <div
+                key={lane.lane}
+                className={`invite-lane-card ${isLeader ? "is-leader" : ""} ${response === "accepted" ? "is-accepted" : ""} ${response === "declined" ? "is-declined" : ""} ${!customer ? "is-open" : ""}`}
+              >
+                <div className="invite-lane-top">
+                  <strong>Lane {lane.lane}</strong>
+                  <span>{isLeader ? "Leader" : response === "accepted" ? "Accepted" : response === "declined" ? "Declined" : lane.status}</span>
+                </div>
+
+                <div className="invite-player-row">
+                  {customer ? <Avatar player={customer} size="small" leader={isLeader} /> : <div className="empty-lane-avatar">Open</div>}
+                  <div>
+                    <strong>{customer ? customer.name : "No player assigned"}</strong>
+                    <span>{customer ? customer.username : "Cannot invite"}</span>
+                  </div>
+                </div>
+
+                <div className="invite-response-actions" aria-label={`Lane ${lane.lane} invite response`}>
+                  {isLeader ? (
+                    <span className="leader-pill">
+                      <Crown size={15} />
+                      Party Leader
+                    </span>
+                  ) : canRespond ? (
+                    <>
+                      <button className="accept-button" type="button" onClick={() => onRespond(lane.lane, "accepted")} aria-label={`Accept invite from Lane ${lane.lane}`}>
+                        <Check size={19} />
+                      </button>
+                      <button className="decline-button" type="button" onClick={() => onRespond(lane.lane, "declined")} aria-label={`Decline invite from Lane ${lane.lane}`}>
+                        <X size={19} />
+                      </button>
+                    </>
+                  ) : (
+                    <span className="open-lane-pill">Open lane</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="invite-modal-actions">
+          <button className="primary-action" type="button" onClick={onClose}>
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

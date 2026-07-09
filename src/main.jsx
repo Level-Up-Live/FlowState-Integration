@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   BadgeCheck,
   BarChart3,
   Bluetooth,
+  Camera,
   Check,
+  ChevronLeft,
   ChevronRight,
   CircleDot,
   Crosshair,
@@ -32,6 +34,27 @@ import "./styles.css";
 const brandLogoSrc = "/assets/logos/LUL_secondary_marks-6.png";
 const brandTextLogoSrc = "/assets/logos/LUL_logo_no%20icon%20horizontal-1.png";
 const actionTargetLogoSrc = "/assets/logos/action-target-white-logo.svg";
+const homeBackgroundSrc = "/assets/backgrounds/action-target-range.jpg";
+const sessionDurationSeconds = 60 * 60;
+
+function formatSessionTimer(totalSeconds) {
+  const safeSeconds = Math.max(totalSeconds, 0);
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function parseSessionTimer(value) {
+  const [minutes = "60", seconds = "0"] = String(value).split(":");
+  const parsedMinutes = Number.parseInt(minutes, 10);
+  const parsedSeconds = Number.parseInt(seconds, 10);
+
+  if (Number.isNaN(parsedMinutes) || Number.isNaN(parsedSeconds)) {
+    return sessionDurationSeconds;
+  }
+
+  return Math.max(parsedMinutes * 60 + parsedSeconds, 0);
+}
 
 const customers = [
   {
@@ -478,6 +501,7 @@ function App() {
   const [syncEvent, setSyncEvent] = useState("Level Up Live profile connected to Lane 3.");
   const [selectedDrillId, setSelectedDrillId] = useState("five-by-five-check");
   const [audioModalOpen, setAudioModalOpen] = useState(false);
+  const [cameraModalOpen, setCameraModalOpen] = useState(false);
   const [connectedDevice, setConnectedDevice] = useState("");
   const [promptIndex, setPromptIndex] = useState(0);
   const [selectedCompetitorLanes, setSelectedCompetitorLanes] = useState([3, 4, 5]);
@@ -486,7 +510,8 @@ function App() {
   const [axisTargetState, setAxisTargetState] = useState("Face");
   const [axisProgramMode, setAxisProgramMode] = useState("Randomized");
   const [axisLightingScene, setAxisLightingScene] = useState("Training Bright");
-  const [axisLaneTimer, setAxisLaneTimer] = useState("07:00");
+  const [sessionSeconds, setSessionSeconds] = useState(sessionDurationSeconds);
+  const [sessionTimerRunning, setSessionTimerRunning] = useState(true);
   const [axisAlert, setAxisAlert] = useState("Clear");
   const [toast, setToast] = useState(null);
 
@@ -500,6 +525,7 @@ function App() {
   const maxScore = Math.max(allShownShots.length * 10, 1);
   const accuracy = Math.round((totalScore / maxScore) * 100);
   const shotCount = allShownShots.length;
+  const axisLaneTimer = formatSessionTimer(sessionSeconds);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -507,6 +533,27 @@ function App() {
     }, 2400);
     return () => window.clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!sessionTimerRunning || screen === "home" || screen === "timeout") {
+      return undefined;
+    }
+
+    const interval = window.setInterval(() => {
+      setSessionSeconds((current) => Math.max(current - 1, 0));
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [screen, sessionTimerRunning]);
+
+  useEffect(() => {
+    if (sessionSeconds > 0) {
+      return;
+    }
+
+    setSessionTimerRunning(false);
+    setScreen("timeout");
+  }, [sessionSeconds]);
 
   useEffect(() => {
     if (!toast) {
@@ -593,6 +640,30 @@ function App() {
     notify(`${device} connected. Audio prompts are enabled.`);
   }
 
+  function openWelcomeScreen() {
+    setSessionTimerRunning(false);
+    setScreen("home");
+  }
+
+  function openTimeoutScreen() {
+    setSessionTimerRunning(false);
+    setSessionSeconds(0);
+    setScreen("timeout");
+  }
+
+  function beginTimedSession() {
+    setSessionSeconds(sessionDurationSeconds);
+    setSessionTimerRunning(true);
+    setScreen("lane");
+  }
+
+  function addSessionTime(minutes) {
+    setSessionSeconds(minutes * 60);
+    setSessionTimerRunning(true);
+    setScreen("lane");
+    notify(`Lane ${selectedLane} timer extended by ${minutes} minutes.`);
+  }
+
   function finishDrill() {
     setScreen("results");
     notify(`${activeDrill.name} results are ready.`);
@@ -629,7 +700,7 @@ function App() {
     }
 
     if (updates.laneTimer) {
-      setAxisLaneTimer(updates.laneTimer);
+      setSessionSeconds(parseSessionTimer(updates.laneTimer));
     }
 
     if (updates.alert) {
@@ -639,13 +710,21 @@ function App() {
     notify(`SmartRange AXIS command sent: ${command}.`);
   }
 
+  if (screen === "home") {
+    return <HomeScreen player={activeCustomer} onBegin={beginTimedSession} />;
+  }
+
+  if (screen === "timeout") {
+    return <TimeoutScreen selectedLane={selectedLane} onAddTime={addSessionTime} />;
+  }
+
   return (
     <div className="app-shell">
-      <Sidebar currentScreen={screen} onNavigate={setScreen} />
+      <Sidebar currentScreen={screen} onBrandClick={openWelcomeScreen} onNavigate={setScreen} />
       <main className="main-stage">
         <Header
-          activeDrill={activeDrill}
           axisLaneTimer={axisLaneTimer}
+          onTimerClick={openTimeoutScreen}
           selectedLane={selectedLane}
         />
         <div className="content-frame">
@@ -675,6 +754,7 @@ function App() {
               axisLaneTimer={axisLaneTimer}
               onAxisCommand={runAxisCommand}
               onOpenAudio={() => setAudioModalOpen(true)}
+              onOpenCamera={() => setCameraModalOpen(true)}
               onChooseDrill={() => setScreen("drills")}
               onFriendPlay={() => setScreen("friends")}
             />
@@ -761,6 +841,16 @@ function App() {
         />
       )}
 
+      {cameraModalOpen && (
+        <CameraModal
+          selectedLane={selectedLane}
+          drill={activeDrill}
+          axisDistance={axisDistance}
+          axisTargetState={axisTargetState}
+          onClose={() => setCameraModalOpen(false)}
+        />
+      )}
+
       {toast && <Toast key={toast.id} message={toast.message} />}
       <ActionTargetBadge />
 
@@ -773,16 +863,16 @@ function App() {
   );
 }
 
-function Sidebar({ currentScreen, onNavigate }) {
+function Sidebar({ currentScreen, onBrandClick, onNavigate }) {
   const activeNavId = ["drills", "instructions", "pos"].includes(currentScreen) ? "lane" : currentScreen;
 
   return (
     <aside className="sidebar">
-      <div className="brand-block">
+      <button className="brand-block" type="button" onClick={onBrandClick} aria-label="Open Level Up Live welcome screen">
         <div className="brand-mark">
           <img src={brandLogoSrc} alt="Level Up Live logo" />
         </div>
-      </div>
+      </button>
 
       <nav className="nav-list" aria-label="Integration screens">
         {navItems.map((item) => {
@@ -805,9 +895,7 @@ function Sidebar({ currentScreen, onNavigate }) {
   );
 }
 
-function Header({ activeDrill, axisLaneTimer, selectedLane }) {
-  const isLocked = axisLaneTimer === "00:00";
-
+function Header({ axisLaneTimer, onTimerClick, selectedLane }) {
   return (
     <header className="topbar">
       <div>
@@ -815,16 +903,13 @@ function Header({ activeDrill, axisLaneTimer, selectedLane }) {
           <BrandTextLogo className="topbar-brand-text" />
         </div>
       </div>
-      <div className={`session-strip timer-strip ${isLocked ? "is-locked" : ""}`}>
+      <button className="session-strip timer-strip" type="button" onClick={onTimerClick}>
         <Timer size={22} />
         <div>
           <span>Lane {selectedLane} Timer</span>
           <strong>{axisLaneTimer}</strong>
-          <span>
-            {isLocked ? "Lane access locked" : `${activeDrill.name} • Locks at 00:00`}
-          </span>
         </div>
-      </div>
+      </button>
     </header>
   );
 }
@@ -838,6 +923,56 @@ function ActionTargetBadge() {
     <div className="action-target-badge" aria-label="Action Target integration">
       <span>Lane system</span>
       <img src={actionTargetLogoSrc} alt="Action Target logo" />
+    </div>
+  );
+}
+
+function HomeScreen({ player, onBegin }) {
+  return (
+    <button className="home-screen" type="button" onClick={onBegin} aria-label={`Welcome ${player.name}. Press anywhere to begin your timer.`}>
+      <img className="home-screen-bg" src={homeBackgroundSrc} alt="" aria-hidden="true" />
+      <span className="home-screen-shade" aria-hidden="true" />
+      <span className="home-screen-content">
+        <BrandTextLogo className="home-brand-text" />
+        <strong>Welcome {player.name}</strong>
+        <span>Press anywhere to begin your timer.</span>
+      </span>
+      <span className="home-action-target">
+        <span>Lane system</span>
+        <img src={actionTargetLogoSrc} alt="Action Target logo" />
+      </span>
+    </button>
+  );
+}
+
+function TimeoutScreen({ selectedLane, onAddTime }) {
+  const timeOptions = [
+    { label: "Add 10 Minutes", minutes: 10 },
+    { label: "Add 30 Minutes", minutes: 30 },
+    { label: "Add 1 Hour", minutes: 60 }
+  ];
+
+  return (
+    <div className="home-screen timeout-screen" role="dialog" aria-label={`Lane ${selectedLane} is out of time.`}>
+      <img className="home-screen-bg" src={homeBackgroundSrc} alt="" aria-hidden="true" />
+      <span className="home-screen-shade" aria-hidden="true" />
+      <div className="home-screen-content timeout-content">
+        <BrandTextLogo className="home-brand-text" />
+        <span className="timeout-kicker">Lane {selectedLane} Timer</span>
+        <strong>This lane is out of time.</strong>
+        <span>Select more time to unlock the lane screen.</span>
+        <div className="timeout-actions" aria-label="Add lane time">
+          {timeOptions.map((option) => (
+            <button key={option.minutes} type="button" onClick={() => onAddTime(option.minutes)}>
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <span className="home-action-target">
+        <span>Lane system</span>
+        <img src={actionTargetLogoSrc} alt="Action Target logo" />
+      </span>
     </div>
   );
 }
@@ -983,6 +1118,7 @@ function LaneTakeover({
   axisLaneTimer,
   onAxisCommand,
   onOpenAudio,
+  onOpenCamera,
   onChooseDrill,
   onFriendPlay
 }) {
@@ -1002,18 +1138,18 @@ function LaneTakeover({
           </div>
         </div>
 
-        <div className="lane-action-row">
-          <button className="program-card" type="button" onClick={onChooseDrill}>
-            <Gamepad2 size={24} />
-            <span>Programs</span>
-            <strong>Choose Drill</strong>
+        <div className="lane-action-row compact-lane-actions" aria-label="Lane quick actions">
+          <button className="lane-icon-action is-program" type="button" onClick={onChooseDrill} aria-label="Open Programs">
+            <Gamepad2 size={30} />
           </button>
-          <Metric
-            label="Audio"
-            value={connectedDevice ? connectedDevice : "Not Connected"}
-            icon={Headphones}
+          <button
+            className={`lane-icon-action is-audio ${connectedDevice ? "is-connected" : ""}`}
+            type="button"
             onClick={onOpenAudio}
-          />
+            aria-label={connectedDevice ? `Audio connected to ${connectedDevice}` : "Connect audio"}
+          >
+            <Headphones size={30} />
+          </button>
         </div>
 
         <AxisCommandConsole
@@ -1024,6 +1160,7 @@ function LaneTakeover({
           axisLightingScene={axisLightingScene}
           axisLaneTimer={axisLaneTimer}
           onAxisCommand={onAxisCommand}
+          onOpenCamera={onOpenCamera}
         />
 
         <div className="hero-actions">
@@ -1044,67 +1181,154 @@ function AxisCommandConsole({
   axisProgramMode,
   axisLightingScene,
   axisLaneTimer,
-  onAxisCommand
+  onAxisCommand,
+  onOpenCamera
 }) {
   const [lightMenuOpen, setLightMenuOpen] = useState(false);
+  const distanceHoldRef = useRef(null);
+  const distancePointerHandledRef = useRef(false);
+  const distanceStateRef = useRef({ axisDistance, axisTargetState });
   const lightSceneOptions = ["Police", "EMS", "Strobe"];
   const lightLevelOptions = ["Off", "Dim", "Bright"];
+  const retrieverValue = axisDistance === 0 ? "Home" : `${axisDistance} yd / ${axisTargetState}`;
+
+  useEffect(() => {
+    distanceStateRef.current = { axisDistance, axisTargetState };
+  }, [axisDistance, axisTargetState]);
+
+  useEffect(
+    () => () => {
+      window.clearInterval(distanceHoldRef.current);
+    },
+    []
+  );
+
+  useEffect(() => {
+    function handleWindowKeyDown(event) {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        stepDistance(-1);
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        stepDistance(1);
+      }
+    }
+
+    window.addEventListener("keydown", handleWindowKeyDown);
+    return () => window.removeEventListener("keydown", handleWindowKeyDown);
+  });
 
   function sendLightingCommand(label) {
     setLightMenuOpen(false);
     onAxisCommand(`${label} lighting`, { lightingScene: label });
   }
 
+  function nextDistance(direction) {
+    const { axisDistance: currentDistance } = distanceStateRef.current;
+
+    if (currentDistance === 0 && direction < 0) {
+      return 0;
+    }
+
+    const currentIndex = targetDistanceOptions.indexOf(currentDistance);
+    const safeIndex = currentIndex >= 0 ? currentIndex : -1;
+    const nextIndex = Math.max(0, Math.min(targetDistanceOptions.length - 1, safeIndex + direction));
+    return targetDistanceOptions[nextIndex];
+  }
+
+  function sendDistanceCommand(distance, source = "send target") {
+    const { axisTargetState: currentTargetState } = distanceStateRef.current;
+    const nextTargetState = currentTargetState === "Home" ? "Face" : currentTargetState;
+    onAxisCommand(`${source} to ${distance} yards`, { distance, targetState: nextTargetState });
+  }
+
+  function stepDistance(direction) {
+    const distance = nextDistance(direction);
+    const { axisDistance: currentDistance } = distanceStateRef.current;
+
+    if (distance !== currentDistance) {
+      sendDistanceCommand(distance, "manual retriever");
+    }
+  }
+
+  function startDistanceHold(direction, event) {
+    event.preventDefault();
+    distancePointerHandledRef.current = true;
+    stepDistance(direction);
+    window.clearInterval(distanceHoldRef.current);
+    distanceHoldRef.current = window.setInterval(() => stepDistance(direction), 260);
+  }
+
+  function stopDistanceHold() {
+    window.clearInterval(distanceHoldRef.current);
+    distanceHoldRef.current = null;
+    window.setTimeout(() => {
+      distancePointerHandledRef.current = false;
+    }, 0);
+  }
+
+  function handleDistanceArrowClick(direction) {
+    if (distancePointerHandledRef.current) {
+      distancePointerHandledRef.current = false;
+      return;
+    }
+
+    stepDistance(direction);
+  }
+
   return (
     <div className="axis-console">
       <div className="axis-readouts">
-        <AxisReadout icon={Target} label="Retriever" value={`${axisDistance} yd / ${axisTargetState}`} />
+        <AxisReadout icon={Target} label="Retriever" value={retrieverValue} />
         <AxisReadout icon={Timer} label="Program" value={`${drill.name} • ${axisProgramMode}`} />
         <AxisReadout icon={ShieldCheck} label="Lighting" value={axisLightingScene} />
       </div>
 
-      <div className="distance-actions" aria-label="Target distance options">
-        {targetDistanceOptions.map((distance) => (
-          <button
-            key={distance}
-            type="button"
-            aria-label={`Send target to ${distance} yards`}
-            className={axisDistance === distance ? "is-active" : ""}
-            onClick={() => onAxisCommand(`send target to ${distance} yards`, { distance })}
-          >
-            {distance}
-          </button>
-        ))}
+      <div className="distance-control-row" aria-label="Retriever distance controls">
+        <button
+          className="distance-arrow"
+          type="button"
+          aria-label="Decrease retriever distance"
+          onPointerDown={(event) => startDistanceHold(-1, event)}
+          onPointerUp={stopDistanceHold}
+          onPointerLeave={stopDistanceHold}
+          onPointerCancel={stopDistanceHold}
+          onClick={() => handleDistanceArrowClick(-1)}
+        >
+          <ChevronLeft size={24} />
+        </button>
+        <div className="distance-status" aria-label="Current retriever distance">
+          <span>Retriever</span>
+          <strong>{axisDistance === 0 ? "Home" : `${axisDistance} yd`}</strong>
+          <small>{axisTargetState === "Home" ? "At bench" : axisTargetState}</small>
+        </div>
+        <button
+          className="distance-arrow"
+          type="button"
+          aria-label="Increase retriever distance"
+          onPointerDown={(event) => startDistanceHold(1, event)}
+          onPointerUp={stopDistanceHold}
+          onPointerLeave={stopDistanceHold}
+          onPointerCancel={stopDistanceHold}
+          onClick={() => handleDistanceArrowClick(1)}
+        >
+          <ChevronRight size={24} />
+        </button>
       </div>
 
       <div className="axis-actions" aria-label="SmartRange AXIS lane commands">
-        <button type="button" onClick={() => onAxisCommand("face target", { targetState: "Face" })}>
-          <Radio size={17} />
-          Face
+        <button className="axis-command-button is-camera" type="button" onClick={onOpenCamera}>
+          <Camera size={18} />
+          <span>Camera</span>
         </button>
-        <button type="button" onClick={() => onAxisCommand("edge target", { targetState: "Edge" })}>
-          <Radio size={17} />
-          Edge
-        </button>
-        <button type="button" onClick={() => onAxisCommand("recall target", { distance: 0, targetState: "Face", alert: "Clear" })}>
+        <button className="axis-command-button is-recall" type="button" onClick={() => onAxisCommand("recall target home", { distance: 0, targetState: "Home", alert: "Clear" })}>
           <ChevronRight size={17} />
           Recall
         </button>
-        <button
-          type="button"
-          onClick={() =>
-            onAxisCommand("randomized exposure program", {
-              programMode: "Randomized",
-              laneTimer: "07:00",
-              alert: "Clear"
-            })
-          }
-        >
-          <Play size={17} />
-          Program
-        </button>
         <div className="axis-action-menu">
-          <button type="button" onClick={() => setLightMenuOpen((open) => !open)} aria-expanded={lightMenuOpen}>
+          <button className="axis-command-button" type="button" onClick={() => setLightMenuOpen((open) => !open)} aria-expanded={lightMenuOpen}>
             <Zap size={17} />
             Light
           </button>
@@ -1282,7 +1506,7 @@ function InstructionScreen({
                 distance: 7,
                 targetState: "Face",
                 programMode: "Randomized",
-                laneTimer: "07:00",
+                laneTimer: "60:00",
                 alert: "Clear"
               })
             }
@@ -1367,6 +1591,76 @@ function BluetoothModal({ connectedDevice, onConnect, onClose }) {
         <button className="primary-action full-width" type="button" onClick={onClose}>
           Done
         </button>
+      </div>
+    </div>
+  );
+}
+
+function CameraModal({ selectedLane, drill, axisDistance, axisTargetState, onClose }) {
+  const visibleImpacts = [
+    { x: 48, y: 42, score: 10 },
+    { x: 53, y: 45, score: 10 },
+    { x: 50, y: 50, score: 10 },
+    { x: 45, y: 48, score: 9 },
+    { x: 55, y: 52, score: 9 },
+    { x: 51, y: 56, score: 9 },
+    { x: 47, y: 54, score: 10 }
+  ];
+
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <div className="modal-panel camera-modal" role="dialog" aria-modal="true" aria-labelledby="camera-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="panel-heading">
+          <div>
+            <div className="eyebrow">Lane Camera</div>
+            <h2 id="camera-title">Lane {selectedLane} Camera View</h2>
+          </div>
+          <button className="icon-button" type="button" onClick={onClose} aria-label="Close camera view">
+            ×
+          </button>
+        </div>
+
+        <div className="camera-feed">
+          <div className="camera-feed-bar">
+            <span>CAM {String(selectedLane).padStart(2, "0")}</span>
+            <strong>Live</strong>
+            <span>{axisDistance === 0 ? "Home" : `${axisDistance} yd`} • {axisTargetState === "Home" ? "Face" : axisTargetState}</span>
+          </div>
+          <div className="camera-target-view" aria-label="Simulated target camera feed">
+            <span className="camera-crosshair horizontal" />
+            <span className="camera-crosshair vertical" />
+            <span className="target-ring ring-outer" />
+            <span className="target-ring ring-mid" />
+            <span className="target-ring ring-inner" />
+            {visibleImpacts.map((impact, index) => (
+              <span
+                key={`${impact.x}-${impact.y}-${index}`}
+                className="camera-impact"
+                style={{ left: `${impact.x}%`, top: `${impact.y}%` }}
+                aria-label={`Visible impact ${index + 1}, score ${impact.score}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="camera-stats">
+          <div>
+            <span>Program</span>
+            <strong>{drill.name}</strong>
+          </div>
+          <div>
+            <span>Visible Impacts</span>
+            <strong>15</strong>
+          </div>
+          <div>
+            <span>Pass-Through Inferred</span>
+            <strong>5</strong>
+          </div>
+          <div>
+            <span>Camera Confidence</span>
+            <strong>94%</strong>
+          </div>
+        </div>
       </div>
     </div>
   );

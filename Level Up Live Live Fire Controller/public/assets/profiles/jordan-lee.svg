@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Jordan Lee player portrait</title>
+  <desc id="desc">Stylized blue gamer profile portrait with visor.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#061424"/>
+      <stop offset="0.45" stop-color="#14599a"/>
+      <stop offset="1" stop-color="#2ae2ff"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="52%" cy="32%" r="62%">
+      <stop offset="0" stop-color="#7be9ff" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#7be9ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="42" fill="#06111f"/>
+  <rect x="18" y="18" width="476" height="476" rx="34" fill="url(#bg)"/>
+  <circle cx="258" cy="164" r="184" fill="url(#halo)"/>
+  <path d="M82 422c17-79 87-130 174-130s157 51 174 130v33H82z" fill="#071426"/>
+  <path d="M123 443c30-62 74-92 133-92s103 30 133 92z" fill="#123f78"/>
+  <circle cx="256" cy="216" r="92" fill="#c89172"/>
+  <path d="M164 197c-7-52 19-93 65-113 56-24 117 3 136 48-79-18-139 2-201 65z" fill="#071426"/>
+  <path d="M164 194c38-34 95-55 174-38 12 3 21 12 23 24l5 27c-74-29-139-24-202-13z" fill="#10223a"/>
+  <path d="M175 224c46-14 115-14 162 0" fill="none" stroke="#32a7ff" stroke-width="22" stroke-linecap="round"/>
+  <path d="M184 224h144" stroke="#dff8ff" stroke-width="7" stroke-linecap="round" opacity="0.55"/>
+  <path d="M155 229h28v70h-28c-15 0-27-12-27-27v-16c0-15 12-27 27-27zM329 229h28c15 0 27 12 27 27v16c0 15-12 27-27 27h-28z" fill="#06111f"/>
+  <path d="M158 234c0-59 43-107 98-107s98 48 98 107" fill="none" stroke="#dff8ff" stroke-width="11" stroke-linecap="round" opacity="0.7"/>
+  <path d="M221 273c23 14 47 14 70 0" fill="none" stroke="#5c2f26" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="352" cy="315" r="16" fill="#32a7ff"/>
+  <path d="M336 315h-41" stroke="#32a7ff" stroke-width="10" stroke-linecap="round"/>
+  <path d="M74 90h88M100 120h138M344 82h80M316 112h116" stroke="#ffffff" stroke-opacity="0.17" stroke-width="10" stroke-linecap="round"/>
+</svg>

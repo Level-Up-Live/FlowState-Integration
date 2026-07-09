@@ -669,6 +669,22 @@ button {
     #07111e;
 }
 
+.lane-hero.has-camera-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(330px, 0.78fr);
+  align-items: stretch;
+  gap: 12px;
+}
+
+.lane-control-stack {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .scan-line {
   position: absolute;
   inset: 0;
@@ -2470,7 +2486,7 @@ body {
 
 .axis-readouts {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -2531,9 +2547,14 @@ body {
 
 .distance-control-row {
   display: grid;
-  grid-template-columns: 88px minmax(0, 1fr) 88px;
+  grid-template-columns: 78px 78px minmax(0, 1fr) 78px 78px;
   align-items: stretch;
   gap: 8px;
+}
+
+.lane-hero.has-camera-panel .distance-control-row {
+  grid-template-columns: 60px 60px minmax(0, 1fr) 60px 60px;
+  gap: 6px;
 }
 
 .distance-status {
@@ -2603,6 +2624,19 @@ body {
   box-shadow: 0 12px 26px rgba(37, 244, 109, 0.16);
 }
 
+.distance-arrow.is-double {
+  border-color: rgba(50, 167, 255, 0.48);
+  color: #eaf6ff;
+  background:
+    linear-gradient(135deg, rgba(50, 167, 255, 0.36), rgba(37, 244, 109, 0.16)),
+    rgba(50, 167, 255, 0.16);
+}
+
+.lane-hero.has-camera-panel .distance-arrow,
+.lane-hero.has-camera-panel .distance-status {
+  min-height: 62px;
+}
+
 .axis-actions button:hover,
 .distance-actions button:hover,
 .distance-actions button.is-active,
@@ -2616,6 +2650,14 @@ body {
 .distance-arrow:focus-visible {
   color: #06111f;
   background: linear-gradient(135deg, #8affac, var(--green));
+}
+
+.distance-arrow.is-double:hover,
+.distance-arrow.is-double:focus-visible {
+  color: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(37, 244, 109, 0.28), rgba(50, 167, 255, 0.42)),
+    rgba(50, 167, 255, 0.18);
 }
 
 .distance-actions button.is-active {
@@ -2653,8 +2695,24 @@ body {
   border-color: rgba(50, 167, 255, 0.5);
 }
 
-.camera-modal {
-  width: min(880px, 96vw);
+.axis-command-button.is-camera.is-active {
+  color: #06111f;
+  border-color: rgba(37, 244, 109, 0.62);
+  background: linear-gradient(135deg, var(--green), #8affac);
+}
+
+.lane-camera-panel {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(50, 167, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(5, 13, 24, 0.54);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .camera-feed {
@@ -2706,6 +2764,11 @@ body {
     radial-gradient(circle at 50% 50%, rgba(245, 248, 255, 0.9) 0 4%, #102035 4.2% 8%, #f8fbff 8.2% 14%, #1d6fb3 14.2% 22%, #f8fbff 22.2% 32%, #153454 32.2% 42%, transparent 42.2%),
     linear-gradient(135deg, rgba(50, 167, 255, 0.12), rgba(37, 244, 109, 0.05)),
     #07111f;
+}
+
+.lane-camera-panel .camera-target-view {
+  height: min(330px, calc(100dvh - 342px));
+  min-height: 238px;
 }
 
 .target-ring,
@@ -2772,6 +2835,11 @@ body {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin-top: 12px;
+}
+
+.lane-camera-panel .camera-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0;
 }
 
 .camera-stats div {

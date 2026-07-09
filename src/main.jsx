@@ -8,6 +8,8 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   CircleDot,
   Crosshair,
   Download,
@@ -501,7 +503,6 @@ function App() {
   const [syncEvent, setSyncEvent] = useState("Level Up Live profile connected to Lane 3.");
   const [selectedDrillId, setSelectedDrillId] = useState("five-by-five-check");
   const [audioModalOpen, setAudioModalOpen] = useState(false);
-  const [cameraModalOpen, setCameraModalOpen] = useState(false);
   const [connectedDevice, setConnectedDevice] = useState("");
   const [promptIndex, setPromptIndex] = useState(0);
   const [selectedCompetitorLanes, setSelectedCompetitorLanes] = useState([3, 4, 5]);
@@ -749,12 +750,9 @@ function App() {
               connectedDevice={connectedDevice}
               axisDistance={axisDistance}
               axisTargetState={axisTargetState}
-              axisProgramMode={axisProgramMode}
               axisLightingScene={axisLightingScene}
-              axisLaneTimer={axisLaneTimer}
               onAxisCommand={runAxisCommand}
               onOpenAudio={() => setAudioModalOpen(true)}
-              onOpenCamera={() => setCameraModalOpen(true)}
               onChooseDrill={() => setScreen("drills")}
               onFriendPlay={() => setScreen("friends")}
             />
@@ -838,16 +836,6 @@ function App() {
           connectedDevice={connectedDevice}
           onConnect={handleAudioConnect}
           onClose={() => setAudioModalOpen(false)}
-        />
-      )}
-
-      {cameraModalOpen && (
-        <CameraModal
-          selectedLane={selectedLane}
-          drill={activeDrill}
-          axisDistance={axisDistance}
-          axisTargetState={axisTargetState}
-          onClose={() => setCameraModalOpen(false)}
         />
       )}
 
@@ -1113,76 +1101,97 @@ function LaneTakeover({
   connectedDevice,
   axisDistance,
   axisTargetState,
-  axisProgramMode,
   axisLightingScene,
-  axisLaneTimer,
   onAxisCommand,
   onOpenAudio,
-  onOpenCamera,
   onChooseDrill,
   onFriendPlay
 }) {
+  const [cameraPanelOpen, setCameraPanelOpen] = useState(false);
+
   return (
     <section className="fade-in lane-layout">
-      <div className="lane-hero panel">
+      <div className={`lane-hero panel ${cameraPanelOpen ? "has-camera-panel" : ""}`}>
         <div className="scan-line" />
-        <div className="lane-player">
-          <Avatar player={player} />
-          <div>
-            <h2>{player.name}</h2>
-            <p>XP {player.xp.toLocaleString()} • Score {player.recentScore}</p>
+        <div className="lane-control-stack">
+          <div className="lane-player">
+            <Avatar player={player} />
+            <div>
+              <h2>{player.name}</h2>
+              <p>XP {player.xp.toLocaleString()} • Score {player.recentScore}</p>
+            </div>
+            <div className="lane-number">
+              <span>Lane</span>
+              <strong>{selectedLane}</strong>
+            </div>
           </div>
-          <div className="lane-number">
-            <span>Lane</span>
-            <strong>{selectedLane}</strong>
+
+          {cameraPanelOpen ? (
+            <div className="lane-action-row compact-lane-actions" aria-label="Lane quick actions">
+              <button className="lane-icon-action is-program" type="button" onClick={onChooseDrill} aria-label="Open Programs">
+                <Gamepad2 size={30} />
+              </button>
+              <button
+                className={`lane-icon-action is-audio ${connectedDevice ? "is-connected" : ""}`}
+                type="button"
+                onClick={onOpenAudio}
+                aria-label={connectedDevice ? `Audio connected to ${connectedDevice}` : "Connect audio"}
+              >
+                <Headphones size={30} />
+              </button>
+            </div>
+          ) : (
+            <div className="lane-action-row" aria-label="Lane quick actions">
+              <button className="program-card" type="button" onClick={onChooseDrill}>
+                <Gamepad2 size={24} />
+                <span>Programs</span>
+                <strong>Choose Drill</strong>
+              </button>
+              <Metric
+                label="Audio"
+                value={connectedDevice ? connectedDevice : "Not Connected"}
+                icon={Headphones}
+                onClick={onOpenAudio}
+              />
+            </div>
+          )}
+
+          <AxisCommandConsole
+            axisDistance={axisDistance}
+            axisTargetState={axisTargetState}
+            axisLightingScene={axisLightingScene}
+            cameraActive={cameraPanelOpen}
+            onAxisCommand={onAxisCommand}
+            onToggleCamera={() => setCameraPanelOpen((open) => !open)}
+          />
+
+          <div className="hero-actions">
+            <button className="secondary-action large" type="button" onClick={onFriendPlay}>
+              <UsersRound size={22} />
+              Invite Nearby Lanes
+            </button>
           </div>
         </div>
-
-        <div className="lane-action-row compact-lane-actions" aria-label="Lane quick actions">
-          <button className="lane-icon-action is-program" type="button" onClick={onChooseDrill} aria-label="Open Programs">
-            <Gamepad2 size={30} />
-          </button>
-          <button
-            className={`lane-icon-action is-audio ${connectedDevice ? "is-connected" : ""}`}
-            type="button"
-            onClick={onOpenAudio}
-            aria-label={connectedDevice ? `Audio connected to ${connectedDevice}` : "Connect audio"}
-          >
-            <Headphones size={30} />
-          </button>
-        </div>
-
-        <AxisCommandConsole
-          drill={drill}
-          axisDistance={axisDistance}
-          axisTargetState={axisTargetState}
-          axisProgramMode={axisProgramMode}
-          axisLightingScene={axisLightingScene}
-          axisLaneTimer={axisLaneTimer}
-          onAxisCommand={onAxisCommand}
-          onOpenCamera={onOpenCamera}
-        />
-
-        <div className="hero-actions">
-          <button className="secondary-action large" type="button" onClick={onFriendPlay}>
-            <UsersRound size={22} />
-            Invite Nearby Lanes
-          </button>
-        </div>
+        {cameraPanelOpen && (
+          <LaneCameraPanel
+            selectedLane={selectedLane}
+            drill={drill}
+            axisDistance={axisDistance}
+            axisTargetState={axisTargetState}
+          />
+        )}
       </div>
     </section>
   );
 }
 
 function AxisCommandConsole({
-  drill,
   axisDistance,
   axisTargetState,
-  axisProgramMode,
   axisLightingScene,
-  axisLaneTimer,
+  cameraActive,
   onAxisCommand,
-  onOpenCamera
+  onToggleCamera
 }) {
   const [lightMenuOpen, setLightMenuOpen] = useState(false);
   const distanceHoldRef = useRef(null);
@@ -1225,17 +1234,20 @@ function AxisCommandConsole({
     onAxisCommand(`${label} lighting`, { lightingScene: label });
   }
 
-  function nextDistance(direction) {
+  function nextDistance(step) {
     const { axisDistance: currentDistance } = distanceStateRef.current;
+    const minDistance = targetDistanceOptions[0];
+    const maxDistance = targetDistanceOptions[targetDistanceOptions.length - 1];
 
-    if (currentDistance === 0 && direction < 0) {
+    if (currentDistance === 0) {
+      return step > 0 ? Math.max(minDistance, Math.min(maxDistance, step)) : 0;
+    }
+
+    if (step < 0 && currentDistance <= minDistance) {
       return 0;
     }
 
-    const currentIndex = targetDistanceOptions.indexOf(currentDistance);
-    const safeIndex = currentIndex >= 0 ? currentIndex : -1;
-    const nextIndex = Math.max(0, Math.min(targetDistanceOptions.length - 1, safeIndex + direction));
-    return targetDistanceOptions[nextIndex];
+    return Math.max(minDistance, Math.min(maxDistance, currentDistance + step));
   }
 
   function sendDistanceCommand(distance, source = "send target") {
@@ -1244,21 +1256,21 @@ function AxisCommandConsole({
     onAxisCommand(`${source} to ${distance} yards`, { distance, targetState: nextTargetState });
   }
 
-  function stepDistance(direction) {
-    const distance = nextDistance(direction);
+  function stepDistance(step) {
+    const distance = nextDistance(step);
     const { axisDistance: currentDistance } = distanceStateRef.current;
 
     if (distance !== currentDistance) {
-      sendDistanceCommand(distance, "manual retriever");
+      sendDistanceCommand(distance, Math.abs(step) === 5 ? "fast retriever" : "manual retriever");
     }
   }
 
-  function startDistanceHold(direction, event) {
+  function startDistanceHold(step, event) {
     event.preventDefault();
     distancePointerHandledRef.current = true;
-    stepDistance(direction);
+    stepDistance(step);
     window.clearInterval(distanceHoldRef.current);
-    distanceHoldRef.current = window.setInterval(() => stepDistance(direction), 260);
+    distanceHoldRef.current = window.setInterval(() => stepDistance(step), 260);
   }
 
   function stopDistanceHold() {
@@ -1269,28 +1281,27 @@ function AxisCommandConsole({
     }, 0);
   }
 
-  function handleDistanceArrowClick(direction) {
+  function handleDistanceArrowClick(step) {
     if (distancePointerHandledRef.current) {
       distancePointerHandledRef.current = false;
       return;
     }
 
-    stepDistance(direction);
+    stepDistance(step);
   }
 
   return (
     <div className="axis-console">
       <div className="axis-readouts">
         <AxisReadout icon={Target} label="Retriever" value={retrieverValue} />
-        <AxisReadout icon={Timer} label="Program" value={`${drill.name} • ${axisProgramMode}`} />
         <AxisReadout icon={ShieldCheck} label="Lighting" value={axisLightingScene} />
       </div>
 
       <div className="distance-control-row" aria-label="Retriever distance controls">
         <button
-          className="distance-arrow"
+          className="distance-arrow is-single"
           type="button"
-          aria-label="Decrease retriever distance"
+          aria-label="Decrease retriever distance by 1 yard"
           onPointerDown={(event) => startDistanceHold(-1, event)}
           onPointerUp={stopDistanceHold}
           onPointerLeave={stopDistanceHold}
@@ -1299,15 +1310,39 @@ function AxisCommandConsole({
         >
           <ChevronLeft size={24} />
         </button>
+        <button
+          className="distance-arrow is-double"
+          type="button"
+          aria-label="Decrease retriever distance by 5 yards"
+          onPointerDown={(event) => startDistanceHold(-5, event)}
+          onPointerUp={stopDistanceHold}
+          onPointerLeave={stopDistanceHold}
+          onPointerCancel={stopDistanceHold}
+          onClick={() => handleDistanceArrowClick(-5)}
+        >
+          <ChevronsLeft size={24} />
+        </button>
         <div className="distance-status" aria-label="Current retriever distance">
           <span>Retriever</span>
           <strong>{axisDistance === 0 ? "Home" : `${axisDistance} yd`}</strong>
           <small>{axisTargetState === "Home" ? "At bench" : axisTargetState}</small>
         </div>
         <button
-          className="distance-arrow"
+          className="distance-arrow is-double"
           type="button"
-          aria-label="Increase retriever distance"
+          aria-label="Increase retriever distance by 5 yards"
+          onPointerDown={(event) => startDistanceHold(5, event)}
+          onPointerUp={stopDistanceHold}
+          onPointerLeave={stopDistanceHold}
+          onPointerCancel={stopDistanceHold}
+          onClick={() => handleDistanceArrowClick(5)}
+        >
+          <ChevronsRight size={24} />
+        </button>
+        <button
+          className="distance-arrow is-single"
+          type="button"
+          aria-label="Increase retriever distance by 1 yard"
           onPointerDown={(event) => startDistanceHold(1, event)}
           onPointerUp={stopDistanceHold}
           onPointerLeave={stopDistanceHold}
@@ -1319,7 +1354,7 @@ function AxisCommandConsole({
       </div>
 
       <div className="axis-actions" aria-label="SmartRange AXIS lane commands">
-        <button className="axis-command-button is-camera" type="button" onClick={onOpenCamera}>
+        <button className={`axis-command-button is-camera ${cameraActive ? "is-active" : ""}`} type="button" onClick={onToggleCamera}>
           <Camera size={18} />
           <span>Camera</span>
         </button>
@@ -1596,7 +1631,7 @@ function BluetoothModal({ connectedDevice, onConnect, onClose }) {
   );
 }
 
-function CameraModal({ selectedLane, drill, axisDistance, axisTargetState, onClose }) {
+function LaneCameraPanel({ selectedLane, drill, axisDistance, axisTargetState }) {
   const visibleImpacts = [
     { x: 48, y: 42, score: 10 },
     { x: 53, y: 45, score: 10 },
@@ -1608,61 +1643,56 @@ function CameraModal({ selectedLane, drill, axisDistance, axisTargetState, onClo
   ];
 
   return (
-    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <div className="modal-panel camera-modal" role="dialog" aria-modal="true" aria-labelledby="camera-title" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="panel-heading">
-          <div>
-            <div className="eyebrow">Lane Camera</div>
-            <h2 id="camera-title">Lane {selectedLane} Camera View</h2>
-          </div>
-          <button className="icon-button" type="button" onClick={onClose} aria-label="Close camera view">
-            ×
-          </button>
-        </div>
-
-        <div className="camera-feed">
-          <div className="camera-feed-bar">
-            <span>CAM {String(selectedLane).padStart(2, "0")}</span>
-            <strong>Live</strong>
-            <span>{axisDistance === 0 ? "Home" : `${axisDistance} yd`} • {axisTargetState === "Home" ? "Face" : axisTargetState}</span>
-          </div>
-          <div className="camera-target-view" aria-label="Simulated target camera feed">
-            <span className="camera-crosshair horizontal" />
-            <span className="camera-crosshair vertical" />
-            <span className="target-ring ring-outer" />
-            <span className="target-ring ring-mid" />
-            <span className="target-ring ring-inner" />
-            {visibleImpacts.map((impact, index) => (
-              <span
-                key={`${impact.x}-${impact.y}-${index}`}
-                className="camera-impact"
-                style={{ left: `${impact.x}%`, top: `${impact.y}%` }}
-                aria-label={`Visible impact ${index + 1}, score ${impact.score}`}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="camera-stats">
-          <div>
-            <span>Program</span>
-            <strong>{drill.name}</strong>
-          </div>
-          <div>
-            <span>Visible Impacts</span>
-            <strong>15</strong>
-          </div>
-          <div>
-            <span>Pass-Through Inferred</span>
-            <strong>5</strong>
-          </div>
-          <div>
-            <span>Camera Confidence</span>
-            <strong>94%</strong>
-          </div>
+    <aside className="lane-camera-panel" aria-labelledby="camera-title">
+      <div className="panel-heading">
+        <div>
+          <div className="eyebrow">Lane Camera</div>
+          <h2 id="camera-title">Lane {selectedLane} Camera View</h2>
         </div>
       </div>
-    </div>
+
+      <div className="camera-feed">
+        <div className="camera-feed-bar">
+          <span>CAM {String(selectedLane).padStart(2, "0")}</span>
+          <strong>Live</strong>
+          <span>{axisDistance === 0 ? "Home" : `${axisDistance} yd`} • {axisTargetState === "Home" ? "Face" : axisTargetState}</span>
+        </div>
+        <div className="camera-target-view" aria-label="Simulated target camera feed">
+          <span className="camera-crosshair horizontal" />
+          <span className="camera-crosshair vertical" />
+          <span className="target-ring ring-outer" />
+          <span className="target-ring ring-mid" />
+          <span className="target-ring ring-inner" />
+          {visibleImpacts.map((impact, index) => (
+            <span
+              key={`${impact.x}-${impact.y}-${index}`}
+              className="camera-impact"
+              style={{ left: `${impact.x}%`, top: `${impact.y}%` }}
+              aria-label={`Visible impact ${index + 1}, score ${impact.score}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="camera-stats">
+        <div>
+          <span>Program</span>
+          <strong>{drill.name}</strong>
+        </div>
+        <div>
+          <span>Visible Impacts</span>
+          <strong>15</strong>
+        </div>
+        <div>
+          <span>Pass-Through Inferred</span>
+          <strong>5</strong>
+        </div>
+        <div>
+          <span>Confidence</span>
+          <strong>94%</strong>
+        </div>
+      </div>
+    </aside>
   );
 }
 

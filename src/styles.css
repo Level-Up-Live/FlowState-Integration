@@ -253,7 +253,6 @@ button {
 .nav-item,
 .customer-option,
 .lane-tile,
-.competitor-row,
 .device-row,
 .shot-controls button,
 .mini-button,
@@ -457,7 +456,6 @@ button {
 .customer-list,
 .lane-grid,
 .device-list,
-.lane-select-list,
 .simple-list,
 .prompt-stack {
   display: grid;
@@ -481,8 +479,6 @@ button {
 .customer-option.is-selected,
 .lane-tile:hover,
 .lane-tile.is-selected,
-.competitor-row:hover,
-.competitor-row.is-selected,
 .device-row:hover,
 .device-row.is-connected {
   border-color: rgba(37, 244, 109, 0.42);
@@ -491,7 +487,6 @@ button {
 
 .customer-option small,
 .lane-tile small,
-.competitor-row small,
 .device-row small {
   display: block;
   color: var(--text-muted);
@@ -644,7 +639,6 @@ button {
 
 .lane-layout,
 .instruction-layout,
-.friend-layout,
 .scoring-layout,
 .results-layout,
 .profile-layout,
@@ -943,7 +937,7 @@ button {
   width: 100%;
   min-height: 104px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 16px;
   padding: 14px;
@@ -955,7 +949,6 @@ button {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.party-dock-copy span,
 .party-member span,
 .invite-lane-top span,
 .invite-player-row span {
@@ -963,12 +956,6 @@ button {
   font-size: 0.72rem;
   font-weight: 900;
   text-transform: uppercase;
-}
-
-.party-dock-copy strong {
-  display: block;
-  color: #ffffff;
-  font-size: 1.12rem;
 }
 
 .party-member-list {
@@ -996,6 +983,13 @@ button {
   background: rgba(255, 229, 92, 0.08);
 }
 
+.party-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .party-manage-button {
   min-height: 68px;
   display: inline-flex;
@@ -1013,22 +1007,47 @@ button {
   font-weight: 900;
 }
 
-.lane-invite-modal {
-  width: min(920px, 96vw);
+.party-leave-button {
+  min-height: 68px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  border-color: rgba(255, 92, 92, 0.42);
+  border-radius: 8px;
+  color: #ffdede;
+  background: rgba(255, 92, 92, 0.1);
+  font-size: 0.94rem;
+  font-weight: 900;
+}
+
+.party-leave-button:hover,
+.party-leave-button:focus-visible {
+  border-color: rgba(255, 92, 92, 0.62);
+  background: rgba(255, 92, 92, 0.16);
+}
+
+.modal-panel.lane-invite-modal {
+  width: min(880px, calc(100vw - 40px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
 }
 
 .invite-lane-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  margin: 16px 0;
+  margin: 14px 0;
 }
 
 .invite-lane-card {
-  min-height: 184px;
+  min-height: 98px;
   display: grid;
-  align-content: space-between;
-  gap: 12px;
+  grid-template-columns: 76px minmax(0, 1fr) auto;
+  grid-template-areas: "meta player actions";
+  align-items: center;
+  gap: 10px;
   padding: 12px;
   border: 1px solid rgba(196, 229, 255, 0.14);
   border-radius: 8px;
@@ -1057,17 +1076,25 @@ button {
 }
 
 .invite-lane-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  grid-area: meta;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
 }
 
 .invite-lane-top strong {
   color: #ffffff;
+  font-size: 1.12rem;
+  line-height: 1;
+}
+
+.invite-lane-top span {
+  line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 .invite-player-row {
+  grid-area: player;
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
@@ -1075,11 +1102,25 @@ button {
   min-width: 0;
 }
 
+.invite-player-row > div {
+  min-width: 0;
+}
+
 .invite-player-row strong {
   display: block;
   color: #f7fbff;
-  font-size: 0.9rem;
+  font-size: 0.94rem;
   line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.invite-player-row span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .empty-lane-avatar {
@@ -1097,15 +1138,17 @@ button {
 }
 
 .invite-response-actions {
+  grid-area: actions;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 8px;
 }
 
 .invite-response-actions button {
-  min-width: 58px;
-  min-height: 44px;
+  width: 50px;
+  min-width: 50px;
+  min-height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1126,16 +1169,17 @@ button {
 
 .leader-pill,
 .open-lane-pill {
-  min-height: 38px;
+  min-height: 36px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 0 10px;
+  padding: 0 9px;
   border-radius: 999px;
   color: #ffe95d;
   background: rgba(255, 229, 92, 0.1);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .open-lane-pill {
@@ -1147,6 +1191,10 @@ button {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+}
+
+.modal-leave-button {
+  min-height: 66px;
 }
 
 .program-grid {
@@ -1399,93 +1447,6 @@ button {
   margin-bottom: 16px;
 }
 
-.friend-layout {
-  grid-template-columns: minmax(340px, 0.82fr) minmax(0, 1.18fr);
-}
-
-.lane-management-board {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-  margin-bottom: 12px;
-  padding: 8px;
-  border: 1px solid rgba(50, 167, 255, 0.18);
-  border-radius: 8px;
-  background: rgba(50, 167, 255, 0.06);
-}
-
-.management-lane {
-  min-height: 58px;
-  display: grid;
-  align-content: center;
-  gap: 2px;
-  padding: 8px;
-  border: 1px solid rgba(196, 229, 255, 0.12);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.management-lane strong,
-.management-lane span,
-.management-lane small {
-  display: block;
-  line-height: 1.1;
-}
-
-.management-lane strong {
-  font-size: 0.82rem;
-}
-
-.management-lane span {
-  color: var(--text-muted);
-  font-size: 0.7rem;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.management-lane small {
-  color: var(--text-muted);
-  font-size: 0.68rem;
-  font-weight: 800;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.management-lane.status-in-game,
-.management-lane.is-current {
-  border-color: rgba(37, 244, 109, 0.42);
-  background: rgba(37, 244, 109, 0.13);
-}
-
-.management-lane.status-occupied {
-  border-color: rgba(50, 167, 255, 0.32);
-  background: rgba(50, 167, 255, 0.1);
-}
-
-.management-lane.status-waiting {
-  border-color: rgba(251, 243, 93, 0.28);
-  background: rgba(251, 243, 93, 0.08);
-}
-
-.competitor-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  align-items: center;
-  gap: 12px;
-  min-height: 66px;
-  padding: 12px;
-  border-color: var(--border);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.035);
-  text-align: left;
-}
-
-.competitor-row.is-disabled {
-  opacity: 0.48;
-  cursor: not-allowed;
-}
-
 .lane-chip {
   min-width: 74px;
   justify-content: center;
@@ -1524,14 +1485,22 @@ button {
   grid-template-columns: minmax(0, 1.4fr) minmax(340px, 0.68fr);
 }
 
+.target-panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .target-and-feed {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
-  grid-template-columns: minmax(300px, 0.95fr) minmax(260px, 0.65fr);
-  gap: 18px;
+  place-items: center;
 }
 
 .target-wrap {
-  width: 100%;
+  width: min(100%, 520px, calc(100dvh - 260px));
+  max-width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border: 1px solid rgba(50, 167, 255, 0.24);
@@ -1606,7 +1575,7 @@ button {
 
 .shot-row {
   display: grid;
-  grid-template-columns: 72px 72px 1fr;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 10px;
   min-height: 46px;
@@ -1616,9 +1585,231 @@ button {
   background: rgba(255, 255, 255, 0.035);
 }
 
-.shot-row span,
-.shot-row small {
+.shot-row span {
   color: var(--text-muted);
+}
+
+.scoring-control-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.55fr) minmax(140px, 0.45fr) minmax(230px, 0.8fr);
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.scoring-control-row > div {
+  min-height: 68px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 0 16px;
+  border: 1px solid rgba(196, 229, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.scoring-control-row span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.scoring-control-row strong {
+  color: #f7fbff;
+  font-size: 1.24rem;
+  line-height: 1;
+}
+
+.scoring-play-button {
+  min-height: 68px;
+  justify-content: center;
+}
+
+.scoring-play-button:disabled {
+  opacity: 0.72;
+  cursor: default;
+  transform: none;
+}
+
+.score-view-switcher {
+  grid-template-columns: 52px minmax(0, 1fr) 52px;
+  align-items: stretch;
+  gap: 8px;
+  padding: 6px;
+}
+
+.score-view-name {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 3px;
+}
+
+.score-view-name strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score-cycle-button {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 54px;
+  border: 1px solid rgba(50, 167, 255, 0.34);
+  border-radius: 8px;
+  color: #f7fbff;
+  background: rgba(50, 167, 255, 0.12);
+}
+
+.score-cycle-button:disabled {
+  opacity: 0.42;
+  cursor: default;
+}
+
+.score-cycle-button:not(:disabled):hover,
+.score-cycle-button:not(:disabled):focus-visible {
+  border-color: rgba(37, 244, 109, 0.55);
+  background: rgba(37, 244, 109, 0.12);
+}
+
+.shot-log-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  padding-bottom: 76px;
+}
+
+.shot-log-heading {
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.shot-log-heading h2 {
+  font-size: 1.45rem;
+}
+
+.shot-log-score {
+  min-width: 84px;
+  padding: 10px 12px;
+  border: 1px solid rgba(37, 244, 109, 0.3);
+  border-radius: 8px;
+  background: rgba(37, 244, 109, 0.09);
+  text-align: right;
+}
+
+.shot-log-score span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.shot-log-score strong {
+  display: block;
+  color: var(--green);
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+.shot-log-list {
+  display: grid;
+  gap: 8px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 3px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(50, 167, 255, 0.45) rgba(255, 255, 255, 0.05);
+}
+
+.shot-log-row,
+.reload-row {
+  min-height: 56px;
+  display: grid;
+  grid-template-columns: minmax(80px, 0.8fr) minmax(88px, 1fr) minmax(68px, auto);
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border: 1px solid rgba(196, 229, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.shot-log-row span,
+.reload-row span {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.shot-log-row strong,
+.reload-row strong {
+  color: #f7fbff;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.shot-log-row b {
+  justify-self: end;
+  font-size: 1rem;
+}
+
+.reload-row {
+  grid-template-columns: auto 1fr auto;
+  min-height: 42px;
+  border-color: rgba(251, 243, 93, 0.28);
+  background: rgba(251, 243, 93, 0.08);
+}
+
+.reload-row svg,
+.reload-row strong {
+  color: var(--yellow);
+}
+
+.reload-row.is-active {
+  box-shadow: 0 0 24px rgba(251, 243, 93, 0.16);
+}
+
+.shot-log-empty {
+  min-height: 210px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  border: 1px dashed rgba(196, 229, 255, 0.18);
+  border-radius: 8px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.shot-log-empty svg {
+  color: var(--green);
+}
+
+.shot-log-empty strong {
+  color: #f7fbff;
+  font-size: 1.1rem;
+}
+
+.shot-log-empty span {
+  max-width: 210px;
+  line-height: 1.35;
+}
+
+.shot-log-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+  flex: 0 0 auto;
+}
+
+.shot-log-summary .metric-card {
+  min-height: 96px;
 }
 
 .camera-assisted {
@@ -2003,7 +2194,6 @@ button {
   .pos-grid,
   .lane-layout,
   .instruction-layout,
-  .friend-layout,
   .scoring-layout,
   .results-layout,
   .profile-layout,
@@ -2074,10 +2264,6 @@ button {
 
   .shot-row {
     grid-template-columns: 1fr auto;
-  }
-
-  .shot-row small {
-    grid-column: 1 / -1;
   }
 }
 
@@ -2303,7 +2489,6 @@ body {
 .screen-grid,
 .lane-layout,
 .instruction-layout,
-.friend-layout,
 .scoring-layout,
 .results-layout,
 .profile-layout,
@@ -2323,7 +2508,6 @@ body {
 .customer-list,
 .lane-grid,
 .device-list,
-.lane-select-list,
 .simple-list,
 .prompt-stack {
   gap: 8px;
@@ -2546,48 +2730,8 @@ body {
   margin-top: 14px;
 }
 
-.axis-program-card {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.axis-program-card .secondary-action {
-  grid-column: 1 / -1;
-  min-height: 58px;
-  white-space: normal;
-}
-
 .prompt-line {
   min-height: 48px;
-}
-
-.friend-layout {
-  grid-template-columns: 320px minmax(0, 1fr);
-}
-
-.lane-management-board {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 5px;
-  margin-bottom: 10px;
-  padding: 7px;
-}
-
-.management-lane {
-  min-height: 50px;
-  padding: 6px;
-}
-
-.management-lane strong {
-  font-size: 0.72rem;
-}
-
-.management-lane span,
-.management-lane small {
-  font-size: 0.6rem;
-}
-
-.competitor-row {
-  min-height: 68px;
-  padding: 9px;
 }
 
 .score-row {
@@ -2600,12 +2744,12 @@ body {
 }
 
 .target-and-feed {
-  grid-template-columns: minmax(250px, 1fr) minmax(220px, 0.72fr);
-  gap: 12px;
+  place-items: center;
 }
 
 .target-wrap {
-  max-height: calc(100dvh - 252px);
+  width: min(100%, 520px, calc(100dvh - 272px));
+  max-height: calc(100dvh - 272px);
 }
 
 .audio-callout {
@@ -2722,13 +2866,7 @@ body {
 
 .axis-readouts {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.axis-live-strip {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
 }
 
@@ -2750,16 +2888,14 @@ body {
   color: var(--blue);
 }
 
-.axis-readout span,
-.axis-program-card span {
+.axis-readout span {
   color: var(--text-muted);
   font-size: 0.66rem;
   font-weight: 900;
   text-transform: uppercase;
 }
 
-.axis-readout strong,
-.axis-program-card strong {
+.axis-readout strong {
   display: block;
   color: #f7fbff;
   font-size: 0.8rem;
@@ -3131,59 +3267,171 @@ body {
   font-size: 0.78rem;
 }
 
-.axis-program-card {
-  display: grid;
-  grid-template-columns: minmax(140px, 0.55fr) minmax(0, 1fr) minmax(200px, auto);
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-  padding: 10px;
-  border: 1px solid rgba(50, 167, 255, 0.22);
-  border-radius: 8px;
-  background: rgba(50, 167, 255, 0.08);
-}
-
-.axis-program-card .secondary-action {
-  min-height: 62px;
-  width: 100%;
-  white-space: nowrap;
-}
-
-.axis-live-strip {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-bottom: 8px;
-}
-
-.axis-event-feed {
-  display: grid;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.axis-event-feed div {
-  min-height: 28px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 9px;
-  border: 1px solid rgba(37, 244, 109, 0.14);
-  border-radius: 8px;
-  background: rgba(37, 244, 109, 0.06);
-  color: #d7efff;
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
-.axis-event-feed svg {
-  color: var(--green);
-}
-
 .compact-sync {
   min-height: 58px;
 }
 
 .orientation-notice {
   display: none;
+}
+
+.content-frame.is-score-results {
+  overflow: hidden;
+}
+
+.content-frame.is-score-results .results-layout {
+  height: 100%;
+  min-height: 0;
+  grid-template-columns: minmax(300px, 0.58fr) minmax(0, 1fr);
+}
+
+.content-frame.is-score-results .results-hero,
+.content-frame.is-score-results .results-summary-panel {
+  min-height: 0;
+  height: 100%;
+}
+
+.content-frame.is-score-results .results-hero {
+  align-content: start;
+  padding: 18px;
+}
+
+.content-frame.is-score-results .result-burst {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 18px;
+}
+
+.content-frame.is-score-results .result-burst svg {
+  width: 36px;
+  height: 36px;
+}
+
+.content-frame.is-score-results .results-hero h2 {
+  max-width: 8.2em;
+  font-size: clamp(2.45rem, 3.8vw, 3.45rem);
+  line-height: 1.02;
+}
+
+.content-frame.is-score-results .results-hero p {
+  max-width: 21rem;
+  margin: 16px 0 0;
+  font-size: 0.98rem;
+  line-height: 1.38;
+}
+
+.content-frame.is-score-results .result-score {
+  margin: 20px 0 18px;
+  font-size: clamp(4.1rem, 6vw, 5.2rem);
+}
+
+.content-frame.is-score-results .result-actions {
+  display: grid;
+  grid-template-columns: minmax(118px, 0.56fr) minmax(0, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+.content-frame.is-score-results .result-actions .secondary-action {
+  min-height: 58px;
+  padding: 0 16px;
+  justify-content: center;
+  font-size: 0.94rem;
+}
+
+.content-frame.is-score-results .results-summary-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.content-frame.is-score-results .result-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.content-frame.is-score-results .result-grid .metric-card {
+  min-height: 112px;
+}
+
+.content-frame.is-score-results .badge-unlocked {
+  margin-top: 0;
+  padding: 16px;
+}
+
+.content-frame.is-score-results .result-done-action {
+  align-self: flex-end;
+  min-width: 190px;
+  min-height: 60px;
+  padding: 0 28px;
+  font-size: 1rem;
+}
+
+.content-frame.is-live-scoring {
+  overflow: hidden;
+}
+
+.content-frame.is-live-scoring .scoring-layout {
+  height: 100%;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.content-frame.is-live-scoring .target-panel,
+.content-frame.is-live-scoring .shot-log-panel {
+  height: 100%;
+  min-height: 0;
+}
+
+.scoring-layout .shot-log-panel {
+  gap: 8px;
+  padding: 12px 14px 86px;
+  overflow: hidden;
+}
+
+.scoring-layout .shot-log-heading {
+  margin-bottom: 0;
+}
+
+.scoring-layout .shot-log-list {
+  flex: 1 1 0;
+  min-height: 108px;
+  max-height: none;
+  overflow-y: auto;
+  gap: 6px;
+}
+
+.scoring-layout .shot-log-row {
+  min-height: 48px;
+}
+
+.scoring-layout .reload-row {
+  min-height: 36px;
+}
+
+.scoring-layout .shot-log-summary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 0;
+}
+
+.scoring-layout .shot-log-summary .metric-card {
+  min-height: 54px;
+  gap: 5px;
+  padding: 7px 8px;
+}
+
+.scoring-layout .shot-log-summary .metric-card strong {
+  font-size: 0.98rem;
+}
+
+.scoring-layout .shot-log-summary .metric-card span {
+  font-size: 0.62rem;
+}
+
+.scoring-layout .shot-log-summary .metric-card svg {
+  width: 17px;
+  height: 17px;
 }
 
 @media (orientation: portrait) {

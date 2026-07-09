@@ -10,7 +10,6 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  CircleDot,
   Crown,
   Crosshair,
   Download,
@@ -139,15 +138,15 @@ const programCategories = ["Drills", "Skills", "Games", "Leagues", "Training", "
 const drills = [
   {
     id: "five-by-five-check",
-    name: "Five by Five Check",
+    name: "Triples",
     category: "Drills",
     difficulty: "Beginner",
     time: "6 min",
-    rounds: 25,
-    description: "Five strings of five shots focused on clean sight alignment and steady pace.",
-    instructions: "Fire five 5-shot strings at the scoring rings. Keep the target at 5 yards and wait for scoring after each string.",
-    behavior: "Target stays at 5 yards, faces for each string, then edges while the camera confirms score.",
-    scoring: "Each shot is worth up to 10 points. Clean strings earn a consistency bonus."
+    rounds: 6,
+    description: "Two clean 3-shot strings with a reload between strings.",
+    instructions: "Fire 3 rounds, reload when prompted, then fire the final 3-round string.",
+    behavior: "Target stays at 7 yards and holds face-on through both strings while the camera confirms score.",
+    scoring: "Each shot is worth up to 10 points. Reload time is tracked between shot 3 and shot 4."
   },
   {
     id: "dot-grid-warmup",
@@ -375,8 +374,8 @@ const drills = [
 const weeklyChallenge = {
   id: "five-by-five-check",
   title: "Weekly Challenge",
-  name: "Five by Five Clean Target",
-  meta: "5 yards • 25 rounds • Ring score + group bonus",
+  name: "Triples Clean Run",
+  meta: "7 yards • 6 rounds • Ring score + reload time",
   prize: "Top 10 post to the Lake Erie Arms weekly board"
 };
 
@@ -407,35 +406,75 @@ const laneCompetitors = [
   { lane: 6, name: "Open", status: "Open", score: 0, accuracy: 0 },
   { lane: 7, name: "Morgan Blake", status: "Waiting", score: 452, accuracy: 88 }
 ];
+const defaultCompetitorLanes = [3, 4, 5];
 
 const visibleShots = [
-  { id: 1, x: 48, y: 48, score: 10, split: "0.72" },
-  { id: 2, x: 52, y: 49, score: 10, split: "0.31" },
-  { id: 3, x: 50, y: 53, score: 10, split: "0.34" },
-  { id: 4, x: 46, y: 51, score: 10, split: "0.33" },
-  { id: 5, x: 55, y: 47, score: 9, split: "0.36" },
-  { id: 6, x: 49, y: 45, score: 10, split: "0.30" },
-  { id: 7, x: 53, y: 55, score: 9, split: "0.38" },
-  { id: 8, x: 44, y: 48, score: 9, split: "0.41" },
-  { id: 9, x: 51, y: 43, score: 10, split: "0.35" },
-  { id: 10, x: 57, y: 52, score: 8, split: "0.40" },
-  { id: 11, x: 47, y: 56, score: 9, split: "0.37" },
-  { id: 12, x: 50, y: 50, score: 10, split: "0.32" },
-  { id: 13, x: 54, y: 50, score: 10, split: "0.34" },
-  { id: 14, x: 48, y: 54, score: 9, split: "0.39" },
-  { id: 15, x: 52, y: 46, score: 10, split: "0.33" }
+  { id: 1, x: 50, y: 49, score: 10, firedAt: "00:00.72", elapsedSeconds: 0.72 },
+  { id: 2, x: 44, y: 51, score: 9, firedAt: "00:01.08", elapsedSeconds: 1.08 },
+  { id: 3, x: 59, y: 45, score: 8, firedAt: "00:01.46", elapsedSeconds: 1.46 },
+  { id: 4, x: 52, y: 58, score: 9, firedAt: "00:04.92", elapsedSeconds: 4.92 },
+  { id: 5, x: 64, y: 53, score: 7, firedAt: "00:05.30", elapsedSeconds: 5.3 },
+  { id: 6, x: 39, y: 60, score: 6, firedAt: "00:05.67", elapsedSeconds: 5.67 }
 ];
 
-const inferredShots = [
-  { id: 16, score: 10, split: "0.35" },
-  { id: 17, score: 10, split: "0.36" },
-  { id: 18, score: 10, split: "0.34" },
-  { id: 19, score: 10, split: "0.37" },
-  { id: 20, score: 10, split: "0.35" }
-];
+const scoreRunsByCustomerId = {
+  alex: visibleShots,
+  jordan: [
+    { id: 1, x: 48, y: 50, score: 9, firedAt: "00:00.69", elapsedSeconds: 0.69 },
+    { id: 2, x: 55, y: 48, score: 8, firedAt: "00:01.03", elapsedSeconds: 1.03 },
+    { id: 3, x: 46, y: 56, score: 7, firedAt: "00:01.39", elapsedSeconds: 1.39 },
+    { id: 4, x: 54, y: 53, score: 9, firedAt: "00:04.57", elapsedSeconds: 4.57 },
+    { id: 5, x: 58, y: 47, score: 8, firedAt: "00:04.93", elapsedSeconds: 4.93 },
+    { id: 6, x: 63, y: 55, score: 7, firedAt: "00:05.28", elapsedSeconds: 5.28 }
+  ],
+  sam: [
+    { id: 1, x: 49, y: 51, score: 10, firedAt: "00:00.78", elapsedSeconds: 0.78 },
+    { id: 2, x: 51, y: 48, score: 10, firedAt: "00:01.15", elapsedSeconds: 1.15 },
+    { id: 3, x: 46, y: 52, score: 9, firedAt: "00:01.54", elapsedSeconds: 1.54 },
+    { id: 4, x: 53, y: 50, score: 10, firedAt: "00:04.48", elapsedSeconds: 4.48 },
+    { id: 5, x: 57, y: 55, score: 8, firedAt: "00:04.86", elapsedSeconds: 4.86 },
+    { id: 6, x: 44, y: 46, score: 8, firedAt: "00:05.25", elapsedSeconds: 5.25 }
+  ],
+  morgan: [
+    { id: 1, x: 58, y: 49, score: 8, firedAt: "00:00.83", elapsedSeconds: 0.83 },
+    { id: 2, x: 62, y: 55, score: 7, firedAt: "00:01.21", elapsedSeconds: 1.21 },
+    { id: 3, x: 47, y: 61, score: 8, firedAt: "00:01.60", elapsedSeconds: 1.6 },
+    { id: 4, x: 60, y: 43, score: 7, firedAt: "00:05.65", elapsedSeconds: 5.65 },
+    { id: 5, x: 40, y: 56, score: 6, firedAt: "00:06.04", elapsedSeconds: 6.04 },
+    { id: 6, x: 53, y: 42, score: 8, firedAt: "00:06.42", elapsedSeconds: 6.42 }
+  ]
+};
+
+function getScoreRunForPlayer(playerId) {
+  return scoreRunsByCustomerId[playerId] ?? visibleShots;
+}
+
+function getScoreRunTotal(playerId) {
+  return getScoreRunForPlayer(playerId).reduce((sum, shot) => sum + shot.score, 0);
+}
+
+function getReloadTimeValue(run) {
+  if (!run || run.length < 4) {
+    return "--";
+  }
+
+  return `${(run[3].elapsedSeconds - run[2].elapsedSeconds).toFixed(2)} s`;
+}
+
+function getReloadTimeDisplay(run, shotStep, demoRunning) {
+  if (shotStep >= 4) {
+    return getReloadTimeValue(run);
+  }
+
+  if (demoRunning && shotStep === 3) {
+    return "Reloading";
+  }
+
+  return "--";
+}
 
 const recentDrills = [
-  { name: "Five by Five Check", score: 487, date: "Jul 8, 2026", accuracy: "95%" },
+  { name: "Triples", score: 487, date: "Jul 8, 2026", accuracy: "95%" },
   { name: "Dot Grid Warmup", score: 456, date: "Jul 6, 2026", accuracy: "91%" },
   { name: "Slow Fire Precision", score: 472, date: "Jul 2, 2026", accuracy: "94%" }
 ];
@@ -455,7 +494,7 @@ const leagueRows = [
     change: "-1",
     player: "Alex Carter",
     score: 1904,
-    lastDrill: "Five by Five Check",
+    lastDrill: "Triples",
     date: "Jul 8, 2026",
     trend: "down"
   },
@@ -490,9 +529,7 @@ const leagueRows = [
 
 const navItems = [
   { id: "lane", label: "Lane Screen", shortLabel: "Lane", icon: Target },
-  { id: "friends", label: "Friend Play", shortLabel: "Lanes", icon: UsersRound },
   { id: "scoring", label: "Live Scoring", shortLabel: "Score", icon: Crosshair },
-  { id: "results", label: "Results", shortLabel: "Result", icon: Medal },
   { id: "profile", label: "Profile", shortLabel: "Player", icon: UserRound },
   { id: "league", label: "League", shortLabel: "League", icon: Trophy }
 ];
@@ -507,8 +544,11 @@ function App() {
   const [audioModalOpen, setAudioModalOpen] = useState(false);
   const [connectedDevice, setConnectedDevice] = useState("");
   const [promptIndex, setPromptIndex] = useState(0);
-  const [selectedCompetitorLanes, setSelectedCompetitorLanes] = useState([3, 4, 5]);
-  const [shotStep, setShotStep] = useState(20);
+  const [shotStep, setShotStep] = useState(0);
+  const [scoreDemoRunning, setScoreDemoRunning] = useState(false);
+  const [scoreView, setScoreView] = useState("live");
+  const [scoreParticipantIndex, setScoreParticipantIndex] = useState(0);
+  const [laneInviteResponses, setLaneInviteResponses] = useState({});
   const [axisDistance, setAxisDistance] = useState(7);
   const [axisTargetState, setAxisTargetState] = useState("Face");
   const [axisProgramMode, setAxisProgramMode] = useState("Randomized");
@@ -521,14 +561,56 @@ function App() {
   const activeCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? customers[0];
   const activeDrill = drills.find((drill) => drill.id === selectedDrillId) ?? drills[0];
 
-  const shownVisibleShots = visibleShots.slice(0, Math.min(shotStep, visibleShots.length));
-  const shownInferredShots = shotStep > visibleShots.length ? inferredShots.slice(0, shotStep - visibleShots.length) : [];
-  const allShownShots = [...shownVisibleShots, ...shownInferredShots];
+  const partyMembers = useMemo(() => {
+    const acceptedMembers = lanes
+      .filter((lane) => lane.lane !== selectedLane && laneInviteResponses[lane.lane] === "accepted")
+      .map((lane) => {
+        const customer = lane.customerId ? customers.find((item) => item.id === lane.customerId) : null;
+        return customer ? { lane: lane.lane, player: customer, leader: false } : null;
+      })
+      .filter(Boolean);
+
+    return [{ lane: selectedLane, player: activeCustomer, leader: true }, ...acceptedMembers];
+  }, [activeCustomer, laneInviteResponses, lanes, selectedLane]);
+  const isPartyActive = partyMembers.length > 1;
+
+  const scoreParticipants = useMemo(() => {
+    if (isPartyActive) {
+      return partyMembers;
+    }
+
+    const occupiedMembers = lanes
+      .filter((lane) => lane.customerId && lane.lane !== selectedLane)
+      .map((lane) => {
+        const customer = customers.find((item) => item.id === lane.customerId);
+        return customer ? { lane: lane.lane, player: customer, leader: false } : null;
+      })
+      .filter(Boolean);
+
+    return [{ lane: selectedLane, player: activeCustomer, leader: true }, ...occupiedMembers];
+  }, [activeCustomer, isPartyActive, lanes, partyMembers, selectedLane]);
+
+  const activeScoreParticipant = scoreParticipants[scoreParticipantIndex] ?? scoreParticipants[0] ?? { lane: selectedLane, player: activeCustomer, leader: true };
+  const activeScoreRun = getScoreRunForPlayer(activeScoreParticipant.player.id);
+  const shownVisibleShots = activeScoreRun.slice(0, Math.min(shotStep, activeScoreRun.length));
+  const allShownShots = shownVisibleShots;
   const totalScore = allShownShots.reduce((sum, shot) => sum + shot.score, 0);
-  const maxScore = Math.max(allShownShots.length * 10, 1);
-  const accuracy = Math.round((totalScore / maxScore) * 100);
   const shotCount = allShownShots.length;
+  const reloadTime = getReloadTimeDisplay(activeScoreRun, shotStep, scoreDemoRunning);
   const axisLaneTimer = formatSessionTimer(sessionSeconds);
+
+  const rankedScoreParticipants = useMemo(
+    () =>
+      [...scoreParticipants]
+        .map((participant) => ({
+          ...participant,
+          score: getScoreRunTotal(participant.player.id)
+        }))
+        .sort((a, b) => b.score - a.score),
+    [scoreParticipants]
+  );
+
+  const currentRank = rankedScoreParticipants.findIndex((participant) => participant.player.id === activeScoreParticipant.player.id) + 1;
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -550,6 +632,28 @@ function App() {
   }, [screen, sessionTimerRunning]);
 
   useEffect(() => {
+    if (!scoreDemoRunning) {
+      return undefined;
+    }
+
+    if (shotStep >= activeScoreRun.length) {
+      setScoreDemoRunning(false);
+      return undefined;
+    }
+
+    const nextShotDelay = shotStep === 3 ? 1800 : 620;
+    const timeout = window.setTimeout(() => {
+      setShotStep((current) => Math.min(current + 1, activeScoreRun.length));
+    }, nextShotDelay);
+
+    return () => window.clearTimeout(timeout);
+  }, [activeScoreRun.length, scoreDemoRunning, shotStep]);
+
+  useEffect(() => {
+    setScoreParticipantIndex((current) => Math.min(current, Math.max(scoreParticipants.length - 1, 0)));
+  }, [scoreParticipants.length]);
+
+  useEffect(() => {
     if (sessionSeconds > 0) {
       return;
     }
@@ -566,24 +670,6 @@ function App() {
     const timeout = window.setTimeout(() => setToast(null), 3200);
     return () => window.clearTimeout(timeout);
   }, [toast]);
-
-  const invitedCompetitors = useMemo(
-    () => laneCompetitors.filter((competitor) => selectedCompetitorLanes.includes(competitor.lane)),
-    [selectedCompetitorLanes]
-  );
-
-  const rankedCompetitors = useMemo(
-    () =>
-      [...invitedCompetitors]
-        .map((competitor) => ({
-          ...competitor,
-          score: competitor.lane === selectedLane ? Math.max(totalScore + 292, competitor.score) : competitor.score
-        }))
-        .sort((a, b) => b.score - a.score),
-    [invitedCompetitors, selectedLane, totalScore]
-  );
-
-  const currentRank = rankedCompetitors.findIndex((competitor) => competitor.lane === selectedLane) + 1;
 
   function notify(message) {
     setToast({ id: Date.now(), message });
@@ -616,26 +702,48 @@ function App() {
     notify(`${drills.find((drill) => drill.id === drillId)?.name} loaded on Lane ${selectedLane}.`);
   }
 
-  function toggleCompetitorLane(lane) {
-    const competitor = laneCompetitors.find((item) => item.lane === lane);
-    if (!competitor || competitor.status === "Open") {
-      return;
-    }
-    setSelectedCompetitorLanes((current) =>
-      current.includes(lane) ? current.filter((item) => item !== lane) : [...current, lane].sort((a, b) => a - b)
-    );
+  function handleLaneInviteResponse(laneNumber, response) {
+    setLaneInviteResponses((current) => ({
+      ...current,
+      [laneNumber]: response
+    }));
+  }
+
+  function handleLeaveParty() {
+    setLaneInviteResponses({});
+    setScoreParticipantIndex(0);
+    notify("Lane group closed.");
   }
 
   function startDrill() {
-    setShotStep(20);
+    setShotStep(0);
+    setScoreDemoRunning(false);
+    setScoreView("live");
+    setScoreParticipantIndex(0);
     setScreen("scoring");
     notify(`${activeDrill.name} started on Lane ${selectedLane}.`);
   }
 
-  function startSharedDrill() {
-    setShotStep(20);
-    setScreen("scoring");
-    notify(`Lanes ${selectedCompetitorLanes.join(", ")} synced for ${activeDrill.name}.`);
+  function playScoreDemo() {
+    setShotStep(0);
+    setScoreDemoRunning(true);
+    notify("6-shot scoring playback started.");
+  }
+
+  function showPreviousScoreParticipant() {
+    if (scoreParticipants.length <= 1) {
+      return;
+    }
+
+    setScoreParticipantIndex((current) => (current - 1 + scoreParticipants.length) % scoreParticipants.length);
+  }
+
+  function showNextScoreParticipant() {
+    if (scoreParticipants.length <= 1) {
+      return;
+    }
+
+    setScoreParticipantIndex((current) => (current + 1) % scoreParticipants.length);
   }
 
   function handleAudioConnect(device) {
@@ -667,9 +775,12 @@ function App() {
     notify(`Lane ${selectedLane} timer extended by ${minutes} minutes.`);
   }
 
-  function finishDrill() {
-    setScreen("results");
-    notify(`${activeDrill.name} results are ready.`);
+  function closeResults() {
+    setShotStep(0);
+    setScoreDemoRunning(false);
+    setScoreView("live");
+    setScreen("scoring");
+    notify("Score page reset for the next drill.");
   }
 
   function shareResult() {
@@ -730,7 +841,7 @@ function App() {
           onTimerClick={openTimeoutScreen}
           selectedLane={selectedLane}
         />
-        <div className="content-frame">
+        <div className={`content-frame ${screen === "scoring" && scoreView === "results" ? "is-score-results" : ""} ${screen === "scoring" && scoreView !== "results" ? "is-live-scoring" : ""}`}>
           {screen === "pos" && (
             <PosAssignment
               customers={customers}
@@ -755,9 +866,14 @@ function App() {
               axisDistance={axisDistance}
               axisTargetState={axisTargetState}
               axisLightingScene={axisLightingScene}
+              partyMembers={partyMembers}
+              partyActive={isPartyActive}
+              laneInviteResponses={laneInviteResponses}
               onAxisCommand={runAxisCommand}
               onOpenAudio={() => setAudioModalOpen(true)}
               onChooseDrill={() => setScreen("drills")}
+              onLaneInviteResponse={handleLaneInviteResponse}
+              onLeaveParty={handleLeaveParty}
             />
           )}
 
@@ -767,65 +883,40 @@ function App() {
             <InstructionScreen
               drill={activeDrill}
               connectedDevice={connectedDevice}
-              axisDistance={axisDistance}
-              axisTargetState={axisTargetState}
-              axisProgramMode={axisProgramMode}
-              axisLightingScene={axisLightingScene}
-              axisLaneTimer={axisLaneTimer}
-              axisAlert={axisAlert}
-              onAxisCommand={runAxisCommand}
               onOpenAudio={() => setAudioModalOpen(true)}
               onStart={startDrill}
             />
           )}
 
-          {screen === "friends" && (
-            <FriendPlay
-              selectedLane={selectedLane}
-              lanes={lanes}
-              customers={customers}
-              selectedCompetitorLanes={selectedCompetitorLanes}
-              onToggleLane={toggleCompetitorLane}
-              rankedCompetitors={rankedCompetitors}
-              onStart={startSharedDrill}
-            />
-          )}
-
           {screen === "scoring" && (
-            <LiveScoring
-              drill={activeDrill}
-              selectedLane={selectedLane}
-              connectedDevice={connectedDevice}
-              axisDistance={axisDistance}
-              axisTargetState={axisTargetState}
-              axisProgramMode={axisProgramMode}
-              axisLightingScene={axisLightingScene}
-              axisLaneTimer={axisLaneTimer}
-              axisAlert={axisAlert}
-              prompt={spokenPrompts[promptIndex]}
-              visibleShots={shownVisibleShots}
-              inferredShots={shownInferredShots}
-              totalScore={totalScore}
-              accuracy={accuracy}
-              shotCount={shotCount}
-              currentRank={currentRank}
-              shotStep={shotStep}
-              onShotStep={setShotStep}
-              onOpenAudio={() => setAudioModalOpen(true)}
-              onFinish={finishDrill}
-            />
-          )}
-
-          {screen === "results" && (
-            <ResultsScreen
-              player={activeCustomer}
-              drill={activeDrill}
-              totalScore={totalScore}
-              accuracy={accuracy}
-              currentRank={currentRank}
-              onShare={shareResult}
-              onProfile={saveResultToProfile}
-            />
+            scoreView === "results" ? (
+              <ResultsScreen
+                player={activeCustomer}
+                drill={activeDrill}
+                totalScore={totalScore}
+                reloadTime={getReloadTimeValue(activeScoreRun)}
+                currentRank={currentRank}
+                onShare={shareResult}
+                onProfile={saveResultToProfile}
+                onDone={closeResults}
+              />
+            ) : (
+              <LiveScoring
+                drill={activeDrill}
+                scoreParticipant={activeScoreParticipant}
+                scoreParticipants={scoreParticipants}
+                visibleShots={shownVisibleShots}
+                totalScore={totalScore}
+                reloadTime={reloadTime}
+                shotCount={shotCount}
+                currentRank={currentRank}
+                shotStep={shotStep}
+                demoRunning={scoreDemoRunning}
+                onPlay={playScoreDemo}
+                onPreviousParticipant={showPreviousScoreParticipant}
+                onNextParticipant={showNextScoreParticipant}
+              />
+            )
           )}
 
           {screen === "profile" && <PlayerProfile player={activeCustomer} onDrills={() => setScreen("drills")} />}
@@ -1112,31 +1203,26 @@ function LaneTakeover({
   axisDistance,
   axisTargetState,
   axisLightingScene,
+  partyMembers,
+  partyActive,
+  laneInviteResponses,
   onAxisCommand,
   onOpenAudio,
-  onChooseDrill
+  onChooseDrill,
+  onLaneInviteResponse,
+  onLeaveParty
 }) {
   const [cameraPanelOpen, setCameraPanelOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const [laneInviteResponses, setLaneInviteResponses] = useState({});
-
-  const partyMembers = useMemo(() => {
-    const acceptedMembers = lanes
-      .filter((lane) => lane.lane !== selectedLane && laneInviteResponses[lane.lane] === "accepted")
-      .map((lane) => {
-        const customer = lane.customerId ? customers.find((item) => item.id === lane.customerId) : null;
-        return customer ? { lane: lane.lane, player: customer, leader: false } : null;
-      })
-      .filter(Boolean);
-
-    return [{ lane: selectedLane, player, leader: true }, ...acceptedMembers];
-  }, [customers, laneInviteResponses, lanes, player, selectedLane]);
+  const isPartyActive = partyActive;
 
   function handleLaneInviteResponse(laneNumber, response) {
-    setLaneInviteResponses((current) => ({
-      ...current,
-      [laneNumber]: response
-    }));
+    onLaneInviteResponse(laneNumber, response);
+  }
+
+  function handleLeaveParty() {
+    onLeaveParty();
+    setInviteModalOpen(false);
   }
 
   return (
@@ -1145,7 +1231,7 @@ function LaneTakeover({
         <div className="scan-line" />
         <div className="lane-control-stack">
           <div className="lane-player">
-            <Avatar player={player} leader />
+            <Avatar player={player} leader={isPartyActive} />
             <div>
               <h2>{player.name}</h2>
               <p>XP {player.xp.toLocaleString()} • Score {player.recentScore}</p>
@@ -1197,7 +1283,7 @@ function LaneTakeover({
 
           <div className="hero-actions">
             {partyMembers.length > 1 ? (
-              <PartyDock members={partyMembers} onInviteClick={() => setInviteModalOpen(true)} />
+              <PartyDock members={partyMembers} onInviteClick={() => setInviteModalOpen(true)} onLeaveParty={handleLeaveParty} />
             ) : (
               <button className="secondary-action large" type="button" onClick={() => setInviteModalOpen(true)}>
                 <UsersRound size={22} />
@@ -1219,8 +1305,10 @@ function LaneTakeover({
             lanes={lanes}
             customers={customers}
             selectedLane={selectedLane}
+            partyActive={isPartyActive}
             responses={laneInviteResponses}
             onRespond={handleLaneInviteResponse}
+            onLeaveParty={handleLeaveParty}
             onClose={() => setInviteModalOpen(false)}
           />
         )}
@@ -1229,13 +1317,9 @@ function LaneTakeover({
   );
 }
 
-function PartyDock({ members, onInviteClick }) {
+function PartyDock({ members, onInviteClick, onLeaveParty }) {
   return (
     <div className="party-dock" aria-label="Joined lanes">
-      <div className="party-dock-copy">
-        <span>Group</span>
-        <strong>{members.length} lanes joined</strong>
-      </div>
       <div className="party-member-list">
         {members.map((member) => (
           <div key={member.lane} className={`party-member ${member.leader ? "is-leader" : ""}`}>
@@ -1244,15 +1328,21 @@ function PartyDock({ members, onInviteClick }) {
           </div>
         ))}
       </div>
-      <button className="party-manage-button" type="button" onClick={onInviteClick}>
-        <UsersRound size={20} />
-        Invite
-      </button>
+      <div className="party-actions">
+        <button className="party-manage-button" type="button" onClick={onInviteClick}>
+          <UsersRound size={20} />
+          Invite
+        </button>
+        <button className="party-leave-button" type="button" onClick={onLeaveParty}>
+          <X size={20} />
+          Leave
+        </button>
+      </div>
     </div>
   );
 }
 
-function LaneInviteModal({ lanes, customers, selectedLane, responses, onRespond, onClose }) {
+function LaneInviteModal({ lanes, customers, selectedLane, partyActive, responses, onRespond, onLeaveParty, onClose }) {
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
       <div className="modal-panel lane-invite-modal" role="dialog" aria-modal="true" aria-labelledby="lane-invite-title" onMouseDown={(event) => event.stopPropagation()}>
@@ -1284,7 +1374,7 @@ function LaneInviteModal({ lanes, customers, selectedLane, responses, onRespond,
                 </div>
 
                 <div className="invite-player-row">
-                  {customer ? <Avatar player={customer} size="small" leader={isLeader} /> : <div className="empty-lane-avatar">Open</div>}
+                  {customer ? <Avatar player={customer} size="small" leader={isLeader && partyActive} /> : <div className="empty-lane-avatar">Open</div>}
                   <div>
                     <strong>{customer ? customer.name : "No player assigned"}</strong>
                     <span>{customer ? customer.username : "Cannot invite"}</span>
@@ -1316,6 +1406,12 @@ function LaneInviteModal({ lanes, customers, selectedLane, responses, onRespond,
         </div>
 
         <div className="invite-modal-actions">
+          {partyActive && (
+            <button className="party-leave-button modal-leave-button" type="button" onClick={onLeaveParty}>
+              <X size={20} />
+              Leave Party
+            </button>
+          )}
           <button className="primary-action" type="button" onClick={onClose}>
             Done
           </button>
@@ -1339,7 +1435,6 @@ function AxisCommandConsole({
   const distanceStateRef = useRef({ axisDistance, axisTargetState });
   const lightSceneOptions = ["Police", "EMS", "Strobe"];
   const lightLevelOptions = ["Off", "Dim", "Bright"];
-  const retrieverValue = axisDistance === 0 ? "Home" : `${axisDistance} yd / ${axisTargetState}`;
 
   useEffect(() => {
     distanceStateRef.current = { axisDistance, axisTargetState };
@@ -1433,7 +1528,6 @@ function AxisCommandConsole({
   return (
     <div className="axis-console">
       <div className="axis-readouts">
-        <AxisReadout icon={Target} label="Retriever" value={retrieverValue} />
         <AxisReadout icon={ShieldCheck} label="Lighting" value={axisLightingScene} />
       </div>
 
@@ -1551,6 +1645,19 @@ function Metric({ label, value, icon: Icon, onClick }) {
   );
 }
 
+function ResultMetrics({ totalScore, reloadTime, currentRank, className = "result-grid" }) {
+  return (
+    <div className={className}>
+      <Metric label="Final Score" value={totalScore} icon={Trophy} />
+      <Metric label="Reload Time" value={reloadTime} icon={Timer} />
+      <Metric label="Group Size" value="1.8 in" icon={Gauge} />
+      <Metric label="Friend Rank" value={`#${currentRank || 1}`} icon={Medal} />
+      <Metric label="XP Gained" value="+840" icon={Zap} />
+      <Metric label="Personal Best" value="Yes" icon={Sparkles} />
+    </div>
+  );
+}
+
 function ProgramSelection({ programs, activeProgramId, onSelectProgram }) {
   const [activeCategory, setActiveCategory] = useState("Drills");
   const visiblePrograms = programs.filter((program) => program.category === activeCategory);
@@ -1610,10 +1717,6 @@ function ProgramSelection({ programs, activeProgramId, onSelectProgram }) {
             )}
             <div className="program-meta">
               <span>
-                <Timer size={15} />
-                {program.time}
-              </span>
-              <span>
                 <Gauge size={15} />
                 {program.rounds} rounds
               </span>
@@ -1632,13 +1735,6 @@ function ProgramSelection({ programs, activeProgramId, onSelectProgram }) {
 function InstructionScreen({
   drill,
   connectedDevice,
-  axisDistance,
-  axisTargetState,
-  axisProgramMode,
-  axisLightingScene,
-  axisLaneTimer,
-  axisAlert,
-  onAxisCommand,
   onOpenAudio,
   onStart
 }) {
@@ -1659,36 +1755,8 @@ function InstructionScreen({
 
         <div className="instruction-grid">
           <InfoBox label="Round Count" value={`${drill.rounds} rounds`} icon={Gauge} />
-          <InfoBox label="Estimated Time" value={drill.time} icon={Timer} />
           <InfoBox label="Target Behavior" value={drill.behavior} icon={Target} />
           <InfoBox label="Scoring Rules" value={drill.scoring} icon={BarChart3} />
-        </div>
-
-        <div className="axis-program-card">
-          <div>
-            <span>AXIS Program</span>
-            <strong>{axisProgramMode} • {axisDistance} yd • {axisTargetState} • {axisLaneTimer}</strong>
-          </div>
-          <div>
-            <span>Lane Systems</span>
-            <strong>{axisLightingScene} lighting, alert {axisAlert.toLowerCase()}</strong>
-          </div>
-          <button
-            type="button"
-            className="secondary-action"
-            onClick={() =>
-              onAxisCommand(`${drill.name} program staged`, {
-                distance: 7,
-                targetState: "Face",
-                programMode: "Randomized",
-                laneTimer: "60:00",
-                alert: "Clear"
-              })
-            }
-          >
-            <Target size={18} />
-            Stage AXIS Program
-          </button>
         </div>
 
         <div className="instruction-actions">
@@ -1836,85 +1904,6 @@ function LaneCameraPanel({ selectedLane, drill, axisDistance, axisTargetState })
   );
 }
 
-function FriendPlay({ selectedLane, lanes, customers, selectedCompetitorLanes, onToggleLane, rankedCompetitors, onStart }) {
-  return (
-    <section className="friend-layout fade-in">
-      <div className="panel">
-        <div className="panel-heading">
-          <div>
-            <div className="eyebrow">Multi-Lane Friend Play</div>
-            <h2>Select nearby lanes to compete</h2>
-          </div>
-        </div>
-        <LaneManagementBoard
-          lanes={lanes}
-          customers={customers}
-          selectedLane={selectedLane}
-          selectedCompetitorLanes={selectedCompetitorLanes}
-        />
-        <div className="lane-select-list">
-          {laneCompetitors.map((competitor) => {
-            const isSelected = selectedCompetitorLanes.includes(competitor.lane);
-            const isOpen = competitor.status === "Open";
-            return (
-              <button
-                key={competitor.lane}
-                type="button"
-                className={`competitor-row ${isSelected ? "is-selected" : ""} ${isOpen ? "is-disabled" : ""}`}
-                disabled={isOpen}
-                onClick={() => onToggleLane(competitor.lane)}
-              >
-                <span className="lane-chip">Lane {competitor.lane}</span>
-                <strong>{competitor.name}</strong>
-                <small>{competitor.lane === selectedLane ? "Current player" : competitor.status}</small>
-                {isSelected && <Check size={20} />}
-              </button>
-            );
-          })}
-        </div>
-        <button className="primary-action full-width" type="button" onClick={onStart}>
-          <Play size={20} />
-          Start Shared Drill
-        </button>
-      </div>
-
-      <div className="panel scoreboard-panel">
-        <div className="panel-heading">
-          <div>
-            <div className="eyebrow">Shared Scoreboard</div>
-            <h2>Connected lane screens</h2>
-          </div>
-        </div>
-        <Scoreboard rows={rankedCompetitors} selectedLane={selectedLane} />
-      </div>
-    </section>
-  );
-}
-
-function LaneManagementBoard({ lanes, customers, selectedLane, selectedCompetitorLanes }) {
-  return (
-    <div className="lane-management-board" aria-label="Lane management status">
-      {lanes.map((lane) => {
-        const customer = lane.customerId ? customers.find((item) => item.id === lane.customerId) : null;
-        const isCurrent = lane.lane === selectedLane;
-        const isLinked = selectedCompetitorLanes.includes(lane.lane);
-        const displayStatus = isCurrent ? "LUL Live" : lane.status === "Available" ? "Idle" : lane.status;
-
-        return (
-          <div
-            key={lane.lane}
-            className={`management-lane status-${lane.status.toLowerCase().replaceAll(" ", "-")} ${isCurrent ? "is-current" : ""}`}
-          >
-            <strong>Lane {lane.lane}</strong>
-            <span>{displayStatus}</span>
-            <small>{customer ? customer.name : isLinked ? "Linked" : "Open"}</small>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 function Scoreboard({ rows, selectedLane }) {
   return (
     <div className="scoreboard">
@@ -1931,34 +1920,39 @@ function Scoreboard({ rows, selectedLane }) {
   );
 }
 
+function getShotColor(score) {
+  if (score >= 10) return "#25f46d";
+  if (score >= 9) return "#8affac";
+  if (score >= 8) return "#fbf35d";
+  if (score >= 7) return "#ffb84d";
+  return "#ff6b6b";
+}
+
 function LiveScoring({
   drill,
-  selectedLane,
-  connectedDevice,
-  axisDistance,
-  axisTargetState,
-  axisProgramMode,
-  axisLightingScene,
-  axisLaneTimer,
-  axisAlert,
-  prompt,
+  scoreParticipant,
+  scoreParticipants,
   visibleShots,
-  inferredShots,
   totalScore,
-  accuracy,
+  reloadTime,
   shotCount,
   currentRank,
   shotStep,
-  onShotStep,
-  onOpenAudio,
-  onFinish
+  demoRunning,
+  onPlay,
+  onPreviousParticipant,
+  onNextParticipant
 }) {
-  const latestShots = [...visibleShots, ...inferredShots].slice(-4);
-  const liveAxisEvents = [
-    "AXIS Connect: POS session active",
-    `Program ${axisProgramMode} • Timer ${axisLaneTimer}`,
-    axisAlert === "Clear" ? "Safety interlock clear" : "Visual alert active"
-  ];
+  const shotLogRef = useRef(null);
+  const playLabel = demoRunning ? "Playing" : shotStep >= 6 ? "Replay Drill" : "Play Drill";
+  const canCycleScores = scoreParticipants.length > 1;
+
+  useEffect(() => {
+    const shotLog = shotLogRef.current;
+    if (shotLog) {
+      shotLog.scrollTop = shotLog.scrollHeight;
+    }
+  }, [visibleShots.length, demoRunning]);
 
   return (
     <section className="scoring-layout fade-in">
@@ -1967,92 +1961,93 @@ function LiveScoring({
           <div>
             <div className="eyebrow">Live Scoring</div>
             <h2>
-              {drill.name} • Lane {selectedLane}
+              {drill.name} • {scoreParticipant.player.name}
             </h2>
           </div>
         </div>
 
         <div className="target-and-feed">
-          <TargetDiagram visibleShots={visibleShots} inferredCount={inferredShots.length} />
-          <div className="shot-feed">
-            <div className="audio-callout">
-              <Radio size={21} />
-              <span>{connectedDevice ? "Audio instructions enabled" : "Audio available"}</span>
-              <strong>{prompt}</strong>
-              <button className="mini-button" type="button" onClick={onOpenAudio}>
-                <Headphones size={15} />
-                Audio
-              </button>
-            </div>
-
-            <div className="shot-list">
-              {latestShots.map((shot) => (
-                <div key={shot.id} className="shot-row">
-                  <span>Shot {shot.id}</span>
-                  <strong>{shot.score} pts</strong>
-                  <small>{shot.x ? `${shot.x}, ${shot.y}` : "Inferred center pass-through"}</small>
-                </div>
-              ))}
-            </div>
-          </div>
+          <TargetDiagram visibleShots={visibleShots} />
         </div>
 
-        <div className="camera-assisted">
-          <BadgeCheck size={22} />
+        <div className="scoring-control-row">
+          <button className="secondary-action scoring-play-button" type="button" onClick={onPlay} disabled={demoRunning}>
+            <Play size={20} />
+            {playLabel}
+          </button>
           <div>
-            <strong>Camera Assisted Scoring</strong>
-            <span>
-              15 visible impacts detected. 5 center pass-through rounds inferred from grouping density and shot count.
-            </span>
+            <span>Reload Time</span>
+            <strong>{reloadTime}</strong>
           </div>
-        </div>
-
-        <div className="shot-controls" aria-label="Scoring playback controls">
-          {[5, 10, 15, 20].map((value) => (
-            <button
-              key={value}
-              type="button"
-              className={shotStep === value ? "is-active" : ""}
-              onClick={() => onShotStep(value)}
-            >
-              {value} shots
+          <div className="score-view-switcher" aria-label="Group score viewer">
+            <button type="button" className="score-cycle-button" onClick={onPreviousParticipant} disabled={!canCycleScores} aria-label="Show previous group score">
+              <ChevronLeft size={24} />
             </button>
-          ))}
+            <div className="score-view-name">
+              <span>Score View</span>
+              <strong>{scoreParticipant.player.name}</strong>
+            </div>
+            <button type="button" className="score-cycle-button" onClick={onNextParticipant} disabled={!canCycleScores} aria-label="Show next group score">
+              <ChevronRight size={24} />
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="panel live-stats-panel">
-        <div className="axis-live-strip">
-          <AxisReadout icon={Target} label="Target" value={`${axisDistance} yd / ${axisTargetState}`} />
-          <AxisReadout icon={ShieldCheck} label="Lighting" value={axisLightingScene} />
-        </div>
-        <div className="axis-event-feed">
-          {liveAxisEvents.map((event) => (
-            <div key={event}>
-              <CircleDot size={12} />
-              <span>{event}</span>
-            </div>
-          ))}
-        </div>
-        <div className="live-metrics">
-          <Metric label="Shot Count" value={`${shotCount}/20`} icon={Crosshair} />
-          <Metric label="Total Score" value={totalScore} icon={Trophy} />
-          <Metric label="Accuracy" value={`${accuracy}%`} icon={Target} />
-          <Metric label="Friend Rank" value={`#${currentRank || 1}`} icon={Medal} />
-          <Metric label="Group Size" value="1.8 in" icon={Gauge} />
-          <Metric label="Avg Split" value="0.35 s" icon={Timer} />
+      <div className="panel live-stats-panel shot-log-panel">
+        <div className="panel-heading shot-log-heading">
+          <div>
+            <div className="eyebrow">Shot Log</div>
+            <h2>{shotCount}/6 fired</h2>
+          </div>
+          <div className="shot-log-score">
+            <span>Total</span>
+            <strong>{totalScore}</strong>
+          </div>
         </div>
 
-        <button className="primary-action full-width" type="button" onClick={onFinish}>
-          Finish Drill + Show Results
-          <ChevronRight size={20} />
-        </button>
+        <div className="shot-log-list" ref={shotLogRef} aria-label="Shot timing and points">
+          {visibleShots.length === 0 && (
+            <div className="shot-log-empty">
+              <Play size={26} />
+              <strong>Press Play Drill</strong>
+              <span>Six shots will score in two 3-shot strings.</span>
+            </div>
+          )}
+
+          {visibleShots.map((shot) => (
+            <React.Fragment key={shot.id}>
+              {shot.id === 4 && (
+                <div className="reload-row">
+                  <Timer size={16} />
+                  <span>Reload</span>
+                  <strong>{(shot.elapsedSeconds - visibleShots[2].elapsedSeconds).toFixed(2)} s</strong>
+                </div>
+              )}
+              <div className="shot-log-row">
+                <span>Shot {shot.id}</span>
+                <strong>{shot.firedAt}</strong>
+                <b style={{ color: getShotColor(shot.score) }}>{shot.score} pts</b>
+              </div>
+            </React.Fragment>
+          ))}
+
+          {demoRunning && visibleShots.length === 3 && (
+            <div className="reload-row is-active">
+              <Timer size={16} />
+              <span>Reloading</span>
+              <strong>Timing split</strong>
+            </div>
+          )}
+        </div>
+
+        <ResultMetrics totalScore={totalScore} reloadTime={reloadTime} currentRank={currentRank} className="shot-log-summary" />
       </div>
     </section>
   );
 }
 
-function TargetDiagram({ visibleShots, inferredCount }) {
+function TargetDiagram({ visibleShots }) {
   return (
     <div className="target-wrap">
       <svg className="target-svg" viewBox="0 0 100 100" role="img" aria-label="Shooting target with hit locations">
@@ -2065,32 +2060,32 @@ function TargetDiagram({ visibleShots, inferredCount }) {
         </defs>
         <rect x="0" y="0" width="100" height="100" rx="10" fill="#08111d" />
         <circle cx="50" cy="50" r="44" fill="url(#targetGlow)" />
-        <circle cx="50" cy="50" r="38" fill="none" stroke="#dbeafe" strokeOpacity="0.35" strokeWidth="0.8" />
-        <circle cx="50" cy="50" r="28" fill="none" stroke="#32a7ff" strokeOpacity="0.65" strokeWidth="1.2" />
-        <circle cx="50" cy="50" r="18" fill="none" stroke="#25f46d" strokeOpacity="0.85" strokeWidth="1.4" />
-        <circle cx="50" cy="50" r="8" fill="#25f46d" fillOpacity="0.16" stroke="#25f46d" strokeWidth="1.2" />
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#7f91a8" strokeOpacity="0.48" strokeWidth="0.8" />
+        <circle cx="50" cy="50" r="30" fill="none" stroke="#32a7ff" strokeOpacity="0.66" strokeWidth="1" />
+        <circle cx="50" cy="50" r="22" fill="none" stroke="#fbf35d" strokeOpacity="0.8" strokeWidth="1" />
+        <circle cx="50" cy="50" r="14" fill="none" stroke="#8affac" strokeOpacity="0.9" strokeWidth="1.15" />
+        <circle cx="50" cy="50" r="7" fill="#25f46d" fillOpacity="0.16" stroke="#25f46d" strokeWidth="1.2" />
+        <text x="51" y="52" fill="#25f46d" fontSize="4.6" fontWeight="800">10</text>
+        <text x="61" y="52" fill="#8affac" fontSize="4.2" fontWeight="800">9</text>
+        <text x="69" y="52" fill="#fbf35d" fontSize="4.2" fontWeight="800">8</text>
+        <text x="78" y="52" fill="#32a7ff" fontSize="4.2" fontWeight="800">7</text>
+        <text x="86" y="52" fill="#dbeafe" fontSize="4.2" fontWeight="800">6</text>
         <line x1="50" x2="50" y1="8" y2="92" stroke="#ffffff" strokeOpacity="0.18" strokeWidth="0.5" />
         <line x1="8" x2="92" y1="50" y2="50" stroke="#ffffff" strokeOpacity="0.18" strokeWidth="0.5" />
         {visibleShots.map((shot) => (
           <g key={shot.id}>
-            <circle cx={shot.x} cy={shot.y} r="1.9" fill="#ffffff" stroke="#25f46d" strokeWidth="0.8" />
-            <circle cx={shot.x} cy={shot.y} r="3.5" fill="none" stroke="#25f46d" strokeOpacity="0.28" strokeWidth="0.6" />
+            <circle cx={shot.x} cy={shot.y} r="2.35" fill="#ffffff" stroke={getShotColor(shot.score)} strokeWidth="1" />
+            <circle cx={shot.x} cy={shot.y} r="4.3" fill="none" stroke={getShotColor(shot.score)} strokeOpacity="0.32" strokeWidth="0.7" />
           </g>
         ))}
-        {inferredCount > 0 && (
-          <g>
-            <circle cx="50" cy="50" r="6.5" fill="none" stroke="#fbf35d" strokeDasharray="2 1.5" strokeWidth="1.2" />
-            <text x="50" y="70" textAnchor="middle" fill="#fbf35d" fontSize="4.5">
-              +{inferredCount} inferred
-            </text>
-          </g>
-        )}
       </svg>
     </div>
   );
 }
 
-function ResultsScreen({ player, drill, totalScore, accuracy, currentRank, onShare, onProfile }) {
+function ResultsScreen({ player, drill, totalScore, reloadTime, currentRank, onShare, onProfile, onDone }) {
+  const finalScore = totalScore;
+
   return (
     <section className="results-layout fade-in">
       <div className="panel results-hero">
@@ -2102,28 +2097,21 @@ function ResultsScreen({ player, drill, totalScore, accuracy, currentRank, onSha
         <p>
           {player.name} set a new personal best and unlocked a badge from the lane session.
         </p>
-        <div className="result-score">{Math.max(totalScore, 187)} pts</div>
+        <div className="result-score">{finalScore} pts</div>
         <div className="result-actions">
           <button className="secondary-action" type="button" onClick={onShare}>
             <Share2 size={20} />
             Share
           </button>
-          <button className="primary-action" type="button" onClick={onProfile}>
+          <button className="secondary-action" type="button" onClick={onProfile}>
             <Save size={20} />
             Save to Player Profile
           </button>
         </div>
       </div>
 
-      <div className="panel">
-        <div className="result-grid">
-          <Metric label="Final Score" value={Math.max(totalScore, 187)} icon={Trophy} />
-          <Metric label="Accuracy" value={`${Math.max(accuracy, 94)}%`} icon={Target} />
-          <Metric label="Group Size" value="1.8 in" icon={Gauge} />
-          <Metric label="Friend Rank" value={`#${currentRank || 1}`} icon={Medal} />
-          <Metric label="XP Gained" value="+840" icon={Zap} />
-          <Metric label="Personal Best" value="Yes" icon={Sparkles} />
-        </div>
+      <div className="panel results-summary-panel">
+        <ResultMetrics totalScore={finalScore} reloadTime={reloadTime} currentRank={currentRank} />
 
         <div className="badge-unlocked">
           <BadgeCheck size={28} />
@@ -2132,6 +2120,11 @@ function ResultsScreen({ player, drill, totalScore, accuracy, currentRank, onSha
             <span>Also eligible: First Drill Complete, Lane Champion, 90% Accuracy Club, Fast Hands, Perfect String.</span>
           </div>
         </div>
+
+        <button className="primary-action result-done-action" type="button" onClick={onDone}>
+          <Check size={20} />
+          Done
+        </button>
       </div>
     </section>
   );

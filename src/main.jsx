@@ -29,12 +29,17 @@ import {
 } from "lucide-react";
 import "./styles.css";
 
+const brandLogoSrc = "/assets/logos/LUL_secondary_marks-6.png";
+const brandTextLogoSrc = "/assets/logos/LUL_logo_no%20icon%20horizontal-1.png";
+const actionTargetLogoSrc = "/assets/logos/action-target-white-logo.svg";
+
 const customers = [
   {
     id: "alex",
     name: "Alex Carter",
     username: "@alex.carter",
     avatar: "AC",
+    avatarImage: "/assets/profiles/alex-carter.svg",
     rank: "Sharpshooter II",
     xp: 18420,
     nextRankXp: 21000,
@@ -49,6 +54,7 @@ const customers = [
     name: "Jordan Lee",
     username: "@jlee.range",
     avatar: "JL",
+    avatarImage: "/assets/profiles/jordan-lee.svg",
     rank: "Marksman Elite",
     xp: 16280,
     nextRankXp: 19000,
@@ -63,6 +69,7 @@ const customers = [
     name: "Sam Rivera",
     username: "@sam.rivera",
     avatar: "SR",
+    avatarImage: "/assets/profiles/sam-rivera.svg",
     rank: "Competitor I",
     xp: 22110,
     nextRankXp: 25000,
@@ -77,6 +84,7 @@ const customers = [
     name: "Morgan Blake",
     username: "@morgan.blake",
     avatar: "MB",
+    avatarImage: "/assets/profiles/morgan-blake.svg",
     rank: "Defender III",
     xp: 13640,
     nextRankXp: 16500,
@@ -480,7 +488,6 @@ function App() {
   const [axisLightingScene, setAxisLightingScene] = useState("Training Bright");
   const [axisLaneTimer, setAxisLaneTimer] = useState("07:00");
   const [axisAlert, setAxisAlert] = useState("Clear");
-  const [laneLanguage, setLaneLanguage] = useState("English");
   const [toast, setToast] = useState(null);
 
   const activeCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? customers[0];
@@ -629,10 +636,6 @@ function App() {
       setAxisAlert(updates.alert);
     }
 
-    if (updates.language) {
-      setLaneLanguage(updates.language);
-    }
-
     notify(`SmartRange AXIS command sent: ${command}.`);
   }
 
@@ -641,8 +644,8 @@ function App() {
       <Sidebar currentScreen={screen} onNavigate={setScreen} />
       <main className="main-stage">
         <Header
-          activeCustomer={activeCustomer}
           activeDrill={activeDrill}
+          axisLaneTimer={axisLaneTimer}
           selectedLane={selectedLane}
         />
         <div className="content-frame">
@@ -670,8 +673,8 @@ function App() {
               axisProgramMode={axisProgramMode}
               axisLightingScene={axisLightingScene}
               axisLaneTimer={axisLaneTimer}
-              laneLanguage={laneLanguage}
               onAxisCommand={runAxisCommand}
+              onOpenAudio={() => setAudioModalOpen(true)}
               onChooseDrill={() => setScreen("drills")}
               onFriendPlay={() => setScreen("friends")}
             />
@@ -759,6 +762,7 @@ function App() {
       )}
 
       {toast && <Toast key={toast.id} message={toast.message} />}
+      <ActionTargetBadge />
 
       <div className="orientation-notice" role="status" aria-live="polite">
         <MonitorPlay size={42} />
@@ -776,11 +780,7 @@ function Sidebar({ currentScreen, onNavigate }) {
     <aside className="sidebar">
       <div className="brand-block">
         <div className="brand-mark">
-          <Zap size={24} />
-        </div>
-        <div>
-          <strong>Level Up Live</strong>
-          <span>FlowState Lane Integration</span>
+          <img src={brandLogoSrc} alt="Level Up Live logo" />
         </div>
       </div>
 
@@ -805,19 +805,23 @@ function Sidebar({ currentScreen, onNavigate }) {
   );
 }
 
-function Header({ activeCustomer, activeDrill, selectedLane }) {
+function Header({ activeDrill, axisLaneTimer, selectedLane }) {
+  const isLocked = axisLaneTimer === "00:00";
+
   return (
     <header className="topbar">
       <div>
-        <div className="eyebrow">Level Up Live</div>
-        <h1>FlowState POS to Level Up Live Lane Takeover</h1>
+        <div className="eyebrow brand-title-row">
+          <BrandTextLogo className="topbar-brand-text" />
+        </div>
       </div>
-      <div className="session-strip">
-        <Avatar player={activeCustomer} size="small" />
+      <div className={`session-strip timer-strip ${isLocked ? "is-locked" : ""}`}>
+        <Timer size={22} />
         <div>
-          <strong>{activeCustomer.name}</strong>
+          <span>Lane {selectedLane} Timer</span>
+          <strong>{axisLaneTimer}</strong>
           <span>
-            Lane {selectedLane} • {activeDrill.name}
+            {isLocked ? "Lane access locked" : `${activeDrill.name} • Locks at 00:00`}
           </span>
         </div>
       </div>
@@ -825,10 +829,23 @@ function Header({ activeCustomer, activeDrill, selectedLane }) {
   );
 }
 
+function BrandTextLogo({ className = "" }) {
+  return <img className={`brand-text-logo ${className}`} src={brandTextLogoSrc} alt="Level Up Live" />;
+}
+
+function ActionTargetBadge() {
+  return (
+    <div className="action-target-badge" aria-label="Action Target integration">
+      <span>Lane system</span>
+      <img src={actionTargetLogoSrc} alt="Action Target logo" />
+    </div>
+  );
+}
+
 function Avatar({ player, size = "large" }) {
   return (
     <div className={`avatar avatar-${size}`} style={{ "--avatar-accent": player.accent }}>
-      {player.avatar}
+      {player.avatarImage ? <img src={player.avatarImage} alt={`${player.name} profile`} /> : player.avatar}
     </div>
   );
 }
@@ -964,8 +981,8 @@ function LaneTakeover({
   axisProgramMode,
   axisLightingScene,
   axisLaneTimer,
-  laneLanguage,
   onAxisCommand,
+  onOpenAudio,
   onChooseDrill,
   onFriendPlay
 }) {
@@ -976,7 +993,6 @@ function LaneTakeover({
         <div className="lane-player">
           <Avatar player={player} />
           <div>
-            <div className="eyebrow">Level Up Live takeover active</div>
             <h2>{player.name}</h2>
             <p>XP {player.xp.toLocaleString()} • Score {player.recentScore}</p>
           </div>
@@ -992,7 +1008,12 @@ function LaneTakeover({
             <span>Programs</span>
             <strong>Choose Drill</strong>
           </button>
-          <Metric label="Audio" value={connectedDevice ? "Enabled" : "Not Connected"} icon={Headphones} />
+          <Metric
+            label="Audio"
+            value={connectedDevice ? connectedDevice : "Not Connected"}
+            icon={Headphones}
+            onClick={onOpenAudio}
+          />
         </div>
 
         <AxisCommandConsole
@@ -1002,7 +1023,6 @@ function LaneTakeover({
           axisProgramMode={axisProgramMode}
           axisLightingScene={axisLightingScene}
           axisLaneTimer={axisLaneTimer}
-          laneLanguage={laneLanguage}
           onAxisCommand={onAxisCommand}
         />
 
@@ -1024,18 +1044,22 @@ function AxisCommandConsole({
   axisProgramMode,
   axisLightingScene,
   axisLaneTimer,
-  laneLanguage,
   onAxisCommand
 }) {
-  const nextLightingScene = axisLightingScene === "Training Bright" ? "Low Light" : "Training Bright";
-  const nextLanguage = laneLanguage === "English" ? "Spanish" : "English";
+  const [lightMenuOpen, setLightMenuOpen] = useState(false);
+  const lightSceneOptions = ["Police", "EMS", "Strobe"];
+  const lightLevelOptions = ["Off", "Dim", "Bright"];
+
+  function sendLightingCommand(label) {
+    setLightMenuOpen(false);
+    onAxisCommand(`${label} lighting`, { lightingScene: label });
+  }
 
   return (
     <div className="axis-console">
       <div className="axis-readouts">
         <AxisReadout icon={Target} label="Retriever" value={`${axisDistance} yd / ${axisTargetState}`} />
         <AxisReadout icon={Timer} label="Program" value={`${drill.name} • ${axisProgramMode}`} />
-        <AxisReadout icon={Gauge} label="Lane Timer" value={`${axisLaneTimer} • ${laneLanguage === "English" ? "EN" : "ES"}`} />
         <AxisReadout icon={ShieldCheck} label="Lighting" value={axisLightingScene} />
       </div>
 
@@ -1079,14 +1103,28 @@ function AxisCommandConsole({
           <Play size={17} />
           Program
         </button>
-        <button type="button" onClick={() => onAxisCommand(`${nextLightingScene} lighting scene`, { lightingScene: nextLightingScene })}>
-          <Zap size={17} />
-          Light
-        </button>
-        <button type="button" onClick={() => onAxisCommand(`set lane screen language to ${nextLanguage}`, { language: nextLanguage })}>
-          <MonitorPlay size={17} />
-          Language
-        </button>
+        <div className="axis-action-menu">
+          <button type="button" onClick={() => setLightMenuOpen((open) => !open)} aria-expanded={lightMenuOpen}>
+            <Zap size={17} />
+            Light
+          </button>
+          {lightMenuOpen && (
+            <div className="light-menu" role="menu" aria-label="Lighting options">
+              <span>Scene</span>
+              {lightSceneOptions.map((option) => (
+                <button key={option} type="button" onClick={() => sendLightingCommand(option)} role="menuitem">
+                  {option}
+                </button>
+              ))}
+              <span>Level</span>
+              {lightLevelOptions.map((option) => (
+                <button key={option} type="button" onClick={() => sendLightingCommand(option)} role="menuitem">
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -1102,13 +1140,15 @@ function AxisReadout({ icon: Icon, label, value }) {
   );
 }
 
-function Metric({ label, value, icon: Icon }) {
+function Metric({ label, value, icon: Icon, onClick }) {
+  const Element = onClick ? "button" : "div";
+
   return (
-    <div className="metric-card">
+    <Element className={`metric-card ${onClick ? "metric-button" : ""}`} type={onClick ? "button" : undefined} onClick={onClick}>
       <Icon size={20} />
       <span>{label}</span>
       <strong>{value}</strong>
-    </div>
+    </Element>
   );
 }
 
@@ -1640,7 +1680,10 @@ function PlayerProfile({ player, onDrills }) {
     <section className="profile-layout fade-in">
       <div className="panel profile-card">
         <Avatar player={player} />
-        <div className="eyebrow">Level Up Live Player Profile</div>
+        <div className="eyebrow brand-title-row">
+          <BrandTextLogo className="eyebrow-brand-text" />
+          <span>Player Profile</span>
+        </div>
         <h2>{player.name}</h2>
         <p>{player.username}</p>
         <strong>{player.rank}</strong>

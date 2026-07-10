@@ -1,22 +1,23 @@
 export const DEFAULT_AUTOSCORE_CONFIG = {
-  sampleRateFps: 10,
+  sampleRateFps: 12,
   sensitivity: 34,
   darkLimit: 174,
   minClusterPixels: 8,
-  maxClusterPixels: 1600,
-  duplicateDistancePercent: 3.8,
+  maxClusterPixels: 360,
+  minConfidence: 72,
+  duplicateDistancePercent: 5.8,
   targetCenterX: 50,
-  targetCenterY: 50,
-  targetRadius: 42,
+  targetCenterY: 58,
+  targetRadius: 31,
+  targetYScale: 0.58,
   startOffsetSeconds: 1
 };
 
 export const SCORING_RINGS = [
-  { score: 10, label: "10", radius: 0.16 },
-  { score: 9, label: "9", radius: 0.32 },
-  { score: 8, label: "8", radius: 0.5 },
-  { score: 7, label: "7", radius: 0.68 },
-  { score: 6, label: "6", radius: 0.86 }
+  { score: 20, label: "20 LEA" },
+  { score: 15, label: "15" },
+  { score: 10, label: "10" },
+  { score: 5, label: "5" }
 ];
 
 export function formatClock(totalSeconds) {
@@ -36,15 +37,47 @@ export function formatClock(totalSeconds) {
 }
 
 export function scoreImpactPosition(impact, config = DEFAULT_AUTOSCORE_CONFIG) {
-  const dx = impact.xPercent - config.targetCenterX;
-  const dy = impact.yPercent - config.targetCenterY;
-  const distancePercent = Math.hypot(dx, dy);
-  const normalizedRadius = distancePercent / Math.max(config.targetRadius, 1);
-  const ring = SCORING_RINGS.find((item) => normalizedRadius <= item.radius);
+  const radiusX = Math.max(config.targetRadius, 1);
+  const radiusY = Math.max(radiusX * (config.targetYScale ?? DEFAULT_AUTOSCORE_CONFIG.targetYScale), 1);
+  const nx = (impact.xPercent - config.targetCenterX) / radiusX;
+  const ny = (impact.yPercent - config.targetCenterY) / radiusY;
+  const normalizedRadius = Math.hypot(nx, ny);
+
+  if (normalizedRadiusTo({ x: nx, y: ny }, { x: 0.72, y: 0.9 }) <= 0.24) {
+    return {
+      score: 20,
+      zone: "LEA 20",
+      normalizedRadius
+    };
+  }
+
+  if (pointInPolygon(nx, ny, greenTenZone)) {
+    return {
+      score: 10,
+      zone: "10 triangle",
+      normalizedRadius
+    };
+  }
+
+  if (pointInPolygon(nx, ny, upperFifteenZone) || pointInPolygon(nx, ny, lowerFifteenZone)) {
+    return {
+      score: 15,
+      zone: "15 zone",
+      normalizedRadius
+    };
+  }
+
+  if (normalizedRadius <= 1.05) {
+    return {
+      score: 5,
+      zone: "5 blue",
+      normalizedRadius
+    };
+  }
 
   return {
-    score: ring?.score ?? 0,
-    zone: ring?.label ?? "Miss",
+    score: 0,
+    zone: "Miss",
     normalizedRadius
   };
 }
@@ -53,7 +86,13 @@ export function deriveScoredShots(rawShots, config = DEFAULT_AUTOSCORE_CONFIG) {
   const firstImpactSeconds = rawShots[0]?.videoSeconds ?? null;
 
   return rawShots.map((shot, index) => {
-    const score = scoreImpactPosition(shot, config);
+    const score = Number.isFinite(shot.scoreOverride)
+      ? {
+          score: shot.scoreOverride,
+          zone: shot.zoneOverride ?? `${shot.scoreOverride} zone`,
+          normalizedRadius: null
+        }
+      : scoreImpactPosition(shot, config);
     return {
       ...shot,
       ...score,
@@ -200,6 +239,14 @@ export function selectNewImpactCandidates(candidates, existingShots, config = DE
   const sortedCandidates = [...candidates].sort((a, b) => b.confidence - a.confidence);
 
   for (const candidate of sortedCandidates) {
+    if (candidate.confidence < (config.minConfidence ?? DEFAULT_AUTOSCORE_CONFIG.minConfidence)) {
+      continue;
+    }
+
+    if (scoreImpactPosition(candidate, config).score <= 0) {
+      continue;
+    }
+
     const isDuplicate = [...existingShots, ...accepted].some((shot) => {
       const distance = Math.hypot(candidate.xPercent - shot.xPercent, candidate.yPercent - shot.yPercent);
       return distance < config.duplicateDistancePercent;
@@ -211,6 +258,48 @@ export function selectNewImpactCandidates(candidates, existingShots, config = DE
   }
 
   return accepted;
+}
+
+const greenTenZone = [
+  { x: 0, y: -0.98 },
+  { x: -0.62, y: 0.55 },
+  { x: 0.64, y: 0.55 }
+];
+
+const upperFifteenZone = [
+  { x: 0.18, y: -0.78 },
+  { x: 0.82, y: -0.98 },
+  { x: 1.08, y: -0.35 },
+  { x: 0.42, y: 0.18 }
+];
+
+const lowerFifteenZone = [
+  { x: -1.08, y: 0.32 },
+  { x: -0.48, y: -0.32 },
+  { x: 0.2, y: 0.45 },
+  { x: -0.4, y: 1.08 }
+];
+
+function normalizedRadiusTo(point, center) {
+  return Math.hypot(point.x - center.x, point.y - center.y);
+}
+
+function pointInPolygon(x, y, polygon) {
+  let isInside = false;
+
+  for (let current = 0, previous = polygon.length - 1; current < polygon.length; previous = current, current += 1) {
+    const currentPoint = polygon[current];
+    const previousPoint = polygon[previous];
+    const intersects =
+      currentPoint.y > y !== previousPoint.y > y &&
+      x < ((previousPoint.x - currentPoint.x) * (y - currentPoint.y)) / (previousPoint.y - currentPoint.y) + currentPoint.x;
+
+    if (intersects) {
+      isInside = !isInside;
+    }
+  }
+
+  return isInside;
 }
 
 function toGray(red, green, blue) {

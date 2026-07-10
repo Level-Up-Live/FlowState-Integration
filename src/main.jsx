@@ -12,7 +12,6 @@ import {
   ChevronsRight,
   Crown,
   Crosshair,
-  Download,
   Gauge,
   Gamepad2,
   Headphones,
@@ -480,51 +479,207 @@ const recentDrills = [
   { name: "Slow Fire Precision", score: 472, date: "Jul 2, 2026", accuracy: "94%" }
 ];
 
-const leagueRows = [
+const leagues = [
   {
-    rank: 1,
-    change: "+1",
-    player: "Sam Rivera",
-    score: 1928,
-    lastDrill: "League Qualifier",
-    date: "Jul 8, 2026",
-    trend: "up"
+    id: "summer",
+    name: "Lake Erie Arms Summer League",
+    shortName: "Summer League",
+    format: "4-week pistol league",
+    schedule: "Tuesdays at 6:30 PM",
+    registration: "Registration open",
+    spots: "8 spots left",
+    description: "Weekly scored course with Level Up Live standings after every completed run.",
+    standings: [
+      {
+        rank: 1,
+        change: "+1",
+        player: "Sam Rivera",
+        score: 1928,
+        lastDrill: "League Qualifier",
+        date: "Jul 8, 2026",
+        trend: "up"
+      },
+      {
+        rank: 2,
+        change: "-1",
+        player: "Alex Carter",
+        score: 1904,
+        lastDrill: "Triples",
+        date: "Jul 8, 2026",
+        trend: "down"
+      },
+      {
+        rank: 3,
+        change: "+2",
+        player: "Jordan Lee",
+        score: 1852,
+        lastDrill: "Dot Grid Warmup",
+        date: "Jul 7, 2026",
+        trend: "up"
+      },
+      {
+        rank: 4,
+        change: "0",
+        player: "Morgan Blake",
+        score: 1779,
+        lastDrill: "Precision Builder",
+        date: "Jul 6, 2026",
+        trend: "same"
+      },
+      {
+        rank: 5,
+        change: "+3",
+        player: "Taylor Reed",
+        score: 1714,
+        lastDrill: "Steel Challenge Sprint",
+        date: "Jul 5, 2026",
+        trend: "up"
+      }
+    ]
   },
   {
-    rank: 2,
-    change: "-1",
-    player: "Alex Carter",
-    score: 1904,
-    lastDrill: "Triples",
-    date: "Jul 8, 2026",
-    trend: "down"
+    id: "steel-sprint",
+    name: "Steel Sprint League",
+    shortName: "Steel Sprint",
+    format: "Timed steel strings",
+    schedule: "Wednesdays at 7:00 PM",
+    registration: "Registration open",
+    spots: "5 spots left",
+    description: "Speed-focused standings built from clean hits, transitions, and stage time.",
+    standings: [
+      {
+        rank: 1,
+        change: "+2",
+        player: "Alex Carter",
+        score: 884,
+        lastDrill: "Steel Challenge Sprint",
+        date: "Jul 9, 2026",
+        trend: "up"
+      },
+      {
+        rank: 2,
+        change: "0",
+        player: "Taylor Reed",
+        score: 861,
+        lastDrill: "Plate Rack",
+        date: "Jul 9, 2026",
+        trend: "same"
+      },
+      {
+        rank: 3,
+        change: "-1",
+        player: "Sam Rivera",
+        score: 844,
+        lastDrill: "Bill Drill",
+        date: "Jul 8, 2026",
+        trend: "down"
+      },
+      {
+        rank: 4,
+        change: "+1",
+        player: "Morgan Blake",
+        score: 821,
+        lastDrill: "Accelerator",
+        date: "Jul 8, 2026",
+        trend: "up"
+      }
+    ]
   },
   {
-    rank: 3,
-    change: "+2",
-    player: "Jordan Lee",
-    score: 1852,
-    lastDrill: "Dot Grid Warmup",
-    date: "Jul 7, 2026",
-    trend: "up"
+    id: "precision",
+    name: "Precision Pistol League",
+    shortName: "Precision Pistol",
+    format: "Accuracy and consistency",
+    schedule: "Thursdays at 6:00 PM",
+    registration: "Registration open",
+    spots: "12 spots left",
+    description: "A measured league for slow-fire accuracy, grouping, and repeatable performance.",
+    standings: [
+      {
+        rank: 1,
+        change: "0",
+        player: "Jordan Lee",
+        score: 1476,
+        lastDrill: "Slow Fire Precision",
+        date: "Jul 9, 2026",
+        trend: "same"
+      },
+      {
+        rank: 2,
+        change: "+1",
+        player: "Sam Rivera",
+        score: 1452,
+        lastDrill: "Dot Grid Warmup",
+        date: "Jul 8, 2026",
+        trend: "up"
+      },
+      {
+        rank: 3,
+        change: "-1",
+        player: "Alex Carter",
+        score: 1439,
+        lastDrill: "Precision Builder",
+        date: "Jul 8, 2026",
+        trend: "down"
+      },
+      {
+        rank: 4,
+        change: "+2",
+        player: "Riley Chen",
+        score: 1398,
+        lastDrill: "One Hole Drill",
+        date: "Jul 7, 2026",
+        trend: "up"
+      }
+    ]
   },
   {
-    rank: 4,
-    change: "0",
-    player: "Morgan Blake",
-    score: 1779,
-    lastDrill: "Precision Builder",
-    date: "Jul 6, 2026",
-    trend: "same"
-  },
-  {
-    rank: 5,
-    change: "+3",
-    player: "Taylor Reed",
-    score: 1714,
-    lastDrill: "Steel Challenge Sprint",
-    date: "Jul 5, 2026",
-    trend: "up"
+    id: "carry",
+    name: "Carry Skills League",
+    shortName: "Carry Skills",
+    format: "Practical defensive stages",
+    schedule: "Saturdays at 10:00 AM",
+    registration: "New session forming",
+    spots: "16 spots left",
+    description: "Practical skill stages with scoring for accuracy, decisions, and controlled speed.",
+    standings: [
+      {
+        rank: 1,
+        change: "+1",
+        player: "Morgan Blake",
+        score: 1218,
+        lastDrill: "Draw to First Hit",
+        date: "Jul 6, 2026",
+        trend: "up"
+      },
+      {
+        rank: 2,
+        change: "-1",
+        player: "Taylor Reed",
+        score: 1195,
+        lastDrill: "Failure to Stop",
+        date: "Jul 6, 2026",
+        trend: "down"
+      },
+      {
+        rank: 3,
+        change: "+3",
+        player: "Alex Carter",
+        score: 1172,
+        lastDrill: "Reload Ready",
+        date: "Jul 5, 2026",
+        trend: "up"
+      },
+      {
+        rank: 4,
+        change: "0",
+        player: "Jordan Lee",
+        score: 1164,
+        lastDrill: "Target Transitions",
+        date: "Jul 5, 2026",
+        trend: "same"
+      }
+    ]
   }
 ];
 
@@ -794,8 +949,8 @@ function App() {
     notify(`Result saved to ${activeCustomer.name}'s player profile.`);
   }
 
-  function exportLeague() {
-    notify("Lake Erie Arms Summer League export is ready for staff.");
+  function signUpForLeague(league) {
+    notify(`${activeCustomer.name} signup started for ${league.name}.`);
   }
 
   function runAxisCommand(command, updates = {}) {
@@ -929,9 +1084,9 @@ function App() {
             />
           )}
 
-          {screen === "profile" && <PlayerProfile player={activeCustomer} onDrills={() => setScreen("drills")} />}
+          {screen === "profile" && <PlayerProfile player={activeCustomer} />}
 
-          {screen === "league" && <LeagueScreen onExport={exportLeague} />}
+          {screen === "league" && <LeagueScreen onSignup={signUpForLeague} />}
         </div>
       </main>
 
@@ -2140,7 +2295,7 @@ function ResultsScreen({ player, drill, totalScore, reloadTime, currentRank, onS
   );
 }
 
-function PlayerProfile({ player, onDrills }) {
+function PlayerProfile({ player }) {
   const progress = Math.round((player.xp / player.nextRankXp) * 100);
 
   return (
@@ -2160,10 +2315,6 @@ function PlayerProfile({ player, onDrills }) {
         <small>
           {player.xp.toLocaleString()} / {player.nextRankXp.toLocaleString()} XP
         </small>
-        <button className="primary-action full-width" type="button" onClick={onDrills}>
-          <Gamepad2 size={20} />
-          Start Another Drill
-        </button>
       </div>
 
       <div className="profile-main">
@@ -2235,25 +2386,90 @@ function PlayerProfile({ player, onDrills }) {
   );
 }
 
-function LeagueScreen({ onExport }) {
+function LeagueScreen({ onSignup }) {
+  const [selectedLeagueId, setSelectedLeagueId] = useState(leagues[0].id);
+  const selectedLeague = leagues.find((league) => league.id === selectedLeagueId) ?? leagues[0];
+  const leader = selectedLeague.standings[0];
+
   return (
     <section className="fade-in">
-      <div className="section-head">
-        <div>
-          <div className="eyebrow">Range Operations</div>
-          <h2>Lake Erie Arms Summer League</h2>
-        </div>
-        <div className="section-actions">
-          <span className="sim-label">Auto-scored by Level Up Live + Action Target SmartRange AXIS data</span>
-          <button className="secondary-action" type="button" onClick={onExport}>
-            <Download size={19} />
-            Export
+      <div className="league-layout">
+        <div className="panel league-browser-panel">
+          <div className="panel-heading">
+            <div>
+              <div className="eyebrow">All Leagues</div>
+              <h2>Choose a League</h2>
+            </div>
+            <Trophy size={22} />
+          </div>
+
+          <div className="league-picker-grid" aria-label="Available leagues">
+            {leagues.map((league) => {
+              const isSelected = selectedLeagueId === league.id;
+
+              return (
+                <button
+                  key={league.id}
+                  type="button"
+                  className={`league-choice-card ${isSelected ? "is-selected" : ""}`}
+                  aria-pressed={isSelected}
+                  onClick={() => setSelectedLeagueId(league.id)}
+                >
+                  <span className="league-choice-kicker">{league.shortName}</span>
+                  <strong>{league.schedule}</strong>
+                  <small>{league.spots}</small>
+                  <span className="league-choice-action">
+                    {isSelected ? <Check size={16} /> : <ChevronRight size={16} />}
+                    {isSelected ? "Selected" : "View Standings"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="league-summary">
+            <div>
+              <span>Format</span>
+              <strong>{selectedLeague.format}</strong>
+            </div>
+            <div>
+              <span>Schedule</span>
+              <strong>{selectedLeague.schedule}</strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <strong>{selectedLeague.registration}</strong>
+            </div>
+            <div>
+              <span>Availability</span>
+              <strong>{selectedLeague.spots}</strong>
+            </div>
+          </div>
+
+          <div className="league-callout">
+            <div>
+              <span>Current Leader</span>
+              <strong>{leader.player}</strong>
+              <small>{leader.score.toLocaleString()} points</small>
+            </div>
+            <p>{selectedLeague.description}</p>
+          </div>
+
+          <button className="primary-action full-width" type="button" onClick={() => onSignup(selectedLeague)}>
+            <UsersRound size={20} />
+            Sign Up for This League
           </button>
         </div>
-      </div>
 
-      <div className="league-layout">
         <div className="panel league-table-panel">
+          <div className="panel-heading league-standings-head">
+            <div>
+              <div className="eyebrow">{selectedLeague.shortName}</div>
+              <h2>Standings</h2>
+            </div>
+            <span className="league-status-pill">{selectedLeague.registration}</span>
+          </div>
+
           <div className="league-table">
             <div className="league-row table-head">
               <span>Rank</span>
@@ -2263,11 +2479,11 @@ function LeagueScreen({ onExport }) {
               <span>Drill</span>
               <span>Change</span>
             </div>
-            {leagueRows.map((row) => (
+            {selectedLeague.standings.map((row) => (
               <div key={row.player} className="league-row">
                 <span>#{row.rank}</span>
                 <strong>{row.player}</strong>
-                <span>{row.score}</span>
+                <span>{row.score.toLocaleString()}</span>
                 <span>{row.date}</span>
                 <span>{row.lastDrill}</span>
                 <span className={`trend trend-${row.trend}`}>{row.change}</span>

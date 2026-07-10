@@ -32,6 +32,7 @@ import {
   X,
   Zap
 } from "lucide-react";
+import CameraAutoScoring from "./CameraAutoScoring.jsx";
 import "./styles.css";
 
 const brandLogoSrc = "/assets/logos/LUL_secondary_marks-6.png";
@@ -530,6 +531,7 @@ const leagueRows = [
 const navItems = [
   { id: "lane", label: "Lane Screen", shortLabel: "Lane", icon: Target },
   { id: "scoring", label: "Live Scoring", shortLabel: "Score", icon: Crosshair },
+  { id: "autoscore", label: "Camera Autoscore", shortLabel: "Camera", icon: Camera },
   { id: "profile", label: "Profile", shortLabel: "Player", icon: UserRound },
   { id: "league", label: "League", shortLabel: "League", icon: Trophy }
 ];
@@ -833,7 +835,7 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell screen-${screen}`}>
       <Sidebar currentScreen={screen} onBrandClick={openWelcomeScreen} onNavigate={setScreen} />
       <main className="main-stage">
         <Header
@@ -841,7 +843,7 @@ function App() {
           onTimerClick={openTimeoutScreen}
           selectedLane={selectedLane}
         />
-        <div className={`content-frame ${screen === "scoring" && scoreView === "results" ? "is-score-results" : ""} ${screen === "scoring" && scoreView !== "results" ? "is-live-scoring" : ""}`}>
+        <div className={`content-frame ${screen === "scoring" && scoreView === "results" ? "is-score-results" : ""} ${screen === "scoring" && scoreView !== "results" ? "is-live-scoring" : ""} ${screen === "autoscore" ? "is-autoscore" : ""}`}>
           {screen === "pos" && (
             <PosAssignment
               customers={customers}
@@ -917,6 +919,14 @@ function App() {
                 onNextParticipant={showNextScoreParticipant}
               />
             )
+          )}
+
+          {screen === "autoscore" && (
+            <CameraAutoScoring
+              player={activeCustomer}
+              drill={activeDrill}
+              selectedLane={selectedLane}
+            />
           )}
 
           {screen === "profile" && <PlayerProfile player={activeCustomer} onDrills={() => setScreen("drills")} />}

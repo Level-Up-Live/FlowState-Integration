@@ -119,6 +119,36 @@ const customers = [
     badges: ["Reload Ready", "Fast Hands", "First Drill Complete"],
     friends: ["Alex Carter"],
     accent: "#ff7bc6"
+  },
+  {
+    id: "taylor",
+    name: "Taylor Reed",
+    username: "@taylor.reed",
+    avatar: "TR",
+    avatarImage: "/assets/profiles/taylor-reed.svg",
+    rank: "Range Ready II",
+    xp: 9820,
+    nextRankXp: 12000,
+    recentScore: 428,
+    monthlyPosition: 18,
+    badges: ["First Drill Complete", "Reload Ready"],
+    friends: ["Alex Carter", "Sam Rivera"],
+    accent: "#8bff72"
+  },
+  {
+    id: "riley",
+    name: "Riley Chen",
+    username: "@riley.chen",
+    avatar: "RC",
+    avatarImage: "/assets/profiles/riley-chen.svg",
+    rank: "Precision I",
+    xp: 11490,
+    nextRankXp: 14500,
+    recentScore: 439,
+    monthlyPosition: 14,
+    badges: ["First Drill Complete", "Tight Group"],
+    friends: ["Jordan Lee", "Morgan Blake"],
+    accent: "#7d8cff"
   }
 ];
 
@@ -442,6 +472,22 @@ const scoreRunsByCustomerId = {
     { id: 4, x: 60, y: 43, score: 7, firedAt: "00:05.65", elapsedSeconds: 5.65 },
     { id: 5, x: 40, y: 56, score: 6, firedAt: "00:06.04", elapsedSeconds: 6.04 },
     { id: 6, x: 53, y: 42, score: 8, firedAt: "00:06.42", elapsedSeconds: 6.42 }
+  ],
+  taylor: [
+    { id: 1, x: 51, y: 47, score: 9, firedAt: "00:00.76", elapsedSeconds: 0.76 },
+    { id: 2, x: 56, y: 52, score: 8, firedAt: "00:01.11", elapsedSeconds: 1.11 },
+    { id: 3, x: 45, y: 55, score: 8, firedAt: "00:01.51", elapsedSeconds: 1.51 },
+    { id: 4, x: 52, y: 44, score: 9, firedAt: "00:04.72", elapsedSeconds: 4.72 },
+    { id: 5, x: 60, y: 57, score: 7, firedAt: "00:05.14", elapsedSeconds: 5.14 },
+    { id: 6, x: 48, y: 61, score: 7, firedAt: "00:05.53", elapsedSeconds: 5.53 }
+  ],
+  riley: [
+    { id: 1, x: 49, y: 50, score: 10, firedAt: "00:00.71", elapsedSeconds: 0.71 },
+    { id: 2, x: 53, y: 47, score: 9, firedAt: "00:01.09", elapsedSeconds: 1.09 },
+    { id: 3, x: 42, y: 58, score: 7, firedAt: "00:01.48", elapsedSeconds: 1.48 },
+    { id: 4, x: 50, y: 55, score: 9, firedAt: "00:04.83", elapsedSeconds: 4.83 },
+    { id: 5, x: 57, y: 46, score: 8, firedAt: "00:05.21", elapsedSeconds: 5.21 },
+    { id: 6, x: 61, y: 54, score: 7, firedAt: "00:05.62", elapsedSeconds: 5.62 }
   ]
 };
 
@@ -713,6 +759,7 @@ function App() {
   const [sessionSeconds, setSessionSeconds] = useState(sessionDurationSeconds);
   const [sessionTimerRunning, setSessionTimerRunning] = useState(true);
   const [axisAlert, setAxisAlert] = useState("Clear");
+  const [playerSwitchOpen, setPlayerSwitchOpen] = useState(false);
   const [toast, setToast] = useState(null);
 
   const activeCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? customers[0];
@@ -872,6 +919,38 @@ function App() {
     notify("Lane group closed.");
   }
 
+  function switchLanePlayer(customerId) {
+    const nextCustomer = customers.find((customer) => customer.id === customerId);
+
+    if (!nextCustomer) {
+      return;
+    }
+
+    const assignedLane = lanes.find((lane) => lane.customerId === customerId);
+
+    if (assignedLane && assignedLane.lane !== selectedLane) {
+      notify(`${nextCustomer.name} is already active on Lane ${assignedLane.lane}.`);
+      return;
+    }
+
+    setSelectedCustomerId(customerId);
+    setLanes((current) =>
+      current.map((lane) => {
+        if (lane.lane === selectedLane) {
+          return { ...lane, customerId, status: "In Game" };
+        }
+
+        return lane;
+      })
+    );
+    setScoreParticipantIndex(0);
+    setShotStep(0);
+    setScoreDemoRunning(false);
+    setScoreView("live");
+    setPlayerSwitchOpen(false);
+    notify(`${nextCustomer.name} is now active on Lane ${selectedLane}.`);
+  }
+
   function startDrill() {
     setShotStep(0);
     setScoreDemoRunning(false);
@@ -1029,6 +1108,7 @@ function App() {
               onAxisCommand={runAxisCommand}
               onOpenAudio={() => setAudioModalOpen(true)}
               onChooseDrill={() => setScreen("drills")}
+              onPlayerSwitch={() => setPlayerSwitchOpen(true)}
               onLaneInviteResponse={handleLaneInviteResponse}
               onLeaveParty={handleLeaveParty}
             />
@@ -1098,8 +1178,19 @@ function App() {
         />
       )}
 
+      {playerSwitchOpen && (
+        <PlayerSwitchModal
+          customers={customers}
+          lanes={lanes}
+          selectedLane={selectedLane}
+          activeCustomerId={selectedCustomerId}
+          onSelect={switchLanePlayer}
+          onClose={() => setPlayerSwitchOpen(false)}
+        />
+      )}
+
       {toast && <Toast key={toast.id} message={toast.message} />}
-      <ActionTargetBadge />
+      <PoweredByLevelUpBadge />
 
       <div className="orientation-notice" role="status" aria-live="polite">
         <MonitorPlay size={42} />
@@ -1147,7 +1238,7 @@ function Header({ axisLaneTimer, onTimerClick, selectedLane }) {
     <header className="topbar">
       <div>
         <div className="eyebrow brand-title-row">
-          <BrandTextLogo className="topbar-brand-text" />
+          <img className="topbar-action-logo" src={actionTargetLogoSrc} alt="Action Target logo" />
         </div>
       </div>
       <button className="session-strip timer-strip" type="button" onClick={onTimerClick}>
@@ -1165,12 +1256,14 @@ function BrandTextLogo({ className = "" }) {
   return <img className={`brand-text-logo ${className}`} src={brandTextLogoSrc} alt="Level Up Live" />;
 }
 
-function ActionTargetBadge() {
+function PoweredByLevelUpBadge({ className = "", as = "div" }) {
+  const BadgeElement = as;
+
   return (
-    <div className="action-target-badge" aria-label="Action Target integration">
-      <span>Lane system</span>
-      <img src={actionTargetLogoSrc} alt="Action Target logo" />
-    </div>
+    <BadgeElement className={`powered-by-badge ${className}`} aria-label="Powered by Level Up Live">
+      <span>Powered by</span>
+      <BrandTextLogo className="powered-by-logo" />
+    </BadgeElement>
   );
 }
 
@@ -1180,14 +1273,11 @@ function HomeScreen({ player, onBegin }) {
       <img className="home-screen-bg" src={homeBackgroundSrc} alt="" aria-hidden="true" />
       <span className="home-screen-shade" aria-hidden="true" />
       <span className="home-screen-content">
-        <BrandTextLogo className="home-brand-text" />
+        <img className="home-action-logo" src={actionTargetLogoSrc} alt="Action Target logo" />
         <strong>Welcome {player.name}</strong>
         <span>Press anywhere to begin your timer.</span>
       </span>
-      <span className="home-action-target">
-        <span>Lane system</span>
-        <img src={actionTargetLogoSrc} alt="Action Target logo" />
-      </span>
+      <PoweredByLevelUpBadge as="span" className="home-powered-by" />
     </button>
   );
 }
@@ -1204,7 +1294,7 @@ function TimeoutScreen({ selectedLane, onAddTime }) {
       <img className="home-screen-bg" src={homeBackgroundSrc} alt="" aria-hidden="true" />
       <span className="home-screen-shade" aria-hidden="true" />
       <div className="home-screen-content timeout-content">
-        <BrandTextLogo className="home-brand-text" />
+        <img className="home-action-logo" src={actionTargetLogoSrc} alt="Action Target logo" />
         <span className="timeout-kicker">Lane {selectedLane} Timer</span>
         <strong>This lane is out of time.</strong>
         <span>Select more time to unlock the lane screen.</span>
@@ -1216,10 +1306,7 @@ function TimeoutScreen({ selectedLane, onAddTime }) {
           ))}
         </div>
       </div>
-      <span className="home-action-target">
-        <span>Lane system</span>
-        <img src={actionTargetLogoSrc} alt="Action Target logo" />
-      </span>
+      <PoweredByLevelUpBadge as="span" className="home-powered-by" />
     </div>
   );
 }
@@ -1374,6 +1461,7 @@ function LaneTakeover({
   onAxisCommand,
   onOpenAudio,
   onChooseDrill,
+  onPlayerSwitch,
   onLaneInviteResponse,
   onLeaveParty
 }) {
@@ -1397,10 +1485,14 @@ function LaneTakeover({
         <div className="lane-control-stack">
           <div className="lane-player">
             <Avatar player={player} leader={isPartyActive} />
-            <div>
+            <button className="player-switch-button" type="button" onClick={onPlayerSwitch} aria-label={`Change active player from ${player.name}`}>
               <h2>{player.name}</h2>
               <p>XP {player.xp.toLocaleString()} • Score {player.recentScore}</p>
-            </div>
+              <span className="player-switch-hint">
+                <UsersRound size={19} />
+                Switch player
+              </span>
+            </button>
             <div className="lane-number">
               <span>Lane</span>
               <strong>{selectedLane}</strong>
@@ -1479,6 +1571,53 @@ function LaneTakeover({
         )}
       </div>
     </section>
+  );
+}
+
+function PlayerSwitchModal({ customers, lanes, selectedLane, activeCustomerId, onSelect, onClose }) {
+  const availableCustomers = customers.filter((customer) => {
+    const assignedLane = lanes.find((lane) => lane.customerId === customer.id);
+    return customer.id === activeCustomerId || !assignedLane;
+  });
+
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <div className="modal-panel player-switch-modal" role="dialog" aria-modal="true" aria-labelledby="player-switch-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="panel-heading">
+          <div>
+            <div className="eyebrow">Lane {selectedLane} Player</div>
+            <h2 id="player-switch-title">Change active player</h2>
+          </div>
+          <button className="icon-button" type="button" onClick={onClose} aria-label="Close player switch panel">
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="player-switch-grid" aria-label="Checked-in players">
+          {availableCustomers.map((customer) => {
+            const assignedLane = lanes.find((lane) => lane.customerId === customer.id);
+            const isActive = customer.id === activeCustomerId;
+            const status = isActive ? "Current player" : "Available";
+
+            return (
+              <button
+                key={customer.id}
+                className={`player-switch-card ${isActive ? "is-active" : ""}`}
+                type="button"
+                onClick={() => onSelect(customer.id)}
+              >
+                <Avatar player={customer} size="small" />
+                <div>
+                  <strong>{customer.name}</strong>
+                  <span>{customer.username}</span>
+                </div>
+                <small>{status}</small>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 }
 

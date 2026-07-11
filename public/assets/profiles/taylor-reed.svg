@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Taylor Reed player portrait</title>
+  <desc id="desc">Stylized neon green gamer profile portrait with cap and headset.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10270b"/>
+      <stop offset="0.55" stop-color="#2b6f36"/>
+      <stop offset="1" stop-color="#1c578f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="30%" r="62%">
+      <stop offset="0" stop-color="#9cff72" stop-opacity="0.78"/>
+      <stop offset="1" stop-color="#9cff72" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="42" fill="#06111f"/>
+  <rect x="18" y="18" width="476" height="476" rx="34" fill="url(#bg)"/>
+  <circle cx="256" cy="166" r="178" fill="url(#glow)"/>
+  <path d="M84 424c19-86 89-133 172-133s153 47 172 133v32H84z" fill="#081a2d"/>
+  <path d="M126 438c24-61 73-91 130-91s106 30 130 91z" fill="#1ea36a"/>
+  <circle cx="256" cy="214" r="92" fill="#cfa47e"/>
+  <path d="M158 197c21-62 75-94 131-76 32 10 56 31 70 61-61-21-130-15-201 15z" fill="#182339"/>
+  <path d="M151 189c38-54 89-78 145-68 34 6 61 24 82 52-66-23-137-18-227 16z" fill="#26395d"/>
+  <path d="M146 224h30v75h-30c-16 0-29-13-29-29v-17c0-16 13-29 29-29zM336 224h30c16 0 29 13 29 29v17c0 16-13 29-29 29h-30z" fill="#071426"/>
+  <path d="M151 240c0-62 46-112 105-112s105 50 105 112" fill="none" stroke="#8bff72" stroke-width="14" stroke-linecap="round"/>
+  <path d="M324 309c-30 30-86 31-129 3" fill="none" stroke="#11233a" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="218" cy="221" r="8" fill="#071426"/>
+  <circle cx="294" cy="221" r="8" fill="#071426"/>
+  <path d="M219 266c24 18 50 18 74 0" fill="none" stroke="#704533" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="363" cy="316" r="18" fill="#8bff72"/>
+  <path d="M360 316h-56" stroke="#8bff72" stroke-width="11" stroke-linecap="round"/>
+  <path d="M84 88h124M70 119h82M340 76h88M372 108h62" stroke="#ffffff" stroke-opacity="0.15" stroke-width="10" stroke-linecap="round"/>
+</svg>

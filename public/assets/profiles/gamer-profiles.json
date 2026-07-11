@@ -26,5 +26,19 @@
     "handle": "@morgan.blake",
     "image": "/assets/profiles/morgan-blake.svg",
     "theme": "pink blue headset profile"
+  },
+  {
+    "id": "taylor",
+    "name": "Taylor Reed",
+    "handle": "@taylor.reed",
+    "image": "/assets/profiles/taylor-reed.svg",
+    "theme": "neon green cap profile"
+  },
+  {
+    "id": "riley",
+    "name": "Riley Chen",
+    "handle": "@riley.chen",
+    "image": "/assets/profiles/riley-chen.svg",
+    "theme": "blue violet visor profile"
   }
 ]

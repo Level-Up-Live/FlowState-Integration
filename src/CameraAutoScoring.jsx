@@ -414,7 +414,7 @@ export default function CameraAutoScoring({ player, drill, selectedLane }) {
 
           <div className="autoscore-timing-strip">
             <span>Game clock</span>
-            <strong>{firstImpact && lastImpact ? `${formatClock(firstImpact.gameSeconds)} - ${formatClock(lastImpact.gameSeconds)}` : "--"}</strong>
+            <strong>{lastImpact ? formatClock(lastImpact.gameSeconds) : "--"}</strong>
           </div>
         </div>
 
@@ -548,7 +548,7 @@ function formatHoleCount(count) {
 }
 
 function getScoreColor(score) {
-  if (score >= 20) return "#c45355";
+  if (score >= 20) return "#a93a3f";
   if (score >= 15) return "#30272d";
   if (score >= 10) return "#25f46d";
   if (score >= 5) return "#32a7ff";
@@ -556,5 +556,5 @@ function getScoreColor(score) {
 }
 
 function getScoreTextColor(score) {
-  return score >= 10 && score < 15 ? "#06111f" : "#f7fbff";
+  return score >= 5 && score < 15 ? "#06111f" : "#ffffff";
 }

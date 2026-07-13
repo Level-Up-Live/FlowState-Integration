@@ -10,19 +10,25 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  CircleHelp,
+  ClipboardCheck,
   Crown,
   Crosshair,
   Gauge,
   Gamepad2,
   Headphones,
+  LifeBuoy,
   Medal,
   MonitorPlay,
+  Package,
   Play,
   Radio,
   Save,
   Share2,
   ShieldCheck,
   Sparkles,
+  Store,
+  ShoppingCart,
   Target,
   Timer,
   Trophy,
@@ -39,6 +45,11 @@ const brandTextLogoSrc = "/assets/logos/LUL_logo_no%20icon%20horizontal-1.png";
 const actionTargetLogoSrc = "/assets/logos/action-target-white-logo.svg";
 const homeBackgroundSrc = "/assets/backgrounds/action-target-range.jpg";
 const sessionDurationSeconds = 60 * 60;
+const programStartCues = [
+  { label: "SHOOTER READY", durationMs: 1500 },
+  { label: "STANDBY", durationMs: 1500 }
+];
+const programFireCueIndex = programStartCues.length;
 
 function formatSessionTimer(totalSeconds) {
   const safeSeconds = Math.max(totalSeconds, 0);
@@ -176,7 +187,7 @@ const drills = [
     description: "Two clean 3-shot strings with a reload between strings.",
     instructions: "Fire 3 rounds, reload when prompted, then fire the final 3-round string.",
     behavior: "Target stays at 7 yards and holds face-on through both strings while the camera confirms score.",
-    scoring: "Each shot is worth up to 10 points. Reload time is tracked between shot 3 and shot 4."
+    scoring: "Each shot is worth up to 10 points. Score V1 scans the completed target after the drill."
   },
   {
     id: "dot-grid-warmup",
@@ -499,26 +510,6 @@ function getScoreRunTotal(playerId) {
   return getScoreRunForPlayer(playerId).reduce((sum, shot) => sum + shot.score, 0);
 }
 
-function getReloadTimeValue(run) {
-  if (!run || run.length < 4) {
-    return "--";
-  }
-
-  return `${(run[3].elapsedSeconds - run[2].elapsedSeconds).toFixed(2)} s`;
-}
-
-function getReloadTimeDisplay(run, shotStep, demoRunning) {
-  if (shotStep >= 4) {
-    return getReloadTimeValue(run);
-  }
-
-  if (demoRunning && shotStep === 3) {
-    return "Reloading";
-  }
-
-  return "--";
-}
-
 const recentDrills = [
   { name: "Triples", score: 487, date: "Jul 8, 2026", accuracy: "95%" },
   { name: "Dot Grid Warmup", score: 456, date: "Jul 6, 2026", accuracy: "91%" },
@@ -693,12 +684,79 @@ const leagues = [
   }
 ];
 
+const storeTaxRate = 0.0725;
+const storeCatalog = {
+  rentals: {
+    label: "Rentals",
+    categories: ["Full Auto", "Semi-Auto", "Bolt", "Shotgun", "Handgun"],
+    items: [
+      { id: "rent-full-auto-mp5", category: "Full Auto", brand: "Heckler Range", name: "MP5 Experience", details: "9mm rental package", price: 59, inStock: true },
+      { id: "rent-full-auto-m4", category: "Full Auto", brand: "Atlas Defense", name: "M4 Select-Fire", details: "5.56 lane rental", price: 75, inStock: true },
+      { id: "rent-full-auto-uzi", category: "Full Auto", brand: "Vector Arms", name: "UZI Classic", details: "Compact SMG rental", price: 54, inStock: false },
+      { id: "rent-semi-ar15", category: "Semi-Auto", brand: "Springfield", name: "Saint Victor", details: "5.56 carbine", price: 24, inStock: true },
+      { id: "rent-semi-ruger1022", category: "Semi-Auto", brand: "Ruger", name: "10/22 Trainer", details: "22LR rifle", price: 15, inStock: true },
+      { id: "rent-semi-scorpion", category: "Semi-Auto", brand: "CZ", name: "Scorpion EVO", details: "9mm PCC", price: 28, inStock: false },
+      { id: "rent-bolt-700", category: "Bolt", brand: "Remington", name: "700 SPS", details: "308 precision rifle", price: 34, inStock: true },
+      { id: "rent-bolt-tikka", category: "Bolt", brand: "Tikka", name: "T3x Lite", details: "6.5 Creedmoor", price: 38, inStock: true },
+      { id: "rent-bolt-rpr", category: "Bolt", brand: "Ruger", name: "Precision Rifle", details: "6mm Creedmoor", price: 42, inStock: false },
+      { id: "rent-shotgun-1301", category: "Shotgun", brand: "Beretta", name: "1301 Tactical", details: "12ga semi-auto", price: 32, inStock: true },
+      { id: "rent-shotgun-500", category: "Shotgun", brand: "Mossberg", name: "500 Field", details: "12ga pump", price: 21, inStock: true },
+      { id: "rent-shotgun-youth", category: "Shotgun", brand: "TriStar", name: "Viper Youth", details: "20ga trainer", price: 19, inStock: false },
+      { id: "rent-handgun-g19", category: "Handgun", brand: "Glock", name: "G19 Gen5", details: "9mm compact", price: 18, inStock: true },
+      { id: "rent-handgun-1911", category: "Handgun", brand: "Springfield", name: "1911 Loaded", details: "45 ACP classic", price: 22, inStock: true },
+      { id: "rent-handgun-686", category: "Handgun", brand: "Smith & Wesson", name: "686 Plus", details: "38 Special revolver", price: 20, inStock: false }
+    ]
+  },
+  ammo: {
+    label: "Ammo",
+    categories: ["22LR", "9mm", "38 SPC", "40 cal", "45", "223/556", "6mm", "6.5 Creedmoor", "308", "12ga", "20ga", "Specialty"],
+    items: [
+      { id: "ammo-22lr-cci", category: "22LR", brand: "CCI", name: "Mini-Mag 40gr", details: "100-round box", price: 12.99, inStock: true },
+      { id: "ammo-22lr-federal", category: "22LR", brand: "Federal", name: "AutoMatch", details: "325-round box", price: 28.99, inStock: false },
+      { id: "ammo-9mm-blazer", category: "9mm", brand: "Blazer", name: "115gr FMJ", details: "50-round box", price: 16.99, inStock: true },
+      { id: "ammo-9mm-sig", category: "9mm", brand: "Sig Sauer", name: "124gr Elite", details: "50-round box", price: 21.49, inStock: true },
+      { id: "ammo-38spc", category: "38 SPC", brand: "MagTech", name: "158gr LRN", details: "50-round box", price: 29.99, inStock: true },
+      { id: "ammo-40", category: "40 cal", brand: "Winchester", name: "White Box 165gr", details: "50-round box", price: 27.99, inStock: false },
+      { id: "ammo-45", category: "45", brand: "Federal", name: "American Eagle 230gr", details: "50-round box", price: 32.99, inStock: true },
+      { id: "ammo-556", category: "223/556", brand: "PMC", name: "X-TAC 55gr", details: "20-round box", price: 13.99, inStock: true },
+      { id: "ammo-6mm", category: "6mm", brand: "Hornady", name: "Match 108gr ELD", details: "20-round box", price: 43.99, inStock: false },
+      { id: "ammo-65", category: "6.5 Creedmoor", brand: "Hornady", name: "Precision Hunter 143gr", details: "20-round box", price: 49.99, inStock: true },
+      { id: "ammo-308", category: "308", brand: "Federal", name: "Gold Medal 168gr", details: "20-round box", price: 41.99, inStock: true },
+      { id: "ammo-12ga", category: "12ga", brand: "Fiocchi", name: "Target Load 1oz", details: "25-round box", price: 12.49, inStock: true },
+      { id: "ammo-20ga", category: "20ga", brand: "Winchester", name: "Super Target", details: "25-round box", price: 13.49, inStock: false },
+      { id: "ammo-specialty", category: "Specialty", brand: "Action Range", name: "Tracer Demo Pack", details: "Range officer approval", price: 64.99, inStock: true }
+    ]
+  },
+  equipment: {
+    label: "Equipment",
+    categories: ["Optic Accessories", "Zeroing Tools", "Furniture", "More"],
+    items: [
+      { id: "equip-optic-mount", category: "Optic Accessories", brand: "Scalar Peak", name: "30mm Cantilever Mount", details: "Lightweight optic mount", price: 89.99, inStock: true },
+      { id: "equip-optic-battery", category: "Optic Accessories", brand: "Aimpoint", name: "CR2032 Optic Pack", details: "Range-ready battery kit", price: 9.99, inStock: true },
+      { id: "equip-optic-riser", category: "Optic Accessories", brand: "Unity Range", name: "Micro Riser", details: "Lower-third riser", price: 74.99, inStock: false },
+      { id: "equip-zero-bore", category: "Zeroing Tools", brand: "SightMark", name: "Laser Bore Sight", details: "Multi-caliber kit", price: 39.99, inStock: true },
+      { id: "equip-zero-rest", category: "Zeroing Tools", brand: "Caldwell", name: "Lead Sled Solo", details: "Bench zeroing rest", price: 79.99, inStock: true },
+      { id: "equip-zero-torque", category: "Zeroing Tools", brand: "Fix It Sticks", name: "Torque Driver", details: "Optic mounting kit", price: 119.99, inStock: false },
+      { id: "equip-furniture-stock", category: "Furniture", brand: "Magpul", name: "CTR Stock", details: "Mil-spec carbine stock", price: 64.95, inStock: true },
+      { id: "equip-furniture-grip", category: "Furniture", brand: "BCM", name: "Gunfighter Grip", details: "Mod 3 grip", price: 21.95, inStock: true },
+      { id: "equip-furniture-rail", category: "Furniture", brand: "Bravo Range", name: "M-LOK Rail Covers", details: "6-piece kit", price: 18.99, inStock: false },
+      { id: "equip-more-earpro", category: "More", brand: "Walker", name: "Razor Slim Ear Pro", details: "Electronic muffs", price: 49.99, inStock: true },
+      { id: "equip-more-targets", category: "More", brand: "Action Target", name: "Precision Paper Pack", details: "25 paper targets", price: 14.99, inStock: true },
+      { id: "equip-more-bag", category: "More", brand: "Savior", name: "Range Bag", details: "Pistol and ammo tote", price: 59.99, inStock: false }
+    ]
+  }
+};
+
+const storeTabs = Object.keys(storeCatalog);
+
 const navItems = [
   { id: "lane", label: "Lane Screen", shortLabel: "Lane", icon: Target },
-  { id: "scoring", label: "Live Scoring", shortLabel: "Score", icon: Crosshair },
-  { id: "autoscore", label: "Camera Autoscore", shortLabel: "Camera", icon: Camera },
+  { id: "scoring", label: "Score V1", shortLabel: "Score V1", icon: Crosshair },
+  { id: "autoscore", label: "Score V2", shortLabel: "Score V2", icon: Crosshair },
   { id: "profile", label: "Profile", shortLabel: "Player", icon: UserRound },
-  { id: "league", label: "League", shortLabel: "League", icon: Trophy }
+  { id: "league", label: "League", shortLabel: "League", icon: Trophy },
+  { id: "store", label: "Store", shortLabel: "Store", icon: Store },
+  { id: "assistance", label: "Assistance", shortLabel: "Assist", icon: LifeBuoy }
 ];
 
 function App() {
@@ -722,8 +780,10 @@ function App() {
   const [axisLightingScene, setAxisLightingScene] = useState("Training Bright");
   const [sessionSeconds, setSessionSeconds] = useState(sessionDurationSeconds);
   const [sessionTimerRunning, setSessionTimerRunning] = useState(true);
+  const [programStartCueIndex, setProgramStartCueIndex] = useState(0);
   const [axisAlert, setAxisAlert] = useState("Clear");
   const [playerSwitchOpen, setPlayerSwitchOpen] = useState(false);
+  const [assistanceOpen, setAssistanceOpen] = useState(false);
   const [toast, setToast] = useState(null);
 
   const activeCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? customers[0];
@@ -764,7 +824,6 @@ function App() {
   const allShownShots = shownVisibleShots;
   const totalScore = allShownShots.reduce((sum, shot) => sum + shot.score, 0);
   const shotCount = allShownShots.length;
-  const reloadTime = getReloadTimeDisplay(activeScoreRun, shotStep, scoreDemoRunning);
   const axisLaneTimer = formatSessionTimer(sessionSeconds);
 
   const rankedScoreParticipants = useMemo(
@@ -818,6 +877,18 @@ function App() {
   }, [activeScoreRun.length, scoreDemoRunning, shotStep]);
 
   useEffect(() => {
+    if (screen !== "programCountdown" || programStartCueIndex >= programFireCueIndex) {
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setProgramStartCueIndex((current) => Math.min(current + 1, programFireCueIndex));
+    }, programStartCues[programStartCueIndex]?.durationMs ?? 1500);
+
+    return () => window.clearTimeout(timeout);
+  }, [programStartCueIndex, screen]);
+
+  useEffect(() => {
     setScoreParticipantIndex((current) => Math.min(current, Math.max(scoreParticipants.length - 1, 0)));
   }, [scoreParticipants.length]);
 
@@ -841,6 +912,15 @@ function App() {
 
   function notify(message) {
     setToast({ id: Date.now(), message });
+  }
+
+  function handleNavigate(nextScreen) {
+    if (nextScreen === "assistance") {
+      setAssistanceOpen(true);
+      return;
+    }
+
+    setScreen(nextScreen);
   }
 
   function assignLane() {
@@ -920,14 +1000,28 @@ function App() {
     setScoreDemoRunning(false);
     setScoreView("live");
     setScoreParticipantIndex(0);
+    setProgramStartCueIndex(0);
+    setScreen("programCountdown");
+  }
+
+  function cancelProgramCountdown() {
+    setProgramStartCueIndex(0);
+    setScreen("instructions");
+  }
+
+  function openScoreV1FromFire() {
+    setProgramStartCueIndex(0);
+    setShotStep(0);
+    setScoreDemoRunning(false);
+    setScoreView("live");
+    setScoreParticipantIndex(0);
     setScreen("scoring");
-    notify(`${activeDrill.name} started on Lane ${selectedLane}.`);
   }
 
   function playScoreDemo() {
-    setShotStep(0);
-    setScoreDemoRunning(true);
-    notify("6-shot scoring playback started.");
+    setScoreDemoRunning(false);
+    setShotStep(activeScoreRun.length);
+    notify("Target scan complete. Score V1 loaded all impacts.");
   }
 
   function showPreviousScoreParticipant() {
@@ -935,6 +1029,8 @@ function App() {
       return;
     }
 
+    setShotStep(0);
+    setScoreDemoRunning(false);
     setScoreParticipantIndex((current) => (current - 1 + scoreParticipants.length) % scoreParticipants.length);
   }
 
@@ -943,6 +1039,8 @@ function App() {
       return;
     }
 
+    setShotStep(0);
+    setScoreDemoRunning(false);
     setScoreParticipantIndex((current) => (current + 1) % scoreParticipants.length);
   }
 
@@ -1032,16 +1130,21 @@ function App() {
     return <TimeoutScreen selectedLane={selectedLane} onAddTime={addSessionTime} />;
   }
 
+  if (screen === "programCountdown") {
+    return <ProgramCountdownScreen cueIndex={programStartCueIndex} onCancel={cancelProgramCountdown} onFire={openScoreV1FromFire} />;
+  }
+
   return (
     <div className={`app-shell screen-${screen}`}>
-      <Sidebar currentScreen={screen} onBrandClick={openWelcomeScreen} onNavigate={setScreen} />
+      <Header
+        axisLaneTimer={axisLaneTimer}
+        onBrandClick={openWelcomeScreen}
+        onTimerClick={openTimeoutScreen}
+        selectedLane={selectedLane}
+      />
+      <Sidebar currentScreen={screen} onNavigate={handleNavigate} />
       <main className="main-stage">
-        <Header
-          axisLaneTimer={axisLaneTimer}
-          onTimerClick={openTimeoutScreen}
-          selectedLane={selectedLane}
-        />
-        <div className={`content-frame ${screen === "scoring" && scoreView === "results" ? "is-score-results" : ""} ${screen === "scoring" && scoreView !== "results" ? "is-live-scoring" : ""} ${screen === "autoscore" ? "is-autoscore" : ""}`}>
+        <div className={`content-frame ${screen === "scoring" && scoreView === "results" ? "is-score-results" : ""} ${screen === "scoring" && scoreView !== "results" ? "is-live-scoring is-score-v1" : ""} ${screen === "autoscore" ? "is-autoscore" : ""}`}>
           {screen === "pos" && (
             <PosAssignment
               customers={customers}
@@ -1095,20 +1198,18 @@ function App() {
                 player={activeCustomer}
                 drill={activeDrill}
                 totalScore={totalScore}
-                reloadTime={getReloadTimeValue(activeScoreRun)}
                 currentRank={currentRank}
                 onShare={shareResult}
                 onProfile={saveResultToProfile}
                 onDone={closeResults}
               />
             ) : (
-              <LiveScoring
+              <ScoreV1Scoring
                 drill={activeDrill}
                 scoreParticipant={activeScoreParticipant}
                 scoreParticipants={scoreParticipants}
                 visibleShots={shownVisibleShots}
                 totalScore={totalScore}
-                reloadTime={reloadTime}
                 shotCount={shotCount}
                 currentRank={currentRank}
                 shotStep={shotStep}
@@ -1131,6 +1232,8 @@ function App() {
           {screen === "profile" && <PlayerProfile player={activeCustomer} />}
 
           {screen === "league" && <LeagueScreen onSignup={signUpForLeague} />}
+
+          {screen === "store" && <StoreScreen selectedLane={selectedLane} />}
         </div>
       </main>
 
@@ -1153,6 +1256,13 @@ function App() {
         />
       )}
 
+      {assistanceOpen && (
+        <AssistanceModal
+          selectedLane={selectedLane}
+          onClose={() => setAssistanceOpen(false)}
+        />
+      )}
+
       {toast && <Toast key={toast.id} message={toast.message} />}
 
       <div className="orientation-notice" role="status" aria-live="polite">
@@ -1164,17 +1274,11 @@ function App() {
   );
 }
 
-function Sidebar({ currentScreen, onBrandClick, onNavigate }) {
+function Sidebar({ currentScreen, onNavigate }) {
   const activeNavId = ["drills", "instructions", "pos"].includes(currentScreen) ? "lane" : currentScreen;
 
   return (
     <aside className="sidebar">
-      <button className="brand-block" type="button" onClick={onBrandClick} aria-label="Open Level Up Live welcome screen">
-        <div className="brand-mark">
-          <img src={brandLogoSrc} alt="Level Up Live logo" />
-        </div>
-      </button>
-
       <nav className="nav-list" aria-label="Integration screens">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -1196,12 +1300,14 @@ function Sidebar({ currentScreen, onBrandClick, onNavigate }) {
   );
 }
 
-function Header({ axisLaneTimer, onTimerClick, selectedLane }) {
+function Header({ axisLaneTimer, onBrandClick, onTimerClick, selectedLane }) {
   return (
     <header className="topbar">
       <div>
         <div className="eyebrow brand-title-row">
-          <img className="topbar-action-logo" src={actionTargetLogoSrc} alt="Action Target logo" />
+          <button className="topbar-action-button" type="button" onClick={onBrandClick} aria-label="Open welcome screen">
+            <img className="topbar-action-logo" src={actionTargetLogoSrc} alt="Action Target logo" />
+          </button>
         </div>
       </div>
       <PoweredByLevelUpBadge className="topbar-powered-by" />
@@ -1272,6 +1378,46 @@ function TimeoutScreen({ selectedLane, onAddTime }) {
       </div>
       <PoweredByLevelUpBadge as="span" className="home-powered-by" />
     </div>
+  );
+}
+
+function ProgramCountdownScreen({ cueIndex, onCancel, onFire }) {
+  const isFire = cueIndex >= programFireCueIndex;
+  const cueLabel = isFire ? "FIRE" : (programStartCues[cueIndex]?.label ?? programStartCues[0].label);
+  const handleScreenClick = () => {
+    if (isFire) {
+      onFire();
+    }
+  };
+  const handleScreenKeyDown = (event) => {
+    if (!isFire || !["Enter", " "].includes(event.key)) {
+      return;
+    }
+
+    event.preventDefault();
+    onFire();
+  };
+  const handleCancel = (event) => {
+    event.stopPropagation();
+    onCancel();
+  };
+
+  return (
+    <section
+      className={`program-countdown-screen ${isFire ? "is-fire" : ""}`}
+      role={isFire ? "button" : "status"}
+      tabIndex={isFire ? 0 : undefined}
+      aria-label={isFire ? "Fire. Tap to open Score V1." : cueLabel}
+      aria-live="assertive"
+      onClick={handleScreenClick}
+      onKeyDown={handleScreenKeyDown}
+    >
+      <strong>{cueLabel}</strong>
+      {isFire && <span className="program-fire-instruction">Tap the screen when completed</span>}
+      <button className="program-countdown-cancel" type="button" onClick={handleCancel}>
+        Cancel
+      </button>
+    </section>
   );
 }
 
@@ -1913,11 +2059,10 @@ function Metric({ label, value, icon: Icon, onClick }) {
   );
 }
 
-function ResultMetrics({ totalScore, reloadTime, currentRank, className = "result-grid" }) {
+function ResultMetrics({ totalScore, currentRank, className = "result-grid" }) {
   return (
     <div className={className}>
       <Metric label="Final Score" value={totalScore} icon={Trophy} />
-      <Metric label="Reload Time" value={reloadTime} icon={Timer} />
       <Metric label="Group Size" value="1.8 in" icon={Gauge} />
       <Metric label="Friend Rank" value={`#${currentRank || 1}`} icon={Medal} />
       <Metric label="XP Gained" value="+840" icon={Zap} />
@@ -2038,23 +2183,6 @@ function InstructionScreen({
           </button>
         </div>
       </div>
-
-      <div className="panel">
-        <div className="panel-heading">
-          <div>
-            <div className="eyebrow">Audio Prompt Engine</div>
-            <h2>Hands-free lane guidance</h2>
-          </div>
-        </div>
-        <div className="prompt-stack">
-          {spokenPrompts.map((prompt, index) => (
-            <div key={prompt} className={`prompt-line ${index < 2 ? "is-live" : ""}`}>
-              <Radio size={18} />
-              <span>{prompt}</span>
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
@@ -2101,6 +2229,320 @@ function BluetoothModal({ connectedDevice, onConnect, onClose }) {
         </div>
         <button className="primary-action full-width" type="button" onClick={onClose}>
           Done
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function formatStoreMoney(value) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
+}
+
+function StoreScreen({ selectedLane }) {
+  const [activeTab, setActiveTab] = useState(storeTabs[0]);
+  const [selectedCategories, setSelectedCategories] = useState(() =>
+    storeTabs.reduce((categoryState, tabId) => ({
+      ...categoryState,
+      [tabId]: storeCatalog[tabId].categories[0]
+    }), {})
+  );
+  const [cart, setCart] = useState([]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [waitEstimate, setWaitEstimate] = useState("");
+
+  const activeSection = storeCatalog[activeTab];
+  const selectedCategory = selectedCategories[activeTab] ?? activeSection.categories[0];
+  const visibleItems = activeSection.items.filter((item) => item.category === selectedCategory);
+  const allStoreItems = useMemo(() => storeTabs.flatMap((tabId) => storeCatalog[tabId].items), []);
+  const cartItems = cart
+    .map((entry) => {
+      const item = allStoreItems.find((storeItem) => storeItem.id === entry.id);
+      return item ? { ...item, quantity: entry.quantity } : null;
+    })
+    .filter(Boolean);
+  const cartSubtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const cartTax = cartSubtotal * storeTaxRate;
+  const cartTotal = cartSubtotal + cartTax;
+  const cartCount = cart.reduce((sum, entry) => sum + entry.quantity, 0);
+
+  function handleTabChange(tabId) {
+    setActiveTab(tabId);
+    setWaitEstimate("");
+  }
+
+  function handleCategoryChange(event) {
+    setSelectedCategories((current) => ({
+      ...current,
+      [activeTab]: event.target.value
+    }));
+  }
+
+  function addToCart(item) {
+    if (!item.inStock) {
+      return;
+    }
+
+    setCart((current) => {
+      const existing = current.find((entry) => entry.id === item.id);
+      if (existing) {
+        return current.map((entry) => entry.id === item.id ? { ...entry, quantity: entry.quantity + 1 } : entry);
+      }
+
+      return [...current, { id: item.id, quantity: 1 }];
+    });
+    setWaitEstimate("");
+  }
+
+  function updateCartQuantity(itemId, delta) {
+    setWaitEstimate("");
+    setCart((current) =>
+      current
+        .map((entry) => entry.id === itemId ? { ...entry, quantity: entry.quantity + delta } : entry)
+        .filter((entry) => entry.quantity > 0)
+    );
+  }
+
+  function submitCart() {
+    if (cartItems.length === 0) {
+      return;
+    }
+
+    setWaitEstimate(`Estimated wait time for Lane ${selectedLane}: 12-18 minutes.`);
+  }
+
+  return (
+    <section className="store-layout fade-in">
+      <div className="panel store-panel">
+        <div className="panel-heading store-heading">
+          <div>
+            <div className="eyebrow">Range Store</div>
+            <h2>Order rentals, ammo, and gear</h2>
+          </div>
+          <button className="store-cart-button" type="button" onClick={() => setCartOpen(true)} aria-label={`Open shopping cart with ${cartCount} items`}>
+            <ShoppingCart size={22} />
+            <span>Cart</span>
+            <strong>{cartCount}</strong>
+          </button>
+        </div>
+
+        <div className="store-tabs" aria-label="Store departments">
+          {storeTabs.map((tabId) => (
+            <button
+              key={tabId}
+              type="button"
+              className={activeTab === tabId ? "is-active" : ""}
+              onClick={() => handleTabChange(tabId)}
+            >
+              {storeCatalog[tabId].label}
+            </button>
+          ))}
+        </div>
+
+        <div className="store-filter-row">
+          <label htmlFor="store-category-select">{activeSection.label} category</label>
+          <select id="store-category-select" value={selectedCategory} onChange={handleCategoryChange}>
+            {activeSection.categories.map((category) => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="store-grid" aria-label={`${selectedCategory} items`}>
+          {visibleItems.map((item) => (
+            <article key={item.id} className={`store-card ${item.inStock ? "" : "is-out"}`}>
+              <div className="store-card-icon">
+                <Package size={24} />
+              </div>
+              <div className="store-card-copy">
+                <span>{item.brand}</span>
+                <h3>{item.name}</h3>
+                <p>{item.details}</p>
+              </div>
+              <div className="store-card-bottom">
+                <strong>{formatStoreMoney(item.price)}</strong>
+                <small>{item.inStock ? "Available now" : "Out of stock"}</small>
+              </div>
+              <button className="store-add-button" type="button" onClick={() => addToCart(item)} disabled={!item.inStock}>
+                {item.inStock ? "Add" : "Unavailable"}
+              </button>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <StoreCartPanel
+        cartItems={cartItems}
+        subtotal={cartSubtotal}
+        tax={cartTax}
+        total={cartTotal}
+        waitEstimate={waitEstimate}
+        onCheckout={() => setCartOpen(true)}
+        onUpdateQuantity={updateCartQuantity}
+      />
+
+      {cartOpen && (
+        <StoreCartModal
+          cartItems={cartItems}
+          subtotal={cartSubtotal}
+          tax={cartTax}
+          total={cartTotal}
+          waitEstimate={waitEstimate}
+          onClose={() => setCartOpen(false)}
+          onSubmit={submitCart}
+          onUpdateQuantity={updateCartQuantity}
+        />
+      )}
+    </section>
+  );
+}
+
+function StoreCartPanel({ cartItems, subtotal, tax, total, waitEstimate, onCheckout, onUpdateQuantity }) {
+  return (
+    <aside className="panel store-cart-side-panel" aria-label="Current cart">
+      <div className="panel-heading store-cart-side-heading">
+        <div>
+          <div className="eyebrow">My Cart</div>
+          <h2>{cartItems.length === 0 ? "Empty" : `${cartItems.reduce((sum, item) => sum + item.quantity, 0)} items`}</h2>
+        </div>
+        <ShoppingCart size={24} />
+      </div>
+
+      <div className="store-cart-side-list">
+        {cartItems.length === 0 ? (
+          <div className="store-cart-empty is-compact">
+            <ShoppingCart size={28} />
+            <strong>No items yet</strong>
+            <span>Add items from the left.</span>
+          </div>
+        ) : (
+          cartItems.map((item) => (
+            <div key={item.id} className="store-cart-side-row">
+              <div>
+                <strong>{item.name}</strong>
+                <span>{item.brand}</span>
+              </div>
+              <div className="store-quantity-controls" aria-label={`${item.name} quantity`}>
+                <button type="button" onClick={() => onUpdateQuantity(item.id, -1)} aria-label={`Remove one ${item.name}`}>-</button>
+                <span>{item.quantity}</span>
+                <button type="button" onClick={() => onUpdateQuantity(item.id, 1)} aria-label={`Add one ${item.name}`}>+</button>
+              </div>
+              <b>{formatStoreMoney(item.price * item.quantity)}</b>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className="store-cart-totals store-cart-side-totals" aria-label="Cart totals">
+        <div>
+          <span>Subtotal</span>
+          <strong>{formatStoreMoney(subtotal)}</strong>
+        </div>
+        <div>
+          <span>Tax</span>
+          <strong>{formatStoreMoney(tax)}</strong>
+        </div>
+        <div className="is-total">
+          <span>Total</span>
+          <strong>{formatStoreMoney(total)}</strong>
+        </div>
+      </div>
+
+      {waitEstimate && (
+        <div className="store-wait-estimate store-side-wait" role="status">
+          <ClipboardCheck size={20} />
+          <strong>{waitEstimate}</strong>
+        </div>
+      )}
+
+      <button className="primary-action full-width" type="button" onClick={onCheckout} disabled={cartItems.length === 0}>
+        Review Cart
+      </button>
+    </aside>
+  );
+}
+
+function StoreCartModal({ cartItems, subtotal, tax, total, waitEstimate, onClose, onSubmit, onUpdateQuantity }) {
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <div className="modal-panel store-cart-modal" role="dialog" aria-modal="true" aria-labelledby="store-cart-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="panel-heading">
+          <div>
+            <div className="eyebrow">Shopping Cart</div>
+            <h2 id="store-cart-title">Lane order</h2>
+          </div>
+          <button className="icon-button" type="button" onClick={onClose} aria-label="Close shopping cart">
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="store-cart-list">
+          {cartItems.length === 0 ? (
+            <div className="store-cart-empty">
+              <ShoppingCart size={30} />
+              <strong>No items selected</strong>
+              <span>Add rentals, ammo, or gear from the Store page.</span>
+            </div>
+          ) : (
+            cartItems.map((item) => (
+              <div key={item.id} className="store-cart-row">
+                <div>
+                  <strong>{item.name}</strong>
+                  <span>{item.brand} • {item.details}</span>
+                </div>
+                <div className="store-quantity-controls" aria-label={`${item.name} quantity`}>
+                  <button type="button" onClick={() => onUpdateQuantity(item.id, -1)} aria-label={`Remove one ${item.name}`}>-</button>
+                  <span>{item.quantity}</span>
+                  <button type="button" onClick={() => onUpdateQuantity(item.id, 1)} aria-label={`Add one ${item.name}`}>+</button>
+                </div>
+                <b>{formatStoreMoney(item.price * item.quantity)}</b>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="store-cart-totals" aria-label="Cart totals">
+          <div>
+            <span>Subtotal</span>
+            <strong>{formatStoreMoney(subtotal)}</strong>
+          </div>
+          <div>
+            <span>Tax</span>
+            <strong>{formatStoreMoney(tax)}</strong>
+          </div>
+          <div className="is-total">
+            <span>Total</span>
+            <strong>{formatStoreMoney(total)}</strong>
+          </div>
+        </div>
+
+        {waitEstimate && (
+          <div className="store-wait-estimate" role="status">
+            <ClipboardCheck size={22} />
+            <strong>{waitEstimate}</strong>
+          </div>
+        )}
+
+        <button className="primary-action full-width" type="button" onClick={onSubmit} disabled={cartItems.length === 0}>
+          Submit Order
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function AssistanceModal({ selectedLane, onClose }) {
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <div className="modal-panel assistance-modal" role="dialog" aria-modal="true" aria-labelledby="assistance-title" onMouseDown={(event) => event.stopPropagation()}>
+        <CircleHelp size={44} />
+        <div>
+          <div className="eyebrow">Lane {selectedLane} Assistance</div>
+          <h2 id="assistance-title">A range officer will be with you shortly.</h2>
+          <p>Click to cancel</p>
+        </div>
+        <button className="secondary-action full-width" type="button" onClick={onClose}>
+          Cancel Request
         </button>
       </div>
     </div>
@@ -2196,13 +2638,12 @@ function getShotColor(score) {
   return "#ff6b6b";
 }
 
-function LiveScoring({
+function ScoreV1Scoring({
   drill,
   scoreParticipant,
   scoreParticipants,
   visibleShots,
   totalScore,
-  reloadTime,
   shotCount,
   currentRank,
   shotStep,
@@ -2211,36 +2652,45 @@ function LiveScoring({
   onPreviousParticipant,
   onNextParticipant
 }) {
-  const shotLogRef = useRef(null);
-  const playLabel = demoRunning ? "Playing" : shotStep >= 6 ? "Replay Drill" : "Play Drill";
+  const scanComplete = shotStep >= 6;
+  const playLabel = scanComplete ? "Rescan Target" : "Scan Target";
   const canCycleScores = scoreParticipants.length > 1;
 
-  useEffect(() => {
-    const shotLog = shotLogRef.current;
-    if (shotLog) {
-      shotLog.scrollTop = shotLog.scrollHeight;
-    }
-  }, [visibleShots.length, demoRunning]);
-
   return (
-    <section className="scoring-layout fade-in">
-      <div className="panel target-panel">
+    <section className="scoring-layout score-v1-layout fade-in">
+      <div className="panel target-panel score-v1-target-panel">
         <div className="panel-heading">
           <div>
-            <div className="eyebrow">Live Scoring</div>
+            <div className="eyebrow">Score V1</div>
             <h2>
               {drill.name} • {scoreParticipant.player.name}
             </h2>
           </div>
+          <span className="sim-label">{scanComplete ? "Scan Complete" : "Ready to Scan"}</span>
         </div>
 
-        <div className="target-and-feed">
+        <div className="score-v1-instructions">
+          <Camera size={28} />
+          <div>
+            <strong>Game complete.</strong>
+            <span className="score-v1-scan-instruction">Please scan and take a photo of your target.</span>
+          </div>
+        </div>
+
+        <div className={`target-and-feed score-v1-target-feed ${scanComplete ? "is-revealed" : ""}`}>
           <TargetDiagram visibleShots={visibleShots} />
+          {!scanComplete && (
+            <div className="score-v1-target-mask" aria-hidden="true">
+              <FakeQrCode />
+              <strong>Awaiting target photo</strong>
+              <span>Scan to open target capture.</span>
+            </div>
+          )}
         </div>
 
         <div className="scoring-control-row">
-          <button className="secondary-action scoring-play-button" type="button" onClick={onPlay} disabled={demoRunning}>
-            <Play size={20} />
+          <button className="primary-action scoring-play-button" type="button" onClick={onPlay} disabled={demoRunning}>
+            <Camera size={20} />
             {playLabel}
           </button>
           <div className="score-view-switcher" aria-label="Group score viewer">
@@ -2258,56 +2708,45 @@ function LiveScoring({
         </div>
       </div>
 
-      <div className="panel live-stats-panel shot-log-panel">
-        <div className="panel-heading shot-log-heading">
+      <div className="panel live-stats-panel score-v1-summary-panel">
+        <div className="panel-heading">
           <div>
-            <div className="eyebrow">Shot Log</div>
-            <h2>{shotCount}/6 fired</h2>
+            <div className="eyebrow">Scan Summary</div>
+            <h2>{scanComplete ? `${shotCount}/6 holes found` : "Awaiting target photo"}</h2>
           </div>
           <div className="shot-log-score">
             <span>Total</span>
-            <strong>{totalScore}</strong>
+            <strong>{scanComplete ? totalScore : "--"}</strong>
           </div>
         </div>
 
-        <div className="shot-log-list" ref={shotLogRef} aria-label="Shot timing and points">
-          {visibleShots.length === 0 && (
-            <div className="shot-log-empty">
-              <Play size={26} />
-              <strong>Press Play Drill</strong>
-              <span>Six shots will score in two 3-shot strings.</span>
-            </div>
-          )}
-
-          {visibleShots.map((shot) => (
-            <React.Fragment key={shot.id}>
-              {shot.id === 4 && (
-                <div className="reload-row">
-                  <Timer size={16} />
-                  <span>Reload</span>
-                  <strong>{(shot.elapsedSeconds - visibleShots[2].elapsedSeconds).toFixed(2)} s</strong>
-                </div>
-              )}
-              <div className="shot-log-row">
-                <span>Shot {shot.id}</span>
-                <strong>{shot.firedAt}</strong>
-                <b style={{ color: getShotColor(shot.score) }}>{shot.score} pts</b>
-              </div>
-            </React.Fragment>
-          ))}
-
-          {demoRunning && visibleShots.length === 3 && (
-            <div className="reload-row is-active">
-              <Timer size={16} />
-              <span>Reloading</span>
-              <strong>Timing split</strong>
-            </div>
-          )}
+        <div className="score-v1-scan-card">
+          <Target size={30} />
+          <strong>{scanComplete ? "All holes loaded at once." : "Ready for target scan."}</strong>
+          <span>
+            {scanComplete
+              ? "The target photo has been processed and the graphic now shows every detected hole together."
+              : "When the target is scanned, Score V1 reveals the full target result in one step."}
+          </span>
         </div>
 
-        <ResultMetrics totalScore={totalScore} reloadTime={reloadTime} currentRank={currentRank} className="shot-log-summary" />
+        <ResultMetrics totalScore={scanComplete ? totalScore : "--"} currentRank={currentRank} className="shot-log-summary score-v1-metrics" />
       </div>
     </section>
+  );
+}
+
+function FakeQrCode() {
+  return (
+    <svg className="score-v1-fake-qr" viewBox="0 0 29 29" aria-hidden="true" focusable="false">
+      <rect width="29" height="29" rx="2" fill="#ffffff" />
+      <path fill="#0060A6" d="M3 3h7v7H3zM19 3h7v7h-7zM3 19h7v7H3z" />
+      <path fill="#ffffff" d="M5 5h3v3H5zM21 5h3v3h-3zM5 21h3v3H5z" />
+      <path
+        fill="#0060A6"
+        d="M12 3h2v2h-2zM15 4h2v2h-2zM12 7h1v2h-1zM15 8h3v2h-3zM12 12h3v3h-3zM16 12h2v1h-2zM20 12h2v2h-2zM24 12h2v3h-2zM3 12h2v2H3zM7 12h2v1H7zM10 13h1v3h-1zM18 15h3v2h-3zM23 17h3v2h-3zM12 18h2v2h-2zM15 18h1v3h-1zM18 20h2v2h-2zM21 21h2v1h-2zM24 22h2v4h-2zM12 23h3v3h-3zM16 24h2v2h-2zM20 24h2v2h-2z"
+      />
+    </svg>
   );
 }
 
@@ -2347,7 +2786,7 @@ function TargetDiagram({ visibleShots }) {
   );
 }
 
-function ResultsScreen({ player, drill, totalScore, reloadTime, currentRank, onShare, onProfile, onDone }) {
+function ResultsScreen({ player, drill, totalScore, currentRank, onShare, onProfile, onDone }) {
   const finalScore = totalScore;
 
   return (
@@ -2375,7 +2814,7 @@ function ResultsScreen({ player, drill, totalScore, reloadTime, currentRank, onS
       </div>
 
       <div className="panel results-summary-panel">
-        <ResultMetrics totalScore={finalScore} reloadTime={reloadTime} currentRank={currentRank} />
+        <ResultMetrics totalScore={finalScore} currentRank={currentRank} />
 
         <div className="badge-unlocked">
           <BadgeCheck size={28} />

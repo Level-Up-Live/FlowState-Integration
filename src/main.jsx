@@ -525,6 +525,75 @@ const recentDrills = [
   { name: "Slow Fire Precision", score: 472, date: "Jul 2, 2026", accuracy: "94%" }
 ];
 
+const leaguePlayerPool = [
+  "Alex Carter",
+  "Jordan Lee",
+  "Sam Rivera",
+  "Morgan Blake",
+  "Taylor Reed",
+  "Riley Chen",
+  "Casey Brooks",
+  "Nina Patel",
+  "Drew Mason",
+  "Avery Collins",
+  "Chris Vega",
+  "Parker Stone",
+  "Jamie Ellis",
+  "Logan Price",
+  "Mia Foster",
+  "Noah Bennett",
+  "Harper Quinn",
+  "Evan Brooks",
+  "Dana Wright",
+  "Owen Pierce",
+  "Maya Long",
+  "Tyler Knox",
+  "Quinn Adams",
+  "Reese Walker"
+];
+
+const leagueDrillPool = [
+  "League Qualifier",
+  "Triples",
+  "Dot Grid Warmup",
+  "Precision Builder",
+  "Steel Challenge Sprint",
+  "Plate Rack",
+  "Bill Drill",
+  "Accelerator",
+  "Slow Fire Precision",
+  "One Hole Drill",
+  "Draw to First Hit",
+  "Reload Ready",
+  "Target Transitions",
+  "Failure to Stop"
+];
+
+const leagueTrendCycle = ["up", "same", "down", "up", "same"];
+
+function buildLeagueStandings(seed, baseScore, step, drillOffset = 0) {
+  return Array.from({ length: 20 }, (_, index) => {
+    const trend = leagueTrendCycle[(seed + index) % leagueTrendCycle.length];
+    const changeAmount = ((seed + index) % 3) + 1;
+
+    return {
+      rank: index + 1,
+      change: trend === "same" ? "0" : trend === "down" ? `-${changeAmount}` : `+${changeAmount}`,
+      player: leaguePlayerPool[(seed + index) % leaguePlayerPool.length],
+      score: baseScore - index * step - ((seed + index * 7) % 13),
+      lastDrill: leagueDrillPool[(drillOffset + index) % leagueDrillPool.length],
+      date: `Jul ${Math.max(1, 10 - (index % 9))}, 2026`,
+      trend
+    };
+  });
+}
+
+const leaguePrizePool = [
+  { place: "1st", amount: "$150", award: "Range credit" },
+  { place: "2nd", amount: "$75", award: "Pro shop" },
+  { place: "3rd", amount: "$25", award: "Lane pass" }
+];
+
 const leagues = [
   {
     id: "summer",
@@ -533,55 +602,10 @@ const leagues = [
     format: "4-week pistol league",
     schedule: "Tuesdays at 6:30 PM",
     registration: "Registration open",
-    spots: "8 spots left",
+    registrationFee: "$45",
+    spots: "8 players left",
     description: "Weekly scored course with Level Up Live standings after every completed run.",
-    standings: [
-      {
-        rank: 1,
-        change: "+1",
-        player: "Sam Rivera",
-        score: 1928,
-        lastDrill: "League Qualifier",
-        date: "Jul 8, 2026",
-        trend: "up"
-      },
-      {
-        rank: 2,
-        change: "-1",
-        player: "Alex Carter",
-        score: 1904,
-        lastDrill: "Triples",
-        date: "Jul 8, 2026",
-        trend: "down"
-      },
-      {
-        rank: 3,
-        change: "+2",
-        player: "Jordan Lee",
-        score: 1852,
-        lastDrill: "Dot Grid Warmup",
-        date: "Jul 7, 2026",
-        trend: "up"
-      },
-      {
-        rank: 4,
-        change: "0",
-        player: "Morgan Blake",
-        score: 1779,
-        lastDrill: "Precision Builder",
-        date: "Jul 6, 2026",
-        trend: "same"
-      },
-      {
-        rank: 5,
-        change: "+3",
-        player: "Taylor Reed",
-        score: 1714,
-        lastDrill: "Steel Challenge Sprint",
-        date: "Jul 5, 2026",
-        trend: "up"
-      }
-    ]
+    standings: buildLeagueStandings(2, 1928, 31, 0)
   },
   {
     id: "steel-sprint",
@@ -590,46 +614,10 @@ const leagues = [
     format: "Timed steel strings",
     schedule: "Wednesdays at 7:00 PM",
     registration: "Registration open",
-    spots: "5 spots left",
+    registrationFee: "$45",
+    spots: "5 players left",
     description: "Speed-focused standings built from clean hits, transitions, and stage time.",
-    standings: [
-      {
-        rank: 1,
-        change: "+2",
-        player: "Alex Carter",
-        score: 884,
-        lastDrill: "Steel Challenge Sprint",
-        date: "Jul 9, 2026",
-        trend: "up"
-      },
-      {
-        rank: 2,
-        change: "0",
-        player: "Taylor Reed",
-        score: 861,
-        lastDrill: "Plate Rack",
-        date: "Jul 9, 2026",
-        trend: "same"
-      },
-      {
-        rank: 3,
-        change: "-1",
-        player: "Sam Rivera",
-        score: 844,
-        lastDrill: "Bill Drill",
-        date: "Jul 8, 2026",
-        trend: "down"
-      },
-      {
-        rank: 4,
-        change: "+1",
-        player: "Morgan Blake",
-        score: 821,
-        lastDrill: "Accelerator",
-        date: "Jul 8, 2026",
-        trend: "up"
-      }
-    ]
+    standings: buildLeagueStandings(0, 884, 12, 4)
   },
   {
     id: "precision",
@@ -638,46 +626,10 @@ const leagues = [
     format: "Accuracy and consistency",
     schedule: "Thursdays at 6:00 PM",
     registration: "Registration open",
-    spots: "12 spots left",
+    registrationFee: "$50",
+    spots: "12 players left",
     description: "A measured league for slow-fire accuracy, grouping, and repeatable performance.",
-    standings: [
-      {
-        rank: 1,
-        change: "0",
-        player: "Jordan Lee",
-        score: 1476,
-        lastDrill: "Slow Fire Precision",
-        date: "Jul 9, 2026",
-        trend: "same"
-      },
-      {
-        rank: 2,
-        change: "+1",
-        player: "Sam Rivera",
-        score: 1452,
-        lastDrill: "Dot Grid Warmup",
-        date: "Jul 8, 2026",
-        trend: "up"
-      },
-      {
-        rank: 3,
-        change: "-1",
-        player: "Alex Carter",
-        score: 1439,
-        lastDrill: "Precision Builder",
-        date: "Jul 8, 2026",
-        trend: "down"
-      },
-      {
-        rank: 4,
-        change: "+2",
-        player: "Riley Chen",
-        score: 1398,
-        lastDrill: "One Hole Drill",
-        date: "Jul 7, 2026",
-        trend: "up"
-      }
-    ]
+    standings: buildLeagueStandings(1, 1476, 18, 8)
   },
   {
     id: "carry",
@@ -686,46 +638,58 @@ const leagues = [
     format: "Practical defensive stages",
     schedule: "Saturdays at 10:00 AM",
     registration: "New session forming",
-    spots: "16 spots left",
+    registrationFee: "$45",
+    spots: "16 players left",
     description: "Practical skill stages with scoring for accuracy, decisions, and controlled speed.",
-    standings: [
-      {
-        rank: 1,
-        change: "+1",
-        player: "Morgan Blake",
-        score: 1218,
-        lastDrill: "Draw to First Hit",
-        date: "Jul 6, 2026",
-        trend: "up"
-      },
-      {
-        rank: 2,
-        change: "-1",
-        player: "Taylor Reed",
-        score: 1195,
-        lastDrill: "Failure to Stop",
-        date: "Jul 6, 2026",
-        trend: "down"
-      },
-      {
-        rank: 3,
-        change: "+3",
-        player: "Alex Carter",
-        score: 1172,
-        lastDrill: "Reload Ready",
-        date: "Jul 5, 2026",
-        trend: "up"
-      },
-      {
-        rank: 4,
-        change: "0",
-        player: "Jordan Lee",
-        score: 1164,
-        lastDrill: "Target Transitions",
-        date: "Jul 5, 2026",
-        trend: "same"
-      }
-    ]
+    standings: buildLeagueStandings(3, 1218, 14, 10)
+  },
+  {
+    id: "rimfire",
+    name: "Rimfire Challenge League",
+    shortName: "Rimfire Challenge",
+    format: "Low recoil speed stages",
+    schedule: "Mondays at 5:30 PM",
+    registration: "Registration open",
+    registrationFee: "$35",
+    spots: "10 players left",
+    description: "A low-recoil format focused on transitions, cadence, and clean target hits.",
+    standings: buildLeagueStandings(5, 1088, 11, 5)
+  },
+  {
+    id: "ladies-night",
+    name: "Ladies Night League",
+    shortName: "Ladies Night",
+    format: "Skill-building league",
+    schedule: "Fridays at 6:30 PM",
+    registration: "Registration open",
+    registrationFee: "$40",
+    spots: "7 players left",
+    description: "Friendly weekly standings built around confidence, accuracy, and repeatable reps.",
+    standings: buildLeagueStandings(7, 1320, 16, 2)
+  },
+  {
+    id: "action-pistol",
+    name: "Action Pistol League",
+    shortName: "Action Pistol",
+    format: "Movement and transitions",
+    schedule: "Sundays at 11:00 AM",
+    registration: "New session forming",
+    registrationFee: "$50",
+    spots: "9 players left",
+    description: "Dynamic stages with movement, target order, reloads, and scored transitions.",
+    standings: buildLeagueStandings(9, 1764, 22, 12)
+  },
+  {
+    id: "youth",
+    name: "Youth Marksmanship League",
+    shortName: "Youth League",
+    format: "Coached fundamentals",
+    schedule: "Sundays at 2:00 PM",
+    registration: "Registration open",
+    registrationFee: "$25",
+    spots: "14 players left",
+    description: "Coached fundamentals with short stages, safe handling, and steady scoring.",
+    standings: buildLeagueStandings(11, 940, 10, 1)
   }
 ];
 
@@ -1190,7 +1154,6 @@ function App() {
       )}
 
       {toast && <Toast key={toast.id} message={toast.message} />}
-      <PoweredByLevelUpBadge />
 
       <div className="orientation-notice" role="status" aria-live="polite">
         <MonitorPlay size={42} />
@@ -1241,6 +1204,7 @@ function Header({ axisLaneTimer, onTimerClick, selectedLane }) {
           <img className="topbar-action-logo" src={actionTargetLogoSrc} alt="Action Target logo" />
         </div>
       </div>
+      <PoweredByLevelUpBadge className="topbar-powered-by" />
       <button className="session-strip timer-strip" type="button" onClick={onTimerClick}>
         <Timer size={22} />
         <div>
@@ -2279,10 +2243,6 @@ function LiveScoring({
             <Play size={20} />
             {playLabel}
           </button>
-          <div>
-            <span>Reload Time</span>
-            <strong>{reloadTime}</strong>
-          </div>
           <div className="score-view-switcher" aria-label="Group score viewer">
             <button type="button" className="score-cycle-button" onClick={onPreviousParticipant} disabled={!canCycleScores} aria-label="Show previous group score">
               <ChevronLeft size={24} />
@@ -2528,7 +2488,6 @@ function PlayerProfile({ player }) {
 function LeagueScreen({ onSignup }) {
   const [selectedLeagueId, setSelectedLeagueId] = useState(leagues[0].id);
   const selectedLeague = leagues.find((league) => league.id === selectedLeagueId) ?? leagues[0];
-  const leader = selectedLeague.standings[0];
 
   return (
     <section className="fade-in">
@@ -2557,16 +2516,31 @@ function LeagueScreen({ onSignup }) {
                   <span className="league-choice-kicker">{league.shortName}</span>
                   <strong>{league.schedule}</strong>
                   <small>{league.spots}</small>
-                  <span className="league-choice-action">
-                    {isSelected ? <Check size={16} /> : <ChevronRight size={16} />}
-                    {isSelected ? "Selected" : "View Standings"}
-                  </span>
                 </button>
               );
             })}
           </div>
+        </div>
 
-          <div className="league-summary">
+        <div className="panel league-table-panel">
+          <div className="panel-heading league-standings-head">
+            <div>
+              <div className="eyebrow">{selectedLeague.shortName}</div>
+              <h2>Standings</h2>
+            </div>
+            <div className="league-standings-actions">
+              <span className="league-fee-pill">
+                <span>Registration Fee</span>
+                <strong>{selectedLeague.registrationFee}</strong>
+              </span>
+              <button className="primary-action league-signup-compact" type="button" onClick={() => onSignup(selectedLeague)}>
+                <UsersRound size={18} />
+                <span>Sign Up</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="league-detail-bar">
             <div>
               <span>Format</span>
               <strong>{selectedLeague.format}</strong>
@@ -2576,37 +2550,28 @@ function LeagueScreen({ onSignup }) {
               <strong>{selectedLeague.schedule}</strong>
             </div>
             <div>
-              <span>Status</span>
-              <strong>{selectedLeague.registration}</strong>
-            </div>
-            <div>
-              <span>Availability</span>
+              <span>Players Left</span>
               <strong>{selectedLeague.spots}</strong>
             </div>
           </div>
 
-          <div className="league-callout">
-            <div>
-              <span>Current Leader</span>
-              <strong>{leader.player}</strong>
-              <small>{leader.score.toLocaleString()} points</small>
+          <div className="league-story-strip">
+            <div className="league-description-card">
+              <span>About</span>
+              <p>{selectedLeague.description}</p>
             </div>
-            <p>{selectedLeague.description}</p>
-          </div>
-
-          <button className="primary-action full-width" type="button" onClick={() => onSignup(selectedLeague)}>
-            <UsersRound size={20} />
-            Sign Up for This League
-          </button>
-        </div>
-
-        <div className="panel league-table-panel">
-          <div className="panel-heading league-standings-head">
-            <div>
-              <div className="eyebrow">{selectedLeague.shortName}</div>
-              <h2>Standings</h2>
+            <div className="league-prize-card">
+              <span>Prize Pool</span>
+              <div className="league-prize-list">
+                {leaguePrizePool.map((prize) => (
+                  <div key={prize.place}>
+                    <strong>{prize.place}</strong>
+                    <b>{prize.amount}</b>
+                    <small>{prize.award}</small>
+                  </div>
+                ))}
+              </div>
             </div>
-            <span className="league-status-pill">{selectedLeague.registration}</span>
           </div>
 
           <div className="league-table">
@@ -2614,20 +2579,20 @@ function LeagueScreen({ onSignup }) {
               <span>Rank</span>
               <span>Player</span>
               <span>Score</span>
-              <span>Date</span>
               <span>Drill</span>
               <span>Change</span>
             </div>
-            {selectedLeague.standings.map((row) => (
-              <div key={row.player} className="league-row">
-                <span>#{row.rank}</span>
-                <strong>{row.player}</strong>
-                <span>{row.score.toLocaleString()}</span>
-                <span>{row.date}</span>
-                <span>{row.lastDrill}</span>
-                <span className={`trend trend-${row.trend}`}>{row.change}</span>
-              </div>
-            ))}
+            <div className="league-roster-scroll">
+              {selectedLeague.standings.map((row) => (
+                <div key={row.player} className="league-row">
+                  <span>#{row.rank}</span>
+                  <strong>{row.player}</strong>
+                  <span>{row.score.toLocaleString()}</span>
+                  <span>{row.lastDrill}</span>
+                  <span className={`trend trend-${row.trend}`}>{row.change}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

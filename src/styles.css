@@ -8,10 +8,10 @@
   --panel: rgba(11, 20, 34, 0.88);
   --panel-strong: rgba(13, 27, 46, 0.96);
   --border: rgba(196, 229, 255, 0.16);
-  --border-strong: rgba(50, 167, 255, 0.4);
+  --border-strong: rgba(0, 96, 166, 0.4);
   --text-muted: #9cb0c8;
-  --blue: #32a7ff;
-  --green: #25f46d;
+  --blue: #0060A6;
+  --green: #0060A6;
   --yellow: #fbf35d;
   --pink: #ff7bc6;
   --danger: #ff5f6d;
@@ -28,8 +28,8 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at 22% -10%, rgba(37, 244, 109, 0.18), transparent 34rem),
-    radial-gradient(circle at 90% 8%, rgba(50, 167, 255, 0.24), transparent 34rem),
+    radial-gradient(circle at 22% -10%, rgba(0, 96, 166, 0.18), transparent 34rem),
+    radial-gradient(circle at 90% 8%, rgba(0, 96, 166, 0.24), transparent 34rem),
     linear-gradient(135deg, #050913 0%, #07111d 42%, #040812 100%);
 }
 
@@ -76,7 +76,7 @@ button {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 46%, rgba(37, 244, 109, 0.18), transparent 28%),
+    radial-gradient(circle at 50% 46%, rgba(0, 96, 166, 0.18), transparent 28%),
     linear-gradient(135deg, rgba(2, 8, 18, 0.72), rgba(3, 14, 27, 0.54));
 }
 
@@ -139,11 +139,11 @@ button {
 
 .timeout-actions button {
   min-height: 86px;
-  border: 1px solid rgba(37, 244, 109, 0.44);
+  border: 1px solid rgba(0, 96, 166, 0.44);
   border-radius: 8px;
   color: #05111d;
-  background: linear-gradient(135deg, var(--green), #8affac);
-  box-shadow: 0 20px 44px rgba(37, 244, 109, 0.22);
+  background: linear-gradient(135deg, var(--green), #d9ecff);
+  box-shadow: 0 20px 44px rgba(0, 96, 166, 0.22);
   font-size: 1.08rem;
   font-weight: 1000;
 }
@@ -227,9 +227,9 @@ button {
   place-items: center;
   border-radius: 8px;
   color: #03100a;
-  border: 1px solid rgba(37, 244, 109, 0.36);
+  border: 1px solid rgba(0, 96, 166, 0.36);
   background: rgba(5, 13, 24, 0.88);
-  box-shadow: 0 0 32px rgba(37, 244, 109, 0.26);
+  box-shadow: 0 0 32px rgba(0, 96, 166, 0.26);
   overflow: hidden;
 }
 
@@ -294,8 +294,8 @@ button {
 
 .nav-item:hover,
 .nav-item.is-active {
-  border-color: rgba(37, 244, 109, 0.34);
-  background: linear-gradient(90deg, rgba(37, 244, 109, 0.16), rgba(50, 167, 255, 0.09));
+  border-color: rgba(0, 96, 166, 0.34);
+  background: linear-gradient(90deg, rgba(0, 96, 166, 0.16), rgba(0, 96, 166, 0.09));
   color: #ffffff;
 }
 
@@ -382,17 +382,17 @@ button {
   gap: 7px;
   min-height: 30px;
   padding: 0 10px;
-  border: 1px solid rgba(50, 167, 255, 0.22);
+  border: 1px solid rgba(0, 96, 166, 0.22);
   border-radius: 999px;
-  background: rgba(50, 167, 255, 0.09);
+  background: rgba(0, 96, 166, 0.09);
   color: #d7efff;
   font-size: 0.78rem;
   font-weight: 700;
 }
 
 .sim-label {
-  border-color: rgba(37, 244, 109, 0.24);
-  background: rgba(37, 244, 109, 0.1);
+  border-color: rgba(0, 96, 166, 0.24);
+  background: rgba(0, 96, 166, 0.1);
   color: #d8ffe5;
 }
 
@@ -441,7 +441,7 @@ button {
 
 .panel-hero {
   background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.07), rgba(50, 167, 255, 0.08)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.07), rgba(0, 96, 166, 0.08)),
     var(--panel-strong);
 }
 
@@ -507,8 +507,8 @@ button {
 .lane-tile.is-selected,
 .device-row:hover,
 .device-row.is-connected {
-  border-color: rgba(37, 244, 109, 0.42);
-  background: rgba(37, 244, 109, 0.1);
+  border-color: rgba(0, 96, 166, 0.42);
+  background: rgba(0, 96, 166, 0.1);
 }
 
 .customer-option small,
@@ -614,7 +614,7 @@ button {
 
 .sync-node.is-complete {
   color: var(--green);
-  border-color: rgba(37, 244, 109, 0.55);
+  border-color: rgba(0, 96, 166, 0.55);
 }
 
 .sync-node.is-live {
@@ -631,18 +631,18 @@ button {
   gap: 10px;
   min-height: 58px;
   padding: 0 20px;
-  border: 1px solid rgba(37, 244, 109, 0.35);
+  border: 1px solid rgba(0, 96, 166, 0.35);
   border-radius: 8px;
   color: #03100a;
-  background: linear-gradient(135deg, var(--green), #8affac);
+  background: linear-gradient(135deg, var(--green), #d9ecff);
   font-weight: 900;
-  box-shadow: 0 10px 34px rgba(37, 244, 109, 0.18);
+  box-shadow: 0 10px 34px rgba(0, 96, 166, 0.18);
 }
 
 .secondary-action {
   color: #eaf6ff;
-  border-color: rgba(50, 167, 255, 0.32);
-  background: rgba(50, 167, 255, 0.12);
+  border-color: rgba(0, 96, 166, 0.32);
+  background: rgba(0, 96, 166, 0.12);
   box-shadow: none;
 }
 
@@ -685,7 +685,7 @@ button {
   flex-direction: column;
   justify-content: space-between;
   background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.12), rgba(50, 167, 255, 0.12)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.12), rgba(0, 96, 166, 0.12)),
     #07111e;
 }
 
@@ -709,7 +709,7 @@ button {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, transparent, rgba(37, 244, 109, 0.1), transparent);
+  background: linear-gradient(180deg, transparent, rgba(0, 96, 166, 0.1), transparent);
   animation: scan 5s linear infinite;
 }
 
@@ -743,8 +743,8 @@ button {
 
 .player-switch-button:hover,
 .player-switch-button:focus-visible {
-  border-color: rgba(50, 167, 255, 0.34);
-  background: rgba(50, 167, 255, 0.08);
+  border-color: rgba(0, 96, 166, 0.34);
+  background: rgba(0, 96, 166, 0.08);
 }
 
 .player-switch-button h2,
@@ -758,10 +758,10 @@ button {
   gap: 8px;
   min-height: 34px;
   padding: 6px 10px;
-  border: 1px solid rgba(37, 244, 109, 0.24);
+  border: 1px solid rgba(0, 96, 166, 0.24);
   border-radius: 8px;
   color: #dfffea;
-  background: rgba(37, 244, 109, 0.1);
+  background: rgba(0, 96, 166, 0.1);
   font-size: 0.78rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -779,9 +779,9 @@ button {
   height: 132px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(37, 244, 109, 0.35);
+  border: 1px solid rgba(0, 96, 166, 0.35);
   border-radius: 8px;
-  background: rgba(37, 244, 109, 0.1);
+  background: rgba(0, 96, 166, 0.1);
 }
 
 .lane-number span,
@@ -810,7 +810,7 @@ button {
   border-radius: 8px;
   color: #ffffff;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--avatar-accent), #03100a 30%), rgba(50, 167, 255, 0.3)),
+    linear-gradient(135deg, color-mix(in srgb, var(--avatar-accent), #03100a 30%), rgba(0, 96, 166, 0.3)),
     rgba(255, 255, 255, 0.08);
   font-size: 2.1rem;
   font-weight: 1000;
@@ -882,16 +882,16 @@ button {
   min-height: 82px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(50, 167, 255, 0.32);
+  border: 1px solid rgba(0, 96, 166, 0.32);
   border-radius: 8px;
   color: #eaf6ff;
   background:
-    linear-gradient(135deg, rgba(50, 167, 255, 0.14), rgba(255, 255, 255, 0.035)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.14), rgba(255, 255, 255, 0.035)),
     rgba(5, 13, 24, 0.56);
 }
 
 .lane-icon-action.is-program {
-  border-color: rgba(37, 244, 109, 0.38);
+  border-color: rgba(0, 96, 166, 0.38);
 }
 
 .lane-icon-action.is-program svg {
@@ -903,15 +903,15 @@ button {
 }
 
 .lane-icon-action.is-connected {
-  border-color: rgba(37, 244, 109, 0.5);
+  border-color: rgba(0, 96, 166, 0.5);
   background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.16), rgba(50, 167, 255, 0.1)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.16), rgba(0, 96, 166, 0.1)),
     rgba(5, 13, 24, 0.62);
 }
 
 .lane-icon-action:hover,
 .lane-icon-action:focus-visible {
-  border-color: rgba(37, 244, 109, 0.58);
+  border-color: rgba(0, 96, 166, 0.58);
   transform: translateY(-1px);
 }
 
@@ -937,15 +937,15 @@ button {
 
 .metric-button:hover,
 .metric-button:focus-visible {
-  border-color: rgba(37, 244, 109, 0.42);
-  background: rgba(37, 244, 109, 0.1);
+  border-color: rgba(0, 96, 166, 0.42);
+  background: rgba(0, 96, 166, 0.1);
 }
 
 .program-card {
-  border-color: rgba(37, 244, 109, 0.34);
+  border-color: rgba(0, 96, 166, 0.34);
   color: inherit;
   background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.18), rgba(50, 167, 255, 0.1)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.18), rgba(0, 96, 166, 0.1)),
     rgba(255, 255, 255, 0.045);
   text-align: left;
 }
@@ -988,8 +988,8 @@ button {
 
 .achievement-badge {
   min-height: 38px;
-  border-color: rgba(37, 244, 109, 0.3);
-  background: rgba(37, 244, 109, 0.1);
+  border-color: rgba(0, 96, 166, 0.3);
+  background: rgba(0, 96, 166, 0.1);
 }
 
 .hero-actions {
@@ -1006,10 +1006,10 @@ button {
   align-items: center;
   gap: 16px;
   padding: 14px;
-  border: 1px solid rgba(37, 244, 109, 0.28);
+  border: 1px solid rgba(0, 96, 166, 0.28);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.14), rgba(50, 167, 255, 0.12)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.14), rgba(0, 96, 166, 0.12)),
     rgba(6, 17, 31, 0.72);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
@@ -1062,12 +1062,12 @@ button {
   justify-content: center;
   gap: 8px;
   padding: 0 22px;
-  border-color: rgba(50, 167, 255, 0.38);
+  border-color: rgba(0, 96, 166, 0.38);
   border-radius: 8px;
   color: #eaf6ff;
   background:
-    linear-gradient(135deg, rgba(50, 167, 255, 0.18), rgba(37, 244, 109, 0.08)),
-    rgba(50, 167, 255, 0.12);
+    linear-gradient(135deg, rgba(0, 96, 166, 0.18), rgba(0, 96, 166, 0.08)),
+    rgba(0, 96, 166, 0.12);
   font-size: 0.94rem;
   font-weight: 900;
 }
@@ -1127,24 +1127,24 @@ button {
   border-radius: 8px;
   color: #f7fbff;
   background:
-    linear-gradient(135deg, rgba(50, 167, 255, 0.1), rgba(255, 255, 255, 0.035)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.1), rgba(255, 255, 255, 0.035)),
     rgba(255, 255, 255, 0.035);
   text-align: left;
 }
 
 .player-switch-card:hover,
 .player-switch-card:focus-visible {
-  border-color: rgba(50, 167, 255, 0.52);
+  border-color: rgba(0, 96, 166, 0.52);
   background:
-    linear-gradient(135deg, rgba(50, 167, 255, 0.18), rgba(37, 244, 109, 0.08)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.18), rgba(0, 96, 166, 0.08)),
     rgba(255, 255, 255, 0.055);
 }
 
 .player-switch-card.is-active {
-  border-color: rgba(37, 244, 109, 0.62);
+  border-color: rgba(0, 96, 166, 0.62);
   background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.16), rgba(50, 167, 255, 0.1)),
-    rgba(37, 244, 109, 0.08);
+    linear-gradient(135deg, rgba(0, 96, 166, 0.16), rgba(0, 96, 166, 0.1)),
+    rgba(0, 96, 166, 0.08);
 }
 
 .player-switch-card > div {
@@ -1185,7 +1185,7 @@ button {
 }
 
 .player-switch-card.is-active small {
-  border-color: rgba(37, 244, 109, 0.34);
+  border-color: rgba(0, 96, 166, 0.34);
   color: #102016;
   background: var(--green);
 }
@@ -1208,7 +1208,7 @@ button {
   border: 1px solid rgba(196, 229, 255, 0.14);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(50, 167, 255, 0.08), rgba(255, 255, 255, 0.035)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.08), rgba(255, 255, 255, 0.035)),
     rgba(255, 255, 255, 0.035);
 }
 
@@ -1218,8 +1218,8 @@ button {
 }
 
 .invite-lane-card.is-accepted {
-  border-color: rgba(37, 244, 109, 0.48);
-  background: rgba(37, 244, 109, 0.1);
+  border-color: rgba(0, 96, 166, 0.48);
+  background: rgba(0, 96, 166, 0.1);
 }
 
 .invite-lane-card.is-declined,
@@ -1312,9 +1312,9 @@ button {
 }
 
 .accept-button {
-  border-color: rgba(37, 244, 109, 0.46);
+  border-color: rgba(0, 96, 166, 0.46);
   color: #06111f;
-  background: linear-gradient(135deg, var(--green), #8affac);
+  background: linear-gradient(135deg, var(--green), #d9ecff);
 }
 
 .decline-button {
@@ -1367,7 +1367,7 @@ button {
   border: 1px solid var(--border);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(50, 167, 255, 0.05)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(0, 96, 166, 0.05)),
     var(--panel);
   transition:
     transform 180ms ease,
@@ -1377,7 +1377,7 @@ button {
 
 .program-tile:hover,
 .program-tile.is-selected {
-  border-color: rgba(37, 244, 109, 0.4);
+  border-color: rgba(0, 96, 166, 0.4);
   transform: translateY(-2px);
 }
 
@@ -1412,10 +1412,10 @@ button {
   align-items: center;
   min-height: 28px;
   padding: 0 9px;
-  border: 1px solid rgba(50, 167, 255, 0.26);
+  border: 1px solid rgba(0, 96, 166, 0.26);
   border-radius: 999px;
   color: #dceeff;
-  background: rgba(50, 167, 255, 0.08);
+  background: rgba(0, 96, 166, 0.08);
   font-size: 0.76rem;
   font-weight: 850;
   line-height: 1;
@@ -1443,10 +1443,10 @@ button {
   gap: 14px;
   margin-bottom: 12px;
   padding: 14px;
-  border: 1px solid rgba(37, 244, 109, 0.34);
+  border: 1px solid rgba(0, 96, 166, 0.34);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.16), rgba(50, 167, 255, 0.1)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.16), rgba(0, 96, 166, 0.1)),
     var(--panel);
 }
 
@@ -1484,15 +1484,15 @@ button {
 
 .program-tabs button {
   min-height: 48px;
-  border: 1px solid rgba(50, 167, 255, 0.24);
+  border: 1px solid rgba(0, 96, 166, 0.24);
   border-radius: 8px;
   color: #dceeff;
-  background: rgba(50, 167, 255, 0.08);
+  background: rgba(0, 96, 166, 0.08);
   font-weight: 900;
 }
 
 .program-tabs button.is-active {
-  border-color: rgba(37, 244, 109, 0.44);
+  border-color: rgba(0, 96, 166, 0.44);
   color: #03100a;
   background: var(--green);
 }
@@ -1550,8 +1550,8 @@ button {
 }
 
 .prompt-line.is-live {
-  border-color: rgba(37, 244, 109, 0.34);
-  background: rgba(37, 244, 109, 0.09);
+  border-color: rgba(0, 96, 166, 0.34);
+  background: rgba(0, 96, 166, 0.09);
 }
 
 .modal-backdrop {
@@ -1627,8 +1627,8 @@ button {
 }
 
 .score-row.is-player {
-  border-color: rgba(37, 244, 109, 0.38);
-  background: rgba(37, 244, 109, 0.09);
+  border-color: rgba(0, 96, 166, 0.38);
+  background: rgba(0, 96, 166, 0.09);
 }
 
 .rank-number {
@@ -1659,7 +1659,7 @@ button {
   max-width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border: 1px solid rgba(50, 167, 255, 0.24);
+  border: 1px solid rgba(0, 96, 166, 0.24);
   border-radius: 8px;
   background: #08111d;
 }
@@ -1683,9 +1683,9 @@ button {
   align-items: center;
   gap: 4px 10px;
   padding: 14px;
-  border: 1px solid rgba(37, 244, 109, 0.32);
+  border: 1px solid rgba(0, 96, 166, 0.32);
   border-radius: 8px;
-  background: rgba(37, 244, 109, 0.09);
+  background: rgba(0, 96, 166, 0.09);
 }
 
 .audio-callout svg {
@@ -1717,10 +1717,10 @@ button {
   gap: 6px;
   min-height: 30px;
   padding: 0 9px;
-  border-color: rgba(50, 167, 255, 0.28);
+  border-color: rgba(0, 96, 166, 0.28);
   border-radius: 8px;
   color: #eaf6ff;
-  background: rgba(50, 167, 255, 0.14);
+  background: rgba(0, 96, 166, 0.14);
   font-size: 0.78rem;
 }
 
@@ -1747,7 +1747,7 @@ button {
 
 .scoring-control-row {
   display: grid;
-  grid-template-columns: minmax(150px, 0.55fr) minmax(140px, 0.45fr) minmax(230px, 0.8fr);
+  grid-template-columns: minmax(150px, 0.55fr) minmax(280px, 1fr);
   align-items: stretch;
   gap: 12px;
   margin-top: 16px;
@@ -1813,10 +1813,10 @@ button {
   place-items: center;
   min-width: 0;
   min-height: 54px;
-  border: 1px solid rgba(50, 167, 255, 0.34);
+  border: 1px solid rgba(0, 96, 166, 0.34);
   border-radius: 8px;
   color: #f7fbff;
-  background: rgba(50, 167, 255, 0.12);
+  background: rgba(0, 96, 166, 0.12);
 }
 
 .score-cycle-button:disabled {
@@ -1826,8 +1826,8 @@ button {
 
 .score-cycle-button:not(:disabled):hover,
 .score-cycle-button:not(:disabled):focus-visible {
-  border-color: rgba(37, 244, 109, 0.55);
-  background: rgba(37, 244, 109, 0.12);
+  border-color: rgba(0, 96, 166, 0.55);
+  background: rgba(0, 96, 166, 0.12);
 }
 
 .shot-log-panel {
@@ -1850,9 +1850,9 @@ button {
 .shot-log-score {
   min-width: 84px;
   padding: 10px 12px;
-  border: 1px solid rgba(37, 244, 109, 0.3);
+  border: 1px solid rgba(0, 96, 166, 0.3);
   border-radius: 8px;
-  background: rgba(37, 244, 109, 0.09);
+  background: rgba(0, 96, 166, 0.09);
   text-align: right;
 }
 
@@ -1878,7 +1878,7 @@ button {
   overflow-y: auto;
   padding-right: 3px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(50, 167, 255, 0.45) rgba(255, 255, 255, 0.05);
+  scrollbar-color: rgba(0, 96, 166, 0.45) rgba(255, 255, 255, 0.05);
 }
 
 .shot-log-row,
@@ -2007,7 +2007,7 @@ button {
 }
 
 .shot-controls button.is-active {
-  border-color: rgba(37, 244, 109, 0.4);
+  border-color: rgba(0, 96, 166, 0.4);
   color: #07111f;
   background: var(--green);
 }
@@ -2026,7 +2026,7 @@ button {
   align-content: center;
   justify-items: start;
   background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.16), rgba(50, 167, 255, 0.11)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.16), rgba(0, 96, 166, 0.11)),
     var(--panel-strong);
 }
 
@@ -2036,10 +2036,10 @@ button {
   display: grid;
   place-items: center;
   margin-bottom: 22px;
-  border: 1px solid rgba(37, 244, 109, 0.36);
+  border: 1px solid rgba(0, 96, 166, 0.36);
   border-radius: 8px;
   color: var(--green);
-  background: rgba(37, 244, 109, 0.11);
+  background: rgba(0, 96, 166, 0.11);
 }
 
 .results-hero h2 {
@@ -2068,9 +2068,9 @@ button {
 .badge-unlocked {
   margin-top: 16px;
   padding: 18px;
-  border: 1px solid rgba(37, 244, 109, 0.32);
+  border: 1px solid rgba(0, 96, 166, 0.32);
   border-radius: 8px;
-  background: rgba(37, 244, 109, 0.09);
+  background: rgba(0, 96, 166, 0.09);
 }
 
 .profile-layout {
@@ -2088,7 +2088,7 @@ button {
   width: 100%;
   height: 12px;
   overflow: hidden;
-  border: 1px solid rgba(37, 244, 109, 0.28);
+  border: 1px solid rgba(0, 96, 166, 0.28);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
 }
@@ -2122,8 +2122,8 @@ button {
 }
 
 .profile-badge.is-earned {
-  border-color: rgba(37, 244, 109, 0.32);
-  background: rgba(37, 244, 109, 0.09);
+  border-color: rgba(0, 96, 166, 0.32);
+  background: rgba(0, 96, 166, 0.09);
 }
 
 .profile-badge svg {
@@ -2155,8 +2155,8 @@ button {
 }
 
 .simple-row.is-highlighted {
-  border-color: rgba(37, 244, 109, 0.32);
-  background: rgba(37, 244, 109, 0.09);
+  border-color: rgba(0, 96, 166, 0.32);
+  background: rgba(0, 96, 166, 0.09);
 }
 
 .section-actions {
@@ -2168,13 +2168,26 @@ button {
 }
 
 .league-layout {
-  grid-template-columns: minmax(320px, 0.42fr) minmax(0, 1fr);
-  align-items: start;
+  grid-template-columns: minmax(270px, 0.3fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.screen-league .content-frame > .fade-in,
+.screen-league .league-layout {
+  height: 100%;
+  min-height: 0;
+}
+
+.screen-league .content-frame {
+  overflow: hidden;
 }
 
 .league-browser-panel {
   display: grid;
-  gap: 14px;
+  align-content: start;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .league-summary span,
@@ -2187,23 +2200,26 @@ button {
 
 .league-picker-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
 }
 
 .league-choice-card {
-  min-height: 154px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 14px;
-  border: 2px solid rgba(50, 167, 255, 0.36);
+  min-height: 61px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "kicker"
+    "schedule"
+    "meta";
+  align-content: center;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 2px solid rgba(0, 96, 166, 0.36);
   border-radius: 8px;
   color: #f7fbff;
   background:
-    linear-gradient(135deg, rgba(50, 167, 255, 0.14), rgba(37, 244, 109, 0.05)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.14), rgba(0, 96, 166, 0.05)),
     var(--panel);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   text-align: left;
@@ -2216,51 +2232,62 @@ button {
 
 .league-choice-card:hover,
 .league-choice-card.is-selected {
-  border-color: rgba(37, 244, 109, 0.78);
-  box-shadow: 0 12px 32px rgba(37, 244, 109, 0.12);
+  border-color: #0060A6;
+  box-shadow: 0 10px 22px rgba(0, 96, 166, 0.16);
   transform: translateY(-2px);
 }
 
 .league-choice-card:focus-visible {
-  outline: 3px solid rgba(37, 244, 109, 0.8);
+  outline: 3px solid rgba(0, 96, 166, 0.8);
   outline-offset: 3px;
 }
 
 .league-choice-card.is-selected {
-  background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.24), rgba(50, 167, 255, 0.12)),
-    var(--panel-strong);
+  background: #0060A6;
 }
 
 .league-choice-kicker {
+  grid-area: kicker;
   color: var(--green);
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 1000;
   text-transform: uppercase;
 }
 
 .league-choice-card strong {
+  grid-area: schedule;
   color: #ffffff;
+  font-size: 0.94rem;
   line-height: 1.16;
+  overflow-wrap: anywhere;
 }
 
 .league-choice-card small {
+  grid-area: meta;
   color: var(--text-muted);
+  font-size: 0.74rem;
+  line-height: 1.18;
   font-weight: 900;
 }
 
+.league-choice-card.is-selected .league-choice-kicker,
+.league-choice-card.is-selected strong,
+.league-choice-card.is-selected small {
+  color: #ffffff;
+}
+
 .league-choice-action {
-  width: 100%;
-  min-height: 36px;
+  grid-area: action;
+  min-width: 86px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 2px;
-  border: 1px solid rgba(37, 244, 109, 0.42);
+  border: 1px solid rgba(0, 96, 166, 0.42);
   border-radius: 8px;
   color: #03100a;
-  background: linear-gradient(135deg, var(--green), #8affac);
+  background: linear-gradient(135deg, var(--green), #d9ecff);
   font-size: 0.82rem;
   font-weight: 1000;
   text-transform: uppercase;
@@ -2268,8 +2295,8 @@ button {
 
 .league-choice-card:not(.is-selected) .league-choice-action {
   color: #eaf6ff;
-  border-color: rgba(50, 167, 255, 0.42);
-  background: rgba(50, 167, 255, 0.14);
+  border-color: rgba(0, 96, 166, 0.42);
+  background: rgba(0, 96, 166, 0.14);
 }
 
 .league-choice-action svg {
@@ -2302,8 +2329,8 @@ button {
 .league-callout {
   display: grid;
   gap: 12px;
-  border-color: rgba(37, 244, 109, 0.3);
-  background: linear-gradient(135deg, rgba(37, 244, 109, 0.1), rgba(50, 167, 255, 0.05));
+  border-color: rgba(0, 96, 166, 0.3);
+  background: linear-gradient(135deg, rgba(0, 96, 166, 0.1), rgba(0, 96, 166, 0.05));
 }
 
 .league-callout p {
@@ -2324,33 +2351,206 @@ button {
   align-items: center;
   min-height: 34px;
   padding: 0 12px;
-  border: 1px solid rgba(37, 244, 109, 0.34);
+  border: 1px solid rgba(0, 96, 166, 0.34);
   border-radius: 999px;
   color: var(--green);
-  background: rgba(37, 244, 109, 0.1);
+  background: rgba(0, 96, 166, 0.1);
   font-size: 0.78rem;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.league-fee-pill {
+  min-height: 52px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 0 16px;
+  border: 1px solid rgba(0, 96, 166, 0.34);
+  border-radius: 8px;
+  background: rgba(0, 96, 166, 0.08);
+  color: #004B82;
+  white-space: nowrap;
+}
+
+.league-fee-pill span {
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.league-fee-pill strong {
+  color: #111827;
+  font-size: 1.08rem;
+  line-height: 1;
 }
 
 .league-standings-head {
   align-items: center;
 }
 
+.league-standings-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.league-signup-compact {
+  position: relative;
+  min-width: 138px;
+  min-height: 64px;
+  flex: 0 0 auto;
+  gap: 0;
+  padding: 0 20px;
+  justify-content: center;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.league-signup-compact svg {
+  position: absolute;
+  left: 18px;
+  flex: 0 0 auto;
+}
+
+.league-signup-compact span {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.league-detail-bar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.league-detail-bar div {
+  min-height: 58px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.league-detail-bar span {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.league-detail-bar strong {
+  color: #ffffff;
+  line-height: 1.18;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.league-story-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 0.88fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.league-description-card,
+.league-prize-card {
+  min-height: 76px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.league-description-card span,
+.league-prize-card > span {
+  color: var(--green);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.league-description-card p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.league-prize-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.league-prize-list div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  padding: 7px 8px;
+  border: 1px solid rgba(0, 96, 166, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 96, 166, 0.08);
+}
+
+.league-prize-list strong {
+  color: var(--green);
+  line-height: 1;
+}
+
+.league-prize-list b {
+  color: #111827;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.league-prize-list small {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .league-table {
-  min-width: 760px;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .league-table-panel {
-  overflow-x: auto;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .league-row {
+  flex: 0 0 auto;
   display: grid;
-  grid-template-columns: 72px minmax(150px, 1fr) 92px 128px minmax(170px, 1fr) 88px;
+  grid-template-columns: 58px minmax(130px, 1fr) 88px minmax(150px, 1fr) 76px;
   align-items: center;
   gap: 12px;
-  min-height: 62px;
+  min-height: 50px;
   padding: 0 12px;
   border-bottom: 1px solid var(--border);
 }
@@ -2360,11 +2560,20 @@ button {
 }
 
 .league-row.table-head {
+  flex: 0 0 auto;
   min-height: 42px;
   color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.league-roster-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 96, 166, 0.45) rgba(0, 96, 166, 0.08);
 }
 
 .trend {
@@ -2379,7 +2588,7 @@ button {
 
 .trend-up {
   color: var(--green);
-  background: rgba(37, 244, 109, 0.11);
+  background: rgba(0, 96, 166, 0.11);
 }
 
 .trend-down {
@@ -2407,7 +2616,7 @@ button {
   max-width: min(420px, calc(100vw - 32px));
   min-height: 52px;
   padding: 12px 14px;
-  border: 1px solid rgba(37, 244, 109, 0.4);
+  border: 1px solid rgba(0, 96, 166, 0.4);
   border-radius: 8px;
   background: rgba(7, 17, 31, 0.96);
   color: #f7fbff;
@@ -2682,8 +2891,8 @@ body {
 }
 
 .nav-item.is-active {
-  border-color: rgba(37, 244, 109, 0.42);
-  background: linear-gradient(180deg, rgba(37, 244, 109, 0.2), rgba(50, 167, 255, 0.09));
+  border-color: rgba(0, 96, 166, 0.42);
+  background: linear-gradient(180deg, rgba(0, 96, 166, 0.2), rgba(0, 96, 166, 0.09));
   box-shadow: inset 3px 0 0 var(--green);
 }
 
@@ -3117,12 +3326,12 @@ body {
 }
 
 .league-layout {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(250px, 0.3fr) minmax(0, 1fr);
 }
 
 .league-row {
-  min-height: 54px;
-  grid-template-columns: 58px minmax(130px, 1fr) 78px 104px minmax(148px, 1fr) 70px;
+  min-height: 50px;
+  grid-template-columns: 52px minmax(118px, 1fr) 74px minmax(132px, 1fr) 64px;
 }
 
 .toast {
@@ -3149,7 +3358,7 @@ body {
   gap: 10px;
   margin: 4px 0 8px;
   padding: 10px;
-  border: 1px solid rgba(50, 167, 255, 0.24);
+  border: 1px solid rgba(0, 96, 166, 0.24);
   border-radius: 8px;
   background: rgba(5, 13, 24, 0.42);
 }
@@ -3228,7 +3437,7 @@ body {
   border: 1px solid rgba(196, 229, 255, 0.14);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(50, 167, 255, 0.11), rgba(37, 244, 109, 0.06)),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.11), rgba(0, 96, 166, 0.06)),
     rgba(255, 255, 255, 0.035);
   text-align: center;
 }
@@ -3261,10 +3470,10 @@ body {
   align-items: center;
   justify-content: center;
   gap: 7px;
-  border: 1px solid rgba(50, 167, 255, 0.28);
+  border: 1px solid rgba(0, 96, 166, 0.28);
   border-radius: 8px;
   color: #eaf6ff;
-  background: rgba(50, 167, 255, 0.1);
+  background: rgba(0, 96, 166, 0.1);
   font-size: 0.82rem;
   font-weight: 900;
 }
@@ -3272,26 +3481,26 @@ body {
 .distance-actions button {
   min-height: 54px;
   padding: 0 4px;
-  border-color: rgba(50, 167, 255, 0.36);
-  background: rgba(50, 167, 255, 0.16);
+  border-color: rgba(0, 96, 166, 0.36);
+  background: rgba(0, 96, 166, 0.16);
   font-size: 0.9rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .distance-arrow {
   min-height: 72px;
-  border-color: rgba(37, 244, 109, 0.38);
+  border-color: rgba(0, 96, 166, 0.38);
   color: #06111f;
-  background: linear-gradient(135deg, var(--green), #8affac);
-  box-shadow: 0 12px 26px rgba(37, 244, 109, 0.16);
+  background: linear-gradient(135deg, var(--green), #d9ecff);
+  box-shadow: 0 12px 26px rgba(0, 96, 166, 0.16);
 }
 
 .distance-arrow.is-double {
-  border-color: rgba(50, 167, 255, 0.48);
+  border-color: rgba(0, 96, 166, 0.48);
   color: #eaf6ff;
   background:
-    linear-gradient(135deg, rgba(50, 167, 255, 0.36), rgba(37, 244, 109, 0.16)),
-    rgba(50, 167, 255, 0.16);
+    linear-gradient(135deg, rgba(0, 96, 166, 0.36), rgba(0, 96, 166, 0.16)),
+    rgba(0, 96, 166, 0.16);
 }
 
 .lane-hero.has-camera-panel .distance-arrow,
@@ -3304,37 +3513,37 @@ body {
 .distance-actions button.is-active,
 .distance-arrow:hover,
 .distance-arrow:focus-visible {
-  border-color: rgba(37, 244, 109, 0.42);
-  background: rgba(37, 244, 109, 0.12);
+  border-color: rgba(0, 96, 166, 0.42);
+  background: rgba(0, 96, 166, 0.12);
 }
 
 .distance-arrow:hover,
 .distance-arrow:focus-visible {
   color: #06111f;
-  background: linear-gradient(135deg, #8affac, var(--green));
+  background: linear-gradient(135deg, #d9ecff, var(--green));
 }
 
 .distance-arrow.is-double:hover,
 .distance-arrow.is-double:focus-visible {
   color: #ffffff;
   background:
-    linear-gradient(135deg, rgba(37, 244, 109, 0.28), rgba(50, 167, 255, 0.42)),
-    rgba(50, 167, 255, 0.18);
+    linear-gradient(135deg, rgba(0, 96, 166, 0.28), rgba(0, 96, 166, 0.42)),
+    rgba(0, 96, 166, 0.18);
 }
 
 .distance-actions button.is-active {
   color: #06111f;
-  background: linear-gradient(135deg, var(--green), #8affac);
-  box-shadow: 0 10px 24px rgba(37, 244, 109, 0.18);
+  background: linear-gradient(135deg, var(--green), #d9ecff);
+  box-shadow: 0 10px 24px rgba(0, 96, 166, 0.18);
 }
 
 .axis-command-button,
 .axis-actions .axis-command-button {
   min-height: 70px;
-  border-color: rgba(50, 167, 255, 0.38);
+  border-color: rgba(0, 96, 166, 0.38);
   background:
-    linear-gradient(135deg, rgba(50, 167, 255, 0.18), rgba(37, 244, 109, 0.08)),
-    rgba(50, 167, 255, 0.12);
+    linear-gradient(135deg, rgba(0, 96, 166, 0.18), rgba(0, 96, 166, 0.08)),
+    rgba(0, 96, 166, 0.12);
   font-size: 0.96rem;
 }
 
@@ -3350,17 +3559,17 @@ body {
 }
 
 .axis-command-button.is-recall {
-  border-color: rgba(37, 244, 109, 0.42);
+  border-color: rgba(0, 96, 166, 0.42);
 }
 
 .axis-command-button.is-camera {
-  border-color: rgba(50, 167, 255, 0.5);
+  border-color: rgba(0, 96, 166, 0.5);
 }
 
 .axis-command-button.is-camera.is-active {
   color: #06111f;
-  border-color: rgba(37, 244, 109, 0.62);
-  background: linear-gradient(135deg, var(--green), #8affac);
+  border-color: rgba(0, 96, 166, 0.62);
+  background: linear-gradient(135deg, var(--green), #d9ecff);
 }
 
 .lane-camera-panel {
@@ -3371,7 +3580,7 @@ body {
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 10px;
   padding: 12px;
-  border: 1px solid rgba(50, 167, 255, 0.24);
+  border: 1px solid rgba(0, 96, 166, 0.24);
   border-radius: 8px;
   background: rgba(5, 13, 24, 0.54);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -3379,7 +3588,7 @@ body {
 
 .camera-feed {
   overflow: hidden;
-  border: 1px solid rgba(50, 167, 255, 0.28);
+  border: 1px solid rgba(0, 96, 166, 0.28);
   border-radius: 8px;
   background: #030915;
 }
@@ -3391,8 +3600,8 @@ body {
   align-items: center;
   gap: 12px;
   padding: 0 14px;
-  border-bottom: 1px solid rgba(50, 167, 255, 0.18);
-  background: rgba(50, 167, 255, 0.08);
+  border-bottom: 1px solid rgba(0, 96, 166, 0.18);
+  background: rgba(0, 96, 166, 0.08);
 }
 
 .camera-feed-bar span {
@@ -3423,8 +3632,8 @@ body {
   min-height: 300px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 50%, rgba(245, 248, 255, 0.9) 0 4%, #102035 4.2% 8%, #f8fbff 8.2% 14%, #1d6fb3 14.2% 22%, #f8fbff 22.2% 32%, #153454 32.2% 42%, transparent 42.2%),
-    linear-gradient(135deg, rgba(50, 167, 255, 0.12), rgba(37, 244, 109, 0.05)),
+    radial-gradient(circle at 50% 50%, rgba(245, 248, 255, 0.9) 0 4%, #102035 4.2% 8%, #f8fbff 8.2% 14%, #0060A6 14.2% 22%, #f8fbff 22.2% 32%, #153454 32.2% 42%, transparent 42.2%),
+    linear-gradient(135deg, rgba(0, 96, 166, 0.12), rgba(0, 96, 166, 0.05)),
     #07111f;
 }
 
@@ -3461,11 +3670,11 @@ body {
 .ring-inner {
   width: min(112px, 17%);
   aspect-ratio: 1;
-  border-color: rgba(37, 244, 109, 0.6);
+  border-color: rgba(0, 96, 166, 0.6);
 }
 
 .camera-crosshair {
-  background: rgba(37, 244, 109, 0.42);
+  background: rgba(0, 96, 166, 0.42);
 }
 
 .camera-crosshair.horizontal {
@@ -3488,7 +3697,7 @@ body {
   border: 2px solid #06111f;
   border-radius: 50%;
   background: var(--green);
-  box-shadow: 0 0 20px rgba(37, 244, 109, 0.75);
+  box-shadow: 0 0 20px rgba(0, 96, 166, 0.75);
   transform: translate(-50%, -50%);
 }
 
@@ -3662,7 +3871,7 @@ body {
   display: block;
   align-self: center;
   overflow: hidden;
-  border: 1px solid rgba(50, 167, 255, 0.3);
+  border: 1px solid rgba(0, 96, 166, 0.3);
   border-radius: 8px;
   background: #030915;
 }
@@ -3686,7 +3895,7 @@ body {
   gap: 10px;
   color: var(--text-muted);
   background:
-    radial-gradient(circle at 50% 50%, rgba(50, 167, 255, 0.18), transparent 36%),
+    radial-gradient(circle at 50% 50%, rgba(0, 96, 166, 0.18), transparent 36%),
     #030915;
 }
 
@@ -3731,7 +3940,7 @@ body {
 }
 
 .autoscore-live-badge.is-live {
-  border-color: rgba(37, 244, 109, 0.56);
+  border-color: rgba(0, 96, 166, 0.56);
   color: #06111f;
   background: var(--green);
 }
@@ -3834,7 +4043,7 @@ body {
   overflow-y: auto;
   padding-right: 2px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(50, 167, 255, 0.45) rgba(255, 255, 255, 0.05);
+  scrollbar-color: rgba(0, 96, 166, 0.45) rgba(255, 255, 255, 0.05);
 }
 
 .autoscore-summary-panel,
@@ -3887,9 +4096,9 @@ body {
   gap: 4px;
   margin-top: 8px;
   padding: 0 10px;
-  border: 1px solid rgba(37, 244, 109, 0.24);
+  border: 1px solid rgba(0, 96, 166, 0.24);
   border-radius: 8px;
-  background: rgba(37, 244, 109, 0.07);
+  background: rgba(0, 96, 166, 0.07);
 }
 
 .autoscore-timing-strip strong {
@@ -3910,7 +4119,7 @@ body {
   overflow-y: auto;
   padding-right: 2px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(50, 167, 255, 0.45) rgba(255, 255, 255, 0.05);
+  scrollbar-color: rgba(0, 96, 166, 0.45) rgba(255, 255, 255, 0.05);
 }
 
 .autoscore-shot-row {
@@ -3928,7 +4137,7 @@ body {
 .autoscore-shot-row.is-header {
   min-height: 30px;
   color: var(--text-muted);
-  background: rgba(50, 167, 255, 0.08);
+  background: rgba(0, 96, 166, 0.08);
   font-size: 0.64rem;
   font-weight: 1000;
   text-transform: uppercase;
@@ -3972,7 +4181,7 @@ body {
   width: min(220px, 72vw);
   gap: 6px;
   padding: 10px;
-  border: 1px solid rgba(37, 244, 109, 0.28);
+  border: 1px solid rgba(0, 96, 166, 0.28);
   border-radius: 8px;
   background: rgba(5, 13, 24, 0.98);
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
@@ -4171,7 +4380,7 @@ body {
     padding: 26px;
     text-align: center;
     background:
-      radial-gradient(circle at 50% 20%, rgba(37, 244, 109, 0.18), transparent 24rem),
+      radial-gradient(circle at 50% 20%, rgba(0, 96, 166, 0.18), transparent 24rem),
       #050913;
   }
 
@@ -4188,4 +4397,511 @@ body {
     color: var(--text-muted);
     line-height: 1.45;
   }
+}
+
+/* Action Target inspired light theme */
+:root {
+  color-scheme: light;
+  background: #f7f9fc;
+  color: #1d2733;
+  --bg: #f7f9fc;
+  --panel: #ffffff;
+  --panel-strong: #f2f7fc;
+  --border: rgba(0, 96, 166, 0.16);
+  --border-strong: rgba(0, 96, 166, 0.46);
+  --text-muted: #607085;
+  --blue: #0060A6;
+  --green: #0060A6;
+  --yellow: #f4a900;
+  --pink: #c24c8f;
+  --danger: #d64646;
+  --shadow: 0 18px 42px rgba(16, 44, 72, 0.1);
+}
+
+body {
+  color: #1d2733;
+  background: #ffffff;
+}
+
+body * {
+  background-image: none !important;
+}
+
+.app-shell,
+.main-stage,
+.content-frame {
+  background: transparent;
+  color: #1d2733;
+}
+
+.sidebar {
+  border-right-color: rgba(0, 96, 166, 0.14);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 12px 0 34px rgba(16, 44, 72, 0.08);
+}
+
+.brand-mark {
+  border-color: rgba(0, 96, 166, 0.24);
+  background: #ffffff;
+  box-shadow: 0 10px 26px rgba(0, 96, 166, 0.16);
+}
+
+.nav-item {
+  color: #334155;
+}
+
+.nav-item:hover,
+.nav-item.is-active {
+  border-color: rgba(0, 96, 166, 0.28);
+  background: rgba(0, 96, 166, 0.1);
+  color: #004B82;
+}
+
+.compact-card,
+.panel,
+.session-strip,
+.sync-card,
+.simple-row,
+.metric-card,
+.program-card,
+.info-box,
+.customer-option,
+.lane-tile,
+.device-row,
+.program-tile,
+.shot-row,
+.score-row,
+.shot-log-row,
+.reload-row,
+.league-summary div,
+.league-callout,
+.autoscore-video-shell,
+.autoscore-feed-panel,
+.autoscore-score-panel,
+.autoscore-calibration-panel,
+.autoscore-log-panel {
+  border-color: rgba(0, 96, 166, 0.14);
+  background: #ffffff;
+  color: #1d2733;
+  box-shadow: 0 16px 34px rgba(16, 44, 72, 0.08);
+}
+
+.panel-hero,
+.lane-hero,
+.instruction-card,
+.results-hero,
+.weekly-challenge,
+.camera-assisted,
+.league-callout {
+  background: #ffffff;
+}
+
+.topbar h1,
+.section-head h2,
+.panel-heading h2,
+.lane-player h2,
+.results-hero h2,
+.profile-card h2,
+.program-tile h3,
+.league-choice-card strong,
+.timer-strip strong,
+.metric-card strong,
+.program-card strong,
+.info-box strong,
+.simple-row strong,
+.league-summary strong,
+.league-callout strong {
+  color: #111827;
+}
+
+.home-screen {
+  color: #1d2733;
+  background: #ffffff;
+}
+
+.home-screen-bg {
+  filter: blur(5px) saturate(0.78) brightness(1.12);
+}
+
+.home-screen-shade {
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.home-screen-content strong {
+  color: #111827;
+  text-shadow: none;
+}
+
+.home-screen-content span {
+  color: #35506b;
+  text-shadow: none;
+}
+
+.eyebrow,
+.brand-title-row span,
+.lane-tile span,
+.timeout-content .timeout-kicker,
+.league-choice-kicker,
+.league-callout small,
+.trend-up,
+.toast svg {
+  color: #0060A6;
+}
+
+.sim-label,
+.difficulty,
+.achievement-badge,
+.lane-state,
+.lane-chip,
+.league-status-pill,
+.player-switch-hint {
+  border-color: rgba(0, 96, 166, 0.2);
+  background: rgba(0, 96, 166, 0.08);
+  color: #004B82;
+}
+
+.customer-option:hover,
+.customer-option.is-selected,
+.lane-tile:hover,
+.lane-tile.is-selected,
+.device-row:hover,
+.device-row.is-connected,
+.program-tile:hover,
+.program-tile.is-selected {
+  border-color: rgba(0, 96, 166, 0.38);
+  background: rgba(0, 96, 166, 0.08);
+}
+
+.primary-action,
+.card-action,
+.timeout-actions button,
+.weekly-challenge .primary-action,
+.autoscore-actions .primary-action {
+  border-color: #0060A6;
+  color: #ffffff;
+  background: #0060A6;
+  box-shadow: 0 14px 28px rgba(0, 96, 166, 0.2);
+}
+
+.secondary-action,
+.mini-button,
+.icon-button,
+.shot-controls button,
+.program-tabs button {
+  border-color: rgba(0, 96, 166, 0.24);
+  color: #004B82;
+  background: rgba(0, 96, 166, 0.08);
+}
+
+.secondary-action:hover,
+.mini-button:hover,
+.icon-button:hover,
+.shot-controls button:hover,
+.program-tabs button:hover,
+.program-tabs button.is-active,
+.shot-controls button.is-active {
+  border-color: rgba(0, 96, 166, 0.42);
+  color: #ffffff;
+  background: #0060A6;
+}
+
+.sync-node.is-live,
+.program-tabs button.is-active {
+  color: #ffffff;
+  background: #0060A6;
+}
+
+.league-choice-card {
+  border-color: rgba(0, 96, 166, 0.34);
+  color: #1d2733;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(16, 44, 72, 0.08);
+}
+
+.league-choice-card:hover,
+.league-choice-card.is-selected {
+  border-color: rgba(0, 96, 166, 0.72);
+  box-shadow: 0 16px 34px rgba(0, 96, 166, 0.16);
+}
+
+.league-choice-card.is-selected {
+  background: #eef3f8;
+}
+
+.league-detail-bar div {
+  border-color: rgba(0, 96, 166, 0.16);
+  background: #ffffff;
+  box-shadow: 0 10px 22px rgba(16, 44, 72, 0.06);
+}
+
+.league-detail-bar span {
+  color: #0060A6;
+}
+
+.league-detail-bar strong {
+  color: #111827;
+}
+
+.league-choice-action,
+.league-choice-card:not(.is-selected) .league-choice-action {
+  border-color: #0060A6;
+  color: #ffffff;
+  background: #0060A6;
+}
+
+.shot-log-row strong,
+.shot-row strong,
+.score-row strong,
+.metric-card span,
+.program-card span,
+.info-box span,
+.sync-card span,
+.customer-option small,
+.lane-tile small,
+.device-row small,
+.program-tile p,
+.league-callout p,
+.league-choice-card small,
+.timer-strip span,
+.brand-block span,
+.session-strip span {
+  color: #607085;
+}
+
+.shot-log-empty strong,
+.autoscore-zone-detail b,
+.autoscore-metric strong,
+.autoscore-timing-strip strong,
+.autoscore-shot-row strong {
+  color: #111827;
+}
+
+.xp-bar,
+.progress-bar,
+.autoscore-progress-track {
+  background: rgba(0, 96, 166, 0.12);
+}
+
+.xp-bar span,
+.progress-bar span,
+.autoscore-progress-fill {
+  background: #0060A6;
+}
+
+.toast,
+.action-target-badge,
+.light-menu {
+  border-color: rgba(0, 96, 166, 0.2);
+  color: #1d2733;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 16px 42px rgba(16, 44, 72, 0.14);
+}
+
+.orientation-notice {
+  color: #1d2733;
+  background: #ffffff;
+}
+
+.orientation-notice svg {
+  color: #0060A6;
+}
+
+.axis-console {
+  border-color: rgba(0, 96, 166, 0.22);
+  background: #f7fbff;
+}
+
+.axis-readout {
+  border-color: rgba(0, 96, 166, 0.18);
+  background: #ffffff;
+}
+
+.axis-readout span {
+  color: #5e7087;
+}
+
+.axis-readout strong {
+  color: #111827;
+}
+
+.distance-status,
+.distance-arrow,
+.distance-arrow.is-double,
+.axis-actions button,
+.distance-actions button,
+.axis-command-button,
+.axis-actions .axis-command-button,
+.axis-command-button.is-recall,
+.axis-command-button.is-camera,
+.axis-command-button.is-camera.is-active {
+  border-color: #0060A6;
+  color: #ffffff;
+  background: #0060A6;
+  box-shadow: 0 12px 24px rgba(0, 96, 166, 0.2);
+}
+
+.distance-status strong,
+.distance-status span,
+.distance-status small,
+.distance-arrow svg,
+.distance-arrow span,
+.axis-command-button,
+.axis-command-button span,
+.axis-command-button svg,
+.axis-actions button,
+.axis-actions button svg,
+.distance-actions button,
+.distance-actions button svg {
+  color: #ffffff;
+}
+
+.distance-arrow:hover,
+.distance-arrow:focus-visible,
+.distance-arrow.is-double:hover,
+.distance-arrow.is-double:focus-visible,
+.axis-actions button:hover,
+.axis-actions button:focus-visible,
+.distance-actions button:hover,
+.distance-actions button:focus-visible,
+.distance-actions button.is-active,
+.axis-command-button:hover,
+.axis-command-button:focus-visible {
+  border-color: #004B82;
+  color: #ffffff;
+  background: #004B82;
+}
+
+.axis-command-button small {
+  color: #0060A6;
+  background: #ffffff;
+}
+
+.topbar {
+  border-color: #0060A6;
+  background: #0060A6;
+  box-shadow: 0 18px 38px rgba(0, 96, 166, 0.24);
+}
+
+.topbar .session-strip {
+  border-color: rgba(255, 255, 255, 0.72);
+  color: #111827;
+  background: #ffffff;
+}
+
+.topbar .session-strip svg,
+.topbar .timer-strip span:first-child {
+  color: #0060A6;
+}
+
+.topbar .timer-strip strong {
+  color: #111827;
+}
+
+.eyebrow,
+.program-card span,
+.metric-card span,
+.info-box span,
+.lane-number span,
+.weekly-challenge span,
+.league-choice-kicker,
+.league-status-pill,
+.powered-by-badge span,
+.simple-row span,
+.simple-row small {
+  color: #0060A6;
+}
+
+.section-head svg,
+.panel-heading svg,
+.program-card svg,
+.metric-card svg,
+.info-box svg {
+  color: #0060A6;
+}
+
+.scoring-control-row > div,
+.score-view-switcher {
+  border-color: rgba(0, 96, 166, 0.18);
+  background: #ffffff;
+}
+
+.score-view-name span,
+.scoring-control-row span {
+  color: #0060A6;
+}
+
+.score-view-name strong,
+.scoring-control-row strong {
+  color: #111827;
+}
+
+.score-cycle-button {
+  border-color: rgba(0, 96, 166, 0.28);
+  color: #0060A6;
+  background: rgba(0, 96, 166, 0.08);
+}
+
+.score-cycle-button svg {
+  color: currentColor;
+}
+
+.score-cycle-button:not(:disabled):hover,
+.score-cycle-button:not(:disabled):focus-visible {
+  border-color: #0060A6;
+  color: #ffffff;
+  background: #0060A6;
+}
+
+.topbar {
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+}
+
+.topbar-powered-by.powered-by-badge {
+  grid-column: 2;
+  grid-row: 1;
+  position: static;
+  right: auto;
+  bottom: auto;
+  z-index: auto;
+  justify-self: end;
+  min-height: 52px;
+  padding: 8px 12px;
+  border-color: rgba(255, 255, 255, 0.42);
+  background: #0060A6;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.topbar-powered-by.powered-by-badge span {
+  color: #ffffff;
+}
+
+.topbar-powered-by.powered-by-badge img {
+  width: 118px;
+  height: 28px;
+}
+
+.topbar .session-strip {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.league-choice-card.is-selected {
+  border-color: #0060A6;
+  background: #0060A6;
+  box-shadow: 0 12px 28px rgba(0, 96, 166, 0.2);
+}
+
+.league-choice-card.is-selected .league-choice-kicker,
+.league-choice-card.is-selected strong,
+.league-choice-card.is-selected small {
+  color: #ffffff;
+}
+
+.league-choice-card:hover:not(.is-selected) {
+  background: rgba(0, 96, 166, 0.08);
+}
+
+.league-table {
+  flex: 1 1 auto;
 }
